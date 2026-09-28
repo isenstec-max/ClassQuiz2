@@ -75,6 +75,24 @@ SPDX-License-Identifier: MPL-2.0
 		open: false,
 		data: ''
 	});
+
+	function handleKeydown(e: KeyboardEvent, nextId: string, prevId?: string) {
+		if (e.key === 'Tab') {
+			if (e.shiftKey && prevId) {
+				const prevEl = document.getElementById(prevId);
+				if (prevEl) {
+					e.preventDefault();
+					prevEl.focus();
+				}
+			} else if (!e.shiftKey && nextId) {
+				const nextEl = document.getElementById(nextId);
+				if (nextEl) {
+					e.preventDefault();
+					nextEl.focus();
+				}
+			}
+		}
+	}
 </script>
 
 <svelte:head>
@@ -106,6 +124,8 @@ SPDX-License-Identifier: MPL-2.0
 									id="email"
 									name="email"
 									type="email"
+									tabindex="1"
+									onkeydown={(e) => handleKeydown(e, 'username')}
 									class="w-full peer bg-transparent h-10 rounded-lg text-gray-700 dark:text-white placeholder-transparent ring-2 px-2 ring-gray-500 focus:ring-sky-600 focus:outline-hidden focus:border-rose-600"
 									placeholder={$t('words.email')}
 									class:ring-red-700={$errors.email !== null}
@@ -126,6 +146,8 @@ SPDX-License-Identifier: MPL-2.0
 									id="username"
 									name="username"
 									type="text"
+									tabindex="2"
+									onkeydown={(e) => handleKeydown(e, 'password1', 'email')}
 									class="w-full peer bg-transparent h-10 rounded-lg text-gray-700 dark:text-white placeholder-transparent ring-2 px-2 ring-gray-500 focus:ring-sky-600 focus:outline-hidden focus:border-rose-600"
 									placeholder={$t('words.username')}
 									class:ring-red-700={$errors.username !== null}
@@ -146,6 +168,8 @@ SPDX-License-Identifier: MPL-2.0
 									id="password1"
 									name="password1"
 									type="password"
+									tabindex="3"
+									onkeydown={(e) => handleKeydown(e, 'password2', 'username')}
 									class:ring-red-700={$errors.password1 !== null}
 									class:ring-green-600={$touched.password1 === true &&
 										$errors.password1 === null}
@@ -166,6 +190,8 @@ SPDX-License-Identifier: MPL-2.0
 									id="password2"
 									name="password2"
 									type="password"
+									tabindex="4"
+									onkeydown={(e) => handleKeydown(e, 'privacy_accept', 'password1')}
 									class="w-full peer bg-transparent h-10 rounded-lg text-gray-700 dark:text-white placeholder-transparent ring-2 px-2 ring-gray-500 focus:ring-sky-600 focus:outline-hidden focus:border-rose-600"
 									placeholder={$t('words.password')}
 									class:ring-red-700={$errors.password2 !== null}
@@ -187,8 +213,15 @@ SPDX-License-Identifier: MPL-2.0
 								$errors.privacy_accept === null}
 						>
 							<!--						<div class='flex items-center justify-between mt-4 w-full'>-->
-							<input type="checkbox" name="privacy_accept" class="ml-3" />
-							<label class="text-sm text-gray-600 dark:text-gray-200">
+							<input
+								id="privacy_accept"
+								type="checkbox"
+								name="privacy_accept"
+								tabindex="5"
+								onkeydown={(e) => handleKeydown(e, 'tos_accept', 'password2')}
+								class="ml-3"
+							/>
+							<label for="privacy_accept" class="text-sm text-gray-600 dark:text-gray-200">
 								I've read the <a href="/docs/privacy-policy" class="underline"
 									>Privacy policy</a
 								>.
@@ -201,8 +234,15 @@ SPDX-License-Identifier: MPL-2.0
 								$errors.tos_accept === null}
 						>
 							<!--						<div class='flex items-center justify-between mt-4 w-full'>-->
-							<input type="checkbox" name="tos_accept" class="ml-3" />
-							<label class="text-sm text-gray-600 dark:text-gray-200">
+							<input
+								id="tos_accept"
+								type="checkbox"
+								name="tos_accept"
+								tabindex="6"
+								onkeydown={(e) => handleKeydown(e, 'register_submit', 'privacy_accept')}
+								class="ml-3"
+							/>
+							<label for="tos_accept" class="text-sm text-gray-600 dark:text-gray-200">
 								I agree to the <a href="/docs/tos" class="underline"
 									>Terms of Service</a
 								>.
@@ -217,6 +257,9 @@ SPDX-License-Identifier: MPL-2.0
 							>
 
 							<button
+								id="register_submit"
+								tabindex="7"
+								onkeydown={(e) => handleKeydown(e, '', 'tos_accept')}
 								class="px-4 py-2 leading-5 text-white transition-colors duration-200 transform bg-gray-700 rounded-sm hover:bg-gray-600 focus:outline-hidden"
 								disabled={!$isValid || $isSubmitting}
 								class:cursor-not-allowed={!$isValid || $isSubmitting}

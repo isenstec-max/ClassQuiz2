@@ -211,7 +211,6 @@ This should be okay, right?
 		tinykeys(window, {
 			'$mod+k': toggle_open,
 			Escape: close_cp,
-			Tab: autocomplete_on_tab,
 			ArrowDown: on_arrow_down,
 			ArrowUp: on_arrow_up,
 			Enter: on_enter
@@ -251,6 +250,12 @@ This should be okay, right?
 					class="col-start-1 row-start-1 w-full p-4 outline-hidden bg-gray-700 rounded-sm"
 					bind:value={input}
 					oninput={() => search(input)}
+					onkeydown={(e) => {
+						if (e.key === 'Tab') {
+							e.preventDefault();
+							input = bg_text;
+						}
+					}}
 					autofocus
 				/>
 			</div>
