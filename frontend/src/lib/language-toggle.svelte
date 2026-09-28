@@ -18,14 +18,19 @@ SPDX-License-Identifier: MPL-2.0
 	let {
 		languages = [
 			{
-				code: 'de',
-				name: 'Deutsch',
-				flag: '🇩🇪'
+				code: 'sk',
+				name: 'Slovenčina',
+				flag: '🇸🇰'
 			},
 			{
 				code: 'en',
 				name: 'English',
-				flag: '🇺🇲'
+				flag: '🇬🇧'
+			},
+			{
+				code: 'de',
+				name: 'Deutsch',
+				flag: '🇩🇪'
 			},
 			{
 				code: 'tr',

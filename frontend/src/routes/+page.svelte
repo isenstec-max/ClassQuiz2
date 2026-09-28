@@ -142,12 +142,12 @@ SPDX-License-Identifier: MPL-2.0
 		<h2 class="text-center text-5xl mb-6">{$t('index_page.how_does_ClassQuiz2_work')}</h2>
 
 		<div class="flex justify-center w-full">
-			<h3 class="text-center text-3xl rounded-t-lg bg-white/40 py-2 px-6">
+			<h3 class="text-center text-3xl rounded-t-lg bg-white/40 dark:bg-gray-800/90 dark:text-gray-100 py-2 px-6">
 				{$t('index_page.get_a_quiz')}
 			</h3>
 		</div>
 		<div
-			class="grid grid-rows-2 lg:grid-rows-1 lg:grid-cols-2 bg-white/40 shadow-lg mb-12 lg:mx-12 mx-4 rounded-lg"
+			class="grid grid-rows-2 lg:grid-rows-1 lg:grid-cols-2 bg-white/40 dark:bg-gray-800/70 shadow-lg mb-12 lg:mx-12 mx-4 rounded-lg border border-transparent dark:border-gray-700"
 		>
 			<div>
 				<div class="p-2 rounded-lg">
@@ -178,10 +178,10 @@ SPDX-License-Identifier: MPL-2.0
 				</div>
 			</div>
 			<div
-				class="lg:border-l lg:border-l-black lg:border-t-0 border-t border-t-black flex lg:flex-col flex-row stretch"
+				class="lg:border-l lg:border-l-gray-300 dark:lg:border-l-gray-700 lg:border-t-0 border-t border-t-gray-300 dark:border-t-gray-700 flex lg:flex-col flex-row stretch"
 			>
 				<div
-					class="m-2 rounded-lg p-2 bg-white/40 transition-all cursor-pointer lg:h-full"
+					class="m-2 rounded-lg p-2 bg-white/40 dark:bg-gray-700/50 hover:dark:bg-gray-700/80 transition-all cursor-pointer lg:h-full"
 					onclick={() => {
 						selected_create_thing = SelectedCreateThing.Create;
 					}}
@@ -212,11 +212,11 @@ SPDX-License-Identifier: MPL-2.0
 							/>
 						</svg>
 					</div>
-					<h5 class="text-xl w-fit dark:text-black">{$t('words.create')}</h5>
-					<p class="dark:text-black">{$t('index_page.create_a_quiz_from_scratch')}</p>
+					<h5 class="text-xl w-fit text-gray-900 dark:text-white">{$t('words.create')}</h5>
+					<p class="text-gray-700 dark:text-gray-300">{$t('index_page.create_a_quiz_from_scratch')}</p>
 				</div>
 				<div
-					class="m-2 rounded-lg p-2 bg-white/40 transition-all cursor-pointer lg:h-full"
+					class="m-2 rounded-lg p-2 bg-white/40 dark:bg-gray-700/50 hover:dark:bg-gray-700/80 transition-all cursor-pointer lg:h-full"
 					onclick={() => {
 						selected_create_thing = SelectedCreateThing.Find;
 					}}
@@ -247,8 +247,8 @@ SPDX-License-Identifier: MPL-2.0
 							/>
 						</svg>
 					</div>
-					<h5 class="text-xl dark:text-black">{$t('words.find')}</h5>
-					<p class="dark:text-black">{$t('index_page.find_or_explore')}</p>
+					<h5 class="text-xl text-gray-900 dark:text-white">{$t('words.find')}</h5>
+					<p class="text-gray-700 dark:text-gray-300">{$t('index_page.find_or_explore')}</p>
 				</div>
 			</div>
 		</div>
@@ -256,13 +256,13 @@ SPDX-License-Identifier: MPL-2.0
 
 	<section class="mt-24">
 		<div class="flex justify-center w-full">
-			<h2 class="text-center text-3xl rounded-t-lg bg-white/40 py-2 px-6">
+			<h2 class="text-center text-3xl rounded-t-lg bg-white/40 dark:bg-gray-800/90 dark:text-gray-100 py-2 px-6">
 				{$t('index_page.play_quiz')}
 			</h2>
 		</div>
 
 		<div
-			class="grid grid-rows-2 lg:grid-rows-1 lg:grid-cols-2 bg-white/40 shadow-lg mb-12 lg:mx-12 mx-4 rounded-lg"
+			class="grid grid-rows-2 lg:grid-rows-1 lg:grid-cols-2 bg-white/40 dark:bg-gray-800/70 shadow-lg mb-12 lg:mx-12 mx-4 rounded-lg border border-transparent dark:border-gray-700"
 		>
 			<div>
 				<div class="p-2 rounded-lg">
@@ -293,10 +293,10 @@ SPDX-License-Identifier: MPL-2.0
 				</div>
 			</div>
 			<div
-				class="lg:border-l lg:border-l-black lg:border-t-0 border-t border-t-black flex lg:flex-col flex-row stretch"
+				class="lg:border-l lg:border-l-gray-300 dark:lg:border-l-gray-700 lg:border-t-0 border-t border-t-gray-300 dark:border-t-gray-700 flex lg:flex-col flex-row stretch"
 			>
 				<div
-					class="m-2 rounded-lg p-2 bg-white/40 transition-all cursor-pointer lg:h-full"
+					class="m-2 rounded-lg p-2 bg-white/40 dark:bg-gray-700/50 hover:dark:bg-gray-700/80 transition-all cursor-pointer lg:h-full"
 					onclick={() => {
 						selected_play_thing = SelectedPlayThing.Select;
 					}}
@@ -327,11 +327,11 @@ SPDX-License-Identifier: MPL-2.0
 							/>
 						</svg>
 					</div>
-					<h5 class="text-xl w-fit dark:text-black">{$t('index_page.select_answer')}</h5>
-					<p class="dark:text-black">{$t('index_page.choose_answer_wisely')}</p>
+					<h5 class="text-xl w-fit text-gray-900 dark:text-white">{$t('index_page.select_answer')}</h5>
+					<p class="text-gray-700 dark:text-gray-300">{$t('index_page.choose_answer_wisely')}</p>
 				</div>
 				<div
-					class="m-2 rounded-lg p-2 bg-white/40 transition-all cursor-pointer lg:h-full"
+					class="m-2 rounded-lg p-2 bg-white/40 dark:bg-gray-700/50 hover:dark:bg-gray-700/80 transition-all cursor-pointer lg:h-full"
 					role="button"
 					tabindex="0"
 					onclick={() => {
@@ -362,11 +362,11 @@ SPDX-License-Identifier: MPL-2.0
 							/>
 						</svg>
 					</div>
-					<h5 class="text-xl dark:text-black">{$t('index_page.view_results')}</h5>
-					<p class="dark:text-black">{$t('index_page.check_if_chosen_wisely')}</p>
+					<h5 class="text-xl text-gray-900 dark:text-white">{$t('index_page.view_results')}</h5>
+					<p class="text-gray-700 dark:text-gray-300">{$t('index_page.check_if_chosen_wisely')}</p>
 				</div>
 				<div
-					class="m-2 rounded-lg p-2 bg-white/40 transition-all cursor-pointer lg:h-full"
+					class="m-2 rounded-lg p-2 bg-white/40 dark:bg-gray-700/50 hover:dark:bg-gray-700/80 transition-all cursor-pointer lg:h-full"
 					role="button"
 					tabindex="0"
 					onclick={() => {
@@ -397,8 +397,8 @@ SPDX-License-Identifier: MPL-2.0
 							/>
 						</svg>
 					</div>
-					<h5 class="text-xl dark:text-black">{$t('index_page.list_winners')}</h5>
-					<p class="dark:text-black">{$t('index_page.get_ranking_and_winners')}</p>
+					<h5 class="text-xl text-gray-900 dark:text-white">{$t('index_page.list_winners')}</h5>
+					<p class="text-gray-700 dark:text-gray-300">{$t('index_page.get_ranking_and_winners')}</p>
 				</div>
 			</div>
 		</div>
@@ -406,27 +406,27 @@ SPDX-License-Identifier: MPL-2.0
 
 	<section class="mt-24">
 		<div class="flex justify-center w-full">
-			<h2 class="text-center text-3xl rounded-t-lg bg-white/40 py-2 px-6">
+			<h2 class="text-center text-3xl rounded-t-lg bg-white/40 dark:bg-gray-800/90 dark:text-gray-100 py-2 px-6">
 				{$t('index_page.why_ClassQuiz2')}
 			</h2>
 		</div>
 
 		<div
-			class="grid grid-rows-2 lg:grid-rows-1 lg:grid-cols-2 bg-white/40 shadow-lg mb-12 lg:mx-12 mx-4 rounded-lg"
+			class="grid grid-rows-2 lg:grid-rows-1 lg:grid-cols-2 bg-white/40 dark:bg-gray-800/70 shadow-lg mb-12 lg:mx-12 mx-4 rounded-lg border border-transparent dark:border-gray-700"
 		>
 			<div>
 				<div class="p-12 rounded-lg flex justify-center items-center h-full">
-					<p class="dark:text-black">
+					<p class="text-gray-900 dark:text-gray-100 text-lg leading-relaxed">
 						{ClassQuiz2_reasons[selected_ClassQuiz2_reason].content}
 					</p>
 				</div>
 			</div>
 			<div
-				class="lg:border-l lg:border-l-black lg:border-t-0 border-t border-t-black flex lg:flex-col flex-row stretch overflow-x-auto why-ClassQuiz2"
+				class="lg:border-l lg:border-l-gray-300 dark:lg:border-l-gray-700 lg:border-t-0 border-t border-t-gray-300 dark:border-t-gray-700 flex lg:flex-col flex-row stretch overflow-x-auto why-ClassQuiz2"
 			>
 				{#each ClassQuiz2_reasons as reason, index}
 					<div
-						class="m-2 rounded-lg p-2 bg-white/40 transition-all cursor-pointer lg:h-full"
+						class="m-2 rounded-lg p-2 bg-white/40 dark:bg-gray-700/50 hover:dark:bg-gray-700/80 transition-all cursor-pointer lg:h-full"
 						role="button"
 						tabindex="0"
 						onclick={() => {
@@ -438,7 +438,7 @@ SPDX-License-Identifier: MPL-2.0
 						class:shadow-2xl={selected_ClassQuiz2_reason === index}
 						class:opacity-70={selected_ClassQuiz2_reason !== index}
 					>
-						<h5 class="text-xl dark:text-black">{reason.headline}</h5>
+						<h5 class="text-xl text-gray-900 dark:text-white">{reason.headline}</h5>
 					</div>
 				{/each}
 			</div>

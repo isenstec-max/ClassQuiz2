@@ -25,6 +25,7 @@ import ja from './locales/ja.json';
 import he from './locales/he.json';
 import prs from './locales/prs.json';
 import ps from './locales/ps.json';
+import sk from './locales/sk.json';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
 import type { i18n } from 'i18next';
@@ -83,6 +84,7 @@ export class I18nService {
 		this.i18n.addResourceBundle('he', 'translation', he);
 		this.i18n.addResourceBundle('prs', 'translation', prs);
 		this.i18n.addResourceBundle('ps', 'translation', ps);
+		this.i18n.addResourceBundle('sk', 'translation', sk);
 	}
 
 	changeLanguage(language: string): void {

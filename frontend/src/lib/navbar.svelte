@@ -45,15 +45,26 @@ SPDX-License-Identifier: MPL-2.0
 		!darkMode ? localStorage.setItem('theme', 'dark') : localStorage.setItem('theme', 'light');
 		window.location.reload();
 	};
+
+	let currentLang = $state('en');
+	if (browser) {
+		currentLang = localStorage.getItem('language') ?? 'en';
+	}
+	const setLang = (code: string) => {
+		if (browser) {
+			localStorage.setItem('language', code);
+			window.location.reload();
+		}
+	};
 </script>
 
-<nav class="w-screen px-4 lg:px-10 py-2 fixed backdrop-blur-2xl bg-white/70 shadow-md z-30 top-0">
+<nav class="w-screen px-4 lg:px-10 py-2 fixed backdrop-blur-2xl bg-white/80 dark:bg-gray-900/90 shadow-md z-30 top-0 border-b border-transparent dark:border-gray-800 transition-colors">
 	<!-- Desktop navbar -->
 	<div class="hidden lg:flex lg:items-center lg:flex-row lg:justify-between">
 		<div class="lg:flex lg:items-center lg:flex-row gap-1">
 			<a
 				href="/"
-				class="font-black tracking-tight text-xl lg:text-2xl text-black marck-script link-hover px-3 lg:px-5 flex items-center gap-1.5"
+				class="font-black tracking-tight text-xl lg:text-2xl text-black dark:text-white marck-script link-hover px-3 lg:px-5 flex items-center gap-1.5"
 				>ClassQuiz2 <span class="border border-green-500 dark:border-green-400 text-green-600 dark:text-green-400 text-[11px] font-mono font-semibold px-1.5 py-0.5 rounded leading-none not-italic tracking-normal">{APP_VERSION}</span></a
 			>
 			<a class="btn-nav border-2 rounded-sm" href="/play">{$t('words.play')}</a>
@@ -107,6 +118,29 @@ SPDX-License-Identifier: MPL-2.0
 				<BrownButton href="https://mawoka.eu/donate" target="_blank"
 					>{$t('navbar.donate')} <span class="">❤️</span></BrownButton
 				>
+
+				<!-- Language toggle SK / GB -->
+				<div class="flex items-center border border-gray-300 dark:border-gray-700 rounded-md p-0.5 bg-gray-100/80 dark:bg-gray-800 text-xs font-semibold gap-0.5">
+					<button
+						type="button"
+						class="px-1.5 py-0.5 rounded flex items-center gap-1 transition {currentLang === 'sk' ? 'bg-green-600 text-white shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}"
+						onclick={() => setLang('sk')}
+						title="Slovenčina"
+						aria-label="Prepnúť na slovenčinu"
+					>
+						<span>🇸🇰</span> <span class="font-mono text-[11px]">SK</span>
+					</button>
+					<button
+						type="button"
+						class="px-1.5 py-0.5 rounded flex items-center gap-1 transition {currentLang === 'en' ? 'bg-green-600 text-white shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}"
+						onclick={() => setLang('en')}
+						title="English"
+						aria-label="Switch to English"
+					>
+						<span>🇬🇧</span> <span class="font-mono text-[11px]">GB</span>
+					</button>
+				</div>
+
 				<div class="lg:flex items-center justify-center">
 					{#if darkMode}
 						<button
@@ -118,7 +152,7 @@ SPDX-License-Identifier: MPL-2.0
 						>
 							<!-- Heroicons: sun -->
 							<svg
-								class="w-6 h-6 text-black"
+								class="w-6 h-6 text-amber-400"
 								fill="none"
 								aria-label="Sun-Icon"
 								stroke="currentColor"
@@ -136,6 +170,7 @@ SPDX-License-Identifier: MPL-2.0
 						</button>
 					{:else}
 						<button
+							class="text-gray-700 hover:text-gray-900"
 							onclick={() => {
 								switchDarkMode();
 							}}
@@ -171,17 +206,39 @@ SPDX-License-Identifier: MPL-2.0
 		<div class="flex items-center justify-between">
 			<a
 				href="/"
-				class="font-black tracking-tight text-xl lg:text-2xl text-black marck-script link-hover px-3 lg:px-5 flex items-center gap-1.5"
+				class="font-black tracking-tight text-xl lg:text-2xl text-black dark:text-white marck-script link-hover px-3 lg:px-5 flex items-center gap-1.5"
 				>ClassQuiz2 <span class="border border-green-500 dark:border-green-400 text-green-600 dark:text-green-400 text-[11px] font-mono font-semibold px-1.5 py-0.5 rounded leading-none not-italic tracking-normal">{APP_VERSION}</span></a
 			>
 			<a class="btn-nav flex" href="/play">{$t('words.play')}</a>
 
 			<!-- Dark/Light mode toggle + Open/Close menu -->
 			<div class="flex items-center">
+				<!-- Language toggle SK / GB -->
+				<div class="flex items-center border border-gray-300 dark:border-gray-700 rounded-md p-0.5 bg-gray-100/80 dark:bg-gray-800 text-xs font-semibold gap-0.5 mr-1">
+					<button
+						type="button"
+						class="px-1.5 py-0.5 rounded flex items-center gap-0.5 transition {currentLang === 'sk' ? 'bg-green-600 text-white shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}"
+						onclick={() => setLang('sk')}
+						title="Slovenčina"
+						aria-label="Prepnúť na slovenčinu"
+					>
+						<span>🇸🇰</span> <span class="font-mono text-[10px]">SK</span>
+					</button>
+					<button
+						type="button"
+						class="px-1.5 py-0.5 rounded flex items-center gap-0.5 transition {currentLang === 'en' ? 'bg-green-600 text-white shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}"
+						onclick={() => setLang('en')}
+						title="English"
+						aria-label="Switch to English"
+					>
+						<span>🇬🇧</span> <span class="font-mono text-[10px]">GB</span>
+					</button>
+				</div>
+
 				{#if darkMode}
 					<!-- Sun icon -->
 					<button
-						class="px-3"
+						class="px-2"
 						onclick={() => {
 							switchDarkMode();
 						}}
@@ -190,7 +247,7 @@ SPDX-License-Identifier: MPL-2.0
 					>
 						<!-- Heroicons: sun -->
 						<svg
-							class="w-6 h-6 text-black"
+							class="w-6 h-6 text-amber-400"
 							fill="none"
 							aria-label="Sun-Icon"
 							stroke="currentColor"
@@ -209,7 +266,7 @@ SPDX-License-Identifier: MPL-2.0
 				{:else}
 					<!-- Moon icon -->
 					<button
-						class="px-3"
+						class="px-2 text-gray-700 hover:text-gray-900"
 						onclick={() => {
 							switchDarkMode();
 						}}
@@ -237,7 +294,7 @@ SPDX-License-Identifier: MPL-2.0
 
 				{#if menuIsClosed}
 					<button
-						class="px-3"
+						class="px-2"
 						id="open-menu"
 						onclick={toggleMenu}
 						aria-label="Open navbar"
@@ -248,7 +305,8 @@ SPDX-License-Identifier: MPL-2.0
 							height="24"
 							viewBox="0 0 24 24"
 							fill="none"
-							stroke="#000000"
+							stroke="currentColor"
+							class="text-gray-900 dark:text-white"
 							stroke-width="2"
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -258,7 +316,7 @@ SPDX-License-Identifier: MPL-2.0
 					</button>
 				{:else}
 					<button
-						class="px-3"
+						class="px-2"
 						id="close-menu"
 						onclick={toggleMenu}
 						aria-label="Close navbar"
@@ -269,7 +327,8 @@ SPDX-License-Identifier: MPL-2.0
 							height="24"
 							viewBox="0 0 24 24"
 							fill="none"
-							stroke="#000000"
+							stroke="currentColor"
+							class="text-gray-900 dark:text-white"
 							stroke-width="2"
 							stroke-linecap="round"
 							stroke-linejoin="round"

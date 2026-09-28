@@ -87,8 +87,7 @@ SPDX-License-Identifier: MPL-2.0
 	}
 
 	:global(html.dark) {
-		//background-color: #0f2702;
-		background-color: #4e6e58;
+		background-color: #111827;
 		background-size: cover;
 		color: white;
 
