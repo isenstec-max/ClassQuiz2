@@ -54,7 +54,7 @@ SPDX-License-Identifier: MPL-2.0
 			<a
 				href="/"
 				class="font-black tracking-tight text-xl lg:text-2xl text-black marck-script link-hover px-3 lg:px-5 flex items-center gap-1.5"
-				>ClassQuiz2 <span class="text-xs font-mono font-normal bg-lime-500 text-white dark:bg-lime-600 px-1.5 py-0.5 rounded-full not-italic tracking-normal">{APP_VERSION}</span></a
+				>ClassQuiz2 <span class="border border-green-500 dark:border-green-400 text-green-600 dark:text-green-400 text-[11px] font-mono font-semibold px-1.5 py-0.5 rounded leading-none not-italic tracking-normal">{APP_VERSION}</span></a
 			>
 			<a class="btn-nav border-2 rounded-sm" href="/play">{$t('words.play')}</a>
 			<a class="btn-nav" href="/explore">{$t('words.explore')}</a>
@@ -172,7 +172,7 @@ SPDX-License-Identifier: MPL-2.0
 			<a
 				href="/"
 				class="font-black tracking-tight text-xl lg:text-2xl text-black marck-script link-hover px-3 lg:px-5 flex items-center gap-1.5"
-				>ClassQuiz2 <span class="text-xs font-mono font-normal bg-lime-500 text-white dark:bg-lime-600 px-1.5 py-0.5 rounded-full not-italic tracking-normal">{APP_VERSION}</span></a
+				>ClassQuiz2 <span class="border border-green-500 dark:border-green-400 text-green-600 dark:text-green-400 text-[11px] font-mono font-semibold px-1.5 py-0.5 rounded leading-none not-italic tracking-normal">{APP_VERSION}</span></a
 			>
 			<a class="btn-nav flex" href="/play">{$t('words.play')}</a>
 

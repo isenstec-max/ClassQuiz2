@@ -169,11 +169,13 @@ This should be okay, right?
 	};
 
 	const autocomplete_on_tab = (e: KeyboardEvent) => {
+		if (!open) return;
 		e.preventDefault();
 		input = bg_text;
 	};
 
 	const on_arrow_down = (e: KeyboardEvent) => {
+		if (!open) return;
 		e.preventDefault();
 		if (visible_items.length < 1) {
 			return;
@@ -184,6 +186,7 @@ This should be okay, right?
 		selected += 1;
 	};
 	const on_arrow_up = (e: KeyboardEvent) => {
+		if (!open) return;
 		e.preventDefault();
 		if (visible_items.length < 1) {
 			return;
@@ -195,9 +198,11 @@ This should be okay, right?
 	};
 
 	const on_enter = (e: KeyboardEvent) => {
+		if (!open) return;
 		if (selected === null) {
 			return;
 		}
+		e.preventDefault();
 		execute_action();
 		input = '';
 	};
