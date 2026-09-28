@@ -15,10 +15,10 @@ SPDX-License-Identifier: MPL-2.0
 </script>
 
 <svelte:head>
-	<title>ClassQuiz/docs - Development-setup</title>
+	<title>ClassQuiz2/docs - Development-setup</title>
 	<meta
 		name="description"
-		content="How to import quizzes from KAHOOT! into ClassQuiz, the open-source quiz-application,  easily"
+		content="How to import quizzes from KAHOOT! into ClassQuiz2, the open-source quiz-application,  easily"
 	/>
 </svelte:head>
 <article
@@ -44,7 +44,7 @@ SPDX-License-Identifier: MPL-2.0
 	<ul>
 		<li>
 			Clone the repo:
-			<pre><code>git clone https://github.com/mawoka-myblock/ClassQuiz</code></pre>
+			<pre><code>git clone https://github.com/isenstec-max/ClassQuiz2</code></pre>
 		</li>
 		<li>
 			Install the dependencies
@@ -68,7 +68,7 @@ SPDX-License-Identifier: MPL-2.0
 			<h4>run_tests.sh - Docs</h4>
 			<p>
 				You can run this script with bash. It helps you managing docker-containers you need
-				to run ClassQuiz. The standard workflow is the following:
+				to run ClassQuiz2. The standard workflow is the following:
 			</p>
 			<ol>
 				<li>
@@ -77,12 +77,12 @@ SPDX-License-Identifier: MPL-2.0
 				</li>
 				<li>
 					Start the Python-server:
-					<pre><code>pipenv run uvicorn classquiz:app --reload --proxy-headers</code
+					<pre><code>pipenv run uvicorn ClassQuiz2:app --reload --proxy-headers</code
 						></pre>
 				</li>
 				<li>
 					Start the background worker:
-					<pre><code>pipenv run arq classquiz.worker.WorkerSettings</code></pre>
+					<pre><code>pipenv run arq ClassQuiz2.worker.WorkerSettings</code></pre>
 				</li>
 				<li>
 					Start the frontend-dev-server:
@@ -94,18 +94,18 @@ SPDX-License-Identifier: MPL-2.0
 				</li>
 				<li>
 					Start the background-worker:
-					<pre><code>arq classquiz.worker.WorkerSettings</code></pre>
+					<pre><code>arq ClassQuiz2.worker.WorkerSettings</code></pre>
 				</li>
 			</ol>
 			<p>If you're done developing: <code>./run_tests.sh -</code></p>
 			<p>If you want to run all the tests: <code>./run_tests.sh a</code></p>
 		</li>
 		<li>
-			Add the following line to your <code>/etc/hosts</code>-file, so you can visit ClassQuiz
+			Add the following line to your <code>/etc/hosts</code>-file, so you can visit ClassQuiz2
 			via <code>test.com</code> (Required for the Captcha)
 			<pre><code>127.0.0.1 test.com</code></pre>
 
-			Now you can visit ClassQuiz at<a
+			Now you can visit ClassQuiz2 at<a
 				href="http://test.com:8080"
 				rel="nofollow"
 				target="_blank">http://test.com:8080</a
@@ -113,7 +113,7 @@ SPDX-License-Identifier: MPL-2.0
 		</li>
 		<li>
 			Set your config up in your .env-file. What you have to set up can you see in the
-			<code>classquiz/config.py</code>-file. The things you have to set are the following:
+			<code>ClassQuiz2/config.py</code>-file. The things you have to set are the following:
 			<ul>
 				<li><code>hcaptcha_key</code></li>
 				<li><code>mail_address</code></li>
@@ -137,7 +137,7 @@ SPDX-License-Identifier: MPL-2.0
 			<ul>
 				<li>
 					Backend:
-					<pre><code>pipenv run uvicorn classquiz:app --reload --proxy-headers</code
+					<pre><code>pipenv run uvicorn ClassQuiz2:app --reload --proxy-headers</code
 						></pre>
 				</li>
 				<li>

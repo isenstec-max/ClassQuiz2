@@ -44,7 +44,7 @@ SPDX-License-Identifier: MPL-2.0
 			<p class="m-auto text-2xl">
 				{$t('play_page.join_description', {
 					url:
-						window.location.host === 'classquiz.de'
+						window.location.host === 'ClassQuiz2.de'
 							? 'cquiz.de'
 							: `${window.location.host}/play`,
 					pin: game_pin

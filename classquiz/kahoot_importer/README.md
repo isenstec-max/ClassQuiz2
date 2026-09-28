@@ -13,7 +13,7 @@ This library is also tested.
 ## Get
 
 ```python
-from classquiz.kahoot_importer.get import get, _Response
+from ClassQuiz2.kahoot_importer.get import get, _Response
 from asyncio import run
 # _Response is a pydantic-object, so you have access to
 # .dict() or .model_dump_json(exclude={"kahoot"})
@@ -28,7 +28,7 @@ run(main())
 ## Search
 
 ```python
-from classquiz.kahoot_importer.search import search, _Response
+from ClassQuiz2.kahoot_importer.search import search, _Response
 from asyncio import run
 # _Response ia a pydantic-object, so you have access to
 # .dict() or .model_dump_json(exclude={"kahoot"})
@@ -41,6 +41,6 @@ run(main())
 
 
 ## Import-Quiz
-This script is meant just to be used with classquiz, not alone.
+This script is meant just to be used with ClassQuiz2, not alone.
 ---
 *Kahoot! and the K! logo are trademarks of Kahoot! AS*

@@ -7,7 +7,7 @@ name: PyTest
 on:
   push:
     paths:
-      - "classquiz/**"
+      - "ClassQuiz2/**"
   workflow_dispatch:
 
 jobs:

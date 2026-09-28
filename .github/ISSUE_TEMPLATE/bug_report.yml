@@ -8,14 +8,14 @@ body:
   - type: input
     attributes:
       label: Which component is affected?
-      description: Which component/part of ClassQuiz is affected by the bug? The editor? The admin-screen if a game is running?
+      description: Which component/part of ClassQuiz2 is affected by the bug? The editor? The admin-screen if a game is running?
     validations:
       required: true
   - type: dropdown
     attributes:
-      label: Did the issue occur at ClassQuiz.de, or on a self-hosted instance?
+      label: Did the issue occur at ClassQuiz2.de, or on a self-hosted instance?
       options:
-        - On ClassQuiz.de
+        - On ClassQuiz2.de
         - On a self-hosted instance
     validations:
       required: true

@@ -14,6 +14,7 @@ SPDX-License-Identifier: MPL-2.0
 	import { beforeNavigate } from '$app/navigation';
 	import { draw, slide } from 'svelte/transition';
 	import { registration_disabled } from './config';
+	import { APP_VERSION } from '$lib/version';
 
 	const tippy = createTippy({
 		arrow: true,
@@ -52,8 +53,8 @@ SPDX-License-Identifier: MPL-2.0
 		<div class="lg:flex lg:items-center lg:flex-row gap-1">
 			<a
 				href="/"
-				class="font-black tracking-tight text-xl lg:text-2xl text-black marck-script link-hover px-3 lg:px-5"
-				>ClassQuiz</a
+				class="font-black tracking-tight text-xl lg:text-2xl text-black marck-script link-hover px-3 lg:px-5 flex items-center gap-1.5"
+				>ClassQuiz2 <span class="text-xs font-mono font-normal bg-lime-500 text-white dark:bg-lime-600 px-1.5 py-0.5 rounded-full not-italic tracking-normal">{APP_VERSION}</span></a
 			>
 			<a class="btn-nav border-2 rounded-sm" href="/play">{$t('words.play')}</a>
 			<a class="btn-nav" href="/explore">{$t('words.explore')}</a>
@@ -65,7 +66,7 @@ SPDX-License-Identifier: MPL-2.0
 				<a
 					target="_blank"
 					class="btn-nav flex items-center gap-1"
-					href="https://github.com/mawoka-myblock/ClassQuiz"
+					href="https://github.com/isenstec-max/ClassQuiz2"
 					>GitHub
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -170,8 +171,8 @@ SPDX-License-Identifier: MPL-2.0
 		<div class="flex items-center justify-between">
 			<a
 				href="/"
-				class="font-black tracking-tight text-xl lg:text-2xl text-black marck-script link-hover px-3 lg:px-5"
-				>ClassQuiz</a
+				class="font-black tracking-tight text-xl lg:text-2xl text-black marck-script link-hover px-3 lg:px-5 flex items-center gap-1.5"
+				>ClassQuiz2 <span class="text-xs font-mono font-normal bg-lime-500 text-white dark:bg-lime-600 px-1.5 py-0.5 rounded-full not-italic tracking-normal">{APP_VERSION}</span></a
 			>
 			<a class="btn-nav flex" href="/play">{$t('words.play')}</a>
 
@@ -294,7 +295,7 @@ SPDX-License-Identifier: MPL-2.0
 					<a
 						target="_blank"
 						class="btn-nav flex items-center gap-1"
-						href="https://github.com/mawoka-myblock/ClassQuiz"
+						href="https://github.com/isenstec-max/ClassQuiz2"
 						>GitHub
 						<svg
 							xmlns="http://www.w3.org/2000/svg"

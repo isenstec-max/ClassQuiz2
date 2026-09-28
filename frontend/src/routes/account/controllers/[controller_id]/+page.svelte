@@ -64,7 +64,7 @@ SPDX-License-Identifier: MPL-2.0
 			return;
 		}
 		const res = await fetch(
-			'https://api.github.com/repos/mawoka-myblock/ClassQuizController/releases'
+			'https://api.github.com/repos/mawoka-myblock/ClassQuiz2Controller/releases'
 		);
 		const json = await res.json();
 		newest_version = json[0].tag_name.replace('v', '');

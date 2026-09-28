@@ -3,7 +3,7 @@ SPDX-FileCopyrightText: 2026 Marlon W (Mawoka)
 
 SPDX-License-Identifier: MPL-2.0
 -->
-# Contribute to ClassQuiz
+# Contribute to ClassQuiz2
 
 For the development-setup, please check out the
 docs: [https://classquiz.de/docs/develop](https://classquiz.de/docs/develop)
