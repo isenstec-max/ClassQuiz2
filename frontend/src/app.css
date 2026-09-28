@@ -43,3 +43,35 @@ SPDX-License-Identifier: MPL-2.0
 @utility btn-nav {
 	@apply text-lg font-medium px-3 text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 py-1.5 transition-all duration-300;
 }
+
+.cq2-brand-logo {
+	color: #111827 !important;
+	transition: color 0.2s ease;
+}
+:global(html.dark) .cq2-brand-logo,
+html.dark .cq2-brand-logo {
+	color: #ffffff !important;
+}
+
+.cq2-version-badge {
+	display: inline-flex;
+	align-items: center;
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-size: 10px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	padding: 1.5px 7px;
+	border-radius: 9999px;
+	line-height: 1.2;
+	border: 1px solid rgba(16, 185, 129, 0.4);
+	background-color: rgba(16, 185, 129, 0.12);
+	color: #047857;
+	vertical-align: middle;
+	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+:global(html.dark) .cq2-version-badge,
+html.dark .cq2-version-badge {
+	border-color: rgba(52, 211, 153, 0.4);
+	background-color: rgba(52, 211, 153, 0.15);
+	color: #6ee7b7;
+}

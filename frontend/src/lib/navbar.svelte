@@ -64,8 +64,8 @@ SPDX-License-Identifier: MPL-2.0
 		<div class="lg:flex lg:items-center lg:flex-row gap-1">
 			<a
 				href="/"
-				class="font-black tracking-tight text-xl lg:text-2xl text-black dark:text-white marck-script link-hover px-3 lg:px-5 flex items-center gap-1.5"
-				>ClassQuiz2 <span class="border border-green-500 dark:border-green-400 text-green-600 dark:text-green-400 text-[11px] font-mono font-semibold px-1.5 py-0.5 rounded leading-none not-italic tracking-normal">{APP_VERSION}</span></a
+				class="font-black tracking-tight text-xl lg:text-2xl marck-script link-hover px-3 lg:px-5 flex items-center gap-2 cq2-brand-logo"
+				>ClassQuiz2 <span class="cq2-version-badge">{APP_VERSION}</span></a
 			>
 			<a class="btn-nav border-2 rounded-sm" href="/play">{$t('words.play')}</a>
 			<a class="btn-nav" href="/explore">{$t('words.explore')}</a>
@@ -119,25 +119,44 @@ SPDX-License-Identifier: MPL-2.0
 					>{$t('navbar.donate')} <span class="">❤️</span></BrownButton
 				>
 
-				<!-- Language toggle SK / GB -->
-				<div class="flex items-center border border-gray-300 dark:border-gray-700 rounded-md p-0.5 bg-gray-100/80 dark:bg-gray-800 text-xs font-semibold gap-0.5">
+				<!-- Language toggle SK / GB with SVG flags -->
+				<div class="flex items-center gap-1 px-1.5 py-1 rounded-full bg-gray-200/70 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 shadow-xs">
 					<button
 						type="button"
-						class="px-1.5 py-0.5 rounded flex items-center gap-1 transition {currentLang === 'sk' ? 'bg-green-600 text-white shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}"
+						class="flex items-center gap-1.5 px-2 py-0.5 rounded-full transition {currentLang === 'sk' ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-xs font-bold' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}"
 						onclick={() => setLang('sk')}
 						title="Slovenčina"
 						aria-label="Prepnúť na slovenčinu"
 					>
-						<span>🇸🇰</span> <span class="font-mono text-[11px]">SK</span>
+						<svg class="w-5 h-3.5 rounded-xs shadow-xs shrink-0" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+							<rect width="900" height="600" fill="#ee1c25"/>
+							<rect width="900" height="400" fill="#0b4ea2"/>
+							<rect width="900" height="200" fill="#ffffff"/>
+							<g transform="translate(240, 300) scale(1.15)">
+								<path d="M-80,-140 h160 v140 a80,80 0 0 1 -160,0 z" fill="#ee1c25" stroke="#ffffff" stroke-width="12"/>
+								<path d="M-72,25 a40,40 0 0 1 48,-20 a40,40 0 0 1 48,0 a40,40 0 0 1 48,20 z" fill="#0b4ea2"/>
+								<path d="M-24,5 a40,40 0 0 1 48,0 v20 h-48 z" fill="#0b4ea2"/>
+								<path d="M-6,-90 h12 v110 h-12 z M-36,-65 h72 v12 h-72 z M-26,-35 h52 v12 h-52 z" fill="#ffffff"/>
+							</g>
+						</svg>
+						<span class="font-mono text-xs font-semibold">SK</span>
 					</button>
+					<span class="text-gray-300 dark:text-gray-600 text-xs">|</span>
 					<button
 						type="button"
-						class="px-1.5 py-0.5 rounded flex items-center gap-1 transition {currentLang === 'en' ? 'bg-green-600 text-white shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}"
+						class="flex items-center gap-1.5 px-2 py-0.5 rounded-full transition {currentLang === 'en' ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-xs font-bold' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}"
 						onclick={() => setLang('en')}
 						title="English"
 						aria-label="Switch to English"
 					>
-						<span>🇬🇧</span> <span class="font-mono text-[11px]">GB</span>
+						<svg class="w-5 h-3.5 rounded-xs shadow-xs shrink-0 overflow-hidden" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
+							<rect width="60" height="30" fill="#012169"/>
+							<path d="M0 0 L60 30 M60 0 L0 30" stroke="#ffffff" stroke-width="6"/>
+							<path d="M0 0 L30 15 M60 30 L30 15 M60 0 L30 15 M0 30 L30 15" stroke="#c8102e" stroke-width="2"/>
+							<path d="M30 0 v30 M0 15 h60" stroke="#ffffff" stroke-width="10"/>
+							<path d="M30 0 v30 M0 15 h60" stroke="#c8102e" stroke-width="6"/>
+						</svg>
+						<span class="font-mono text-xs font-semibold">GB</span>
 					</button>
 				</div>
 
@@ -206,32 +225,51 @@ SPDX-License-Identifier: MPL-2.0
 		<div class="flex items-center justify-between">
 			<a
 				href="/"
-				class="font-black tracking-tight text-xl lg:text-2xl text-black dark:text-white marck-script link-hover px-3 lg:px-5 flex items-center gap-1.5"
-				>ClassQuiz2 <span class="border border-green-500 dark:border-green-400 text-green-600 dark:text-green-400 text-[11px] font-mono font-semibold px-1.5 py-0.5 rounded leading-none not-italic tracking-normal">{APP_VERSION}</span></a
+				class="font-black tracking-tight text-xl lg:text-2xl marck-script link-hover px-3 lg:px-5 flex items-center gap-1.5 cq2-brand-logo"
+				>ClassQuiz2 <span class="cq2-version-badge">{APP_VERSION}</span></a
 			>
 			<a class="btn-nav flex" href="/play">{$t('words.play')}</a>
 
 			<!-- Dark/Light mode toggle + Open/Close menu -->
 			<div class="flex items-center">
-				<!-- Language toggle SK / GB -->
-				<div class="flex items-center border border-gray-300 dark:border-gray-700 rounded-md p-0.5 bg-gray-100/80 dark:bg-gray-800 text-xs font-semibold gap-0.5 mr-1">
+				<!-- Language toggle SK / GB with SVG flags -->
+				<div class="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-gray-200/70 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 shadow-xs mr-1">
 					<button
 						type="button"
-						class="px-1.5 py-0.5 rounded flex items-center gap-0.5 transition {currentLang === 'sk' ? 'bg-green-600 text-white shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}"
+						class="flex items-center gap-1 px-1.5 py-0.5 rounded-full transition {currentLang === 'sk' ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-xs font-bold' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}"
 						onclick={() => setLang('sk')}
 						title="Slovenčina"
 						aria-label="Prepnúť na slovenčinu"
 					>
-						<span>🇸🇰</span> <span class="font-mono text-[10px]">SK</span>
+						<svg class="w-4 h-3 rounded-xs shadow-xs shrink-0" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+							<rect width="900" height="600" fill="#ee1c25"/>
+							<rect width="900" height="400" fill="#0b4ea2"/>
+							<rect width="900" height="200" fill="#ffffff"/>
+							<g transform="translate(240, 300) scale(1.15)">
+								<path d="M-80,-140 h160 v140 a80,80 0 0 1 -160,0 z" fill="#ee1c25" stroke="#ffffff" stroke-width="12"/>
+								<path d="M-72,25 a40,40 0 0 1 48,-20 a40,40 0 0 1 48,0 a40,40 0 0 1 48,20 z" fill="#0b4ea2"/>
+								<path d="M-24,5 a40,40 0 0 1 48,0 v20 h-48 z" fill="#0b4ea2"/>
+								<path d="M-6,-90 h12 v110 h-12 z M-36,-65 h72 v12 h-72 z M-26,-35 h52 v12 h-52 z" fill="#ffffff"/>
+							</g>
+						</svg>
+						<span class="font-mono text-[10px]">SK</span>
 					</button>
+					<span class="text-gray-300 dark:text-gray-600 text-xs">|</span>
 					<button
 						type="button"
-						class="px-1.5 py-0.5 rounded flex items-center gap-0.5 transition {currentLang === 'en' ? 'bg-green-600 text-white shadow-xs' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}"
+						class="flex items-center gap-1 px-1.5 py-0.5 rounded-full transition {currentLang === 'en' ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-xs font-bold' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}"
 						onclick={() => setLang('en')}
 						title="English"
 						aria-label="Switch to English"
 					>
-						<span>🇬🇧</span> <span class="font-mono text-[10px]">GB</span>
+						<svg class="w-4 h-3 rounded-xs shadow-xs shrink-0 overflow-hidden" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
+							<rect width="60" height="30" fill="#012169"/>
+							<path d="M0 0 L60 30 M60 0 L0 30" stroke="#ffffff" stroke-width="6"/>
+							<path d="M0 0 L30 15 M60 30 L30 15 M60 0 L30 15 M0 30 L30 15" stroke="#c8102e" stroke-width="2"/>
+							<path d="M30 0 v30 M0 15 h60" stroke="#ffffff" stroke-width="10"/>
+							<path d="M30 0 v30 M0 15 h60" stroke="#c8102e" stroke-width="6"/>
+						</svg>
+						<span class="font-mono text-[10px]">GB</span>
 					</button>
 				</div>
 
