@@ -280,6 +280,8 @@
         "answers_submitted": "{{answer_count}} odoslaných odpovedí",
         "request_export_results": "Stiahnuť výsledky",
         "download_export_results": "Stiahnuť výsledky",
+        "downloading_export_results": "Sťahujem výsledky...",
+        "download_export_success": "Výsledky stiahnuté!",
         "export_results": "Exportovať výsledky"
     },
     "search_page": {

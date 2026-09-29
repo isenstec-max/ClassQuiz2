@@ -103,9 +103,11 @@ SPDX-License-Identifier: MPL-2.0
 	const game_pin = data.game_pin;
 	let errorMessage = $state('');
 	let success = $state(false);
-	let dataexport_download_a = $state();
+	let dataexport_download_a: HTMLAnchorElement | undefined = $state();
 	let warnToLeave = true;
 	let export_token = $state(undefined);
+	let downloading = $state(false);
+	let download_success = $state(false);
 
 	const socket_game_controls: SocketGameControls = new SocketGameControls(socket);
 	let game_state: GameState = $state(new GameState(game_token));
@@ -165,11 +167,20 @@ SPDX-License-Identifier: MPL-2.0
     });*/
 	socket.on('export_token', (int_data) => {
 		warnToLeave = false;
-		export_token = int_data;
+		if (dataexport_download_a) {
+			dataexport_download_a.href = `/api/v1/quiz/export_data/${int_data}?ts=${new Date().getTime()}&game_pin=${game_pin}`;
+			dataexport_download_a.click();
+		}
+		downloading = false;
+		download_success = true;
 
 		setTimeout(() => {
 			warnToLeave = true;
 		}, 200);
+
+		setTimeout(() => {
+			download_success = false;
+		}, 3500);
 	});
 
 	socket.on('results_saved_successfully', (_) => {
@@ -185,13 +196,24 @@ SPDX-License-Identifier: MPL-2.0
 		}
 	};
 
-	const request_answer_export = (e: Event) => {
-		e.preventDefault();
+	const request_answer_export = (e?: Event) => {
+		if (e) e.preventDefault();
+		if (downloading) return;
+		downloading = true;
+		if (!results_saved) {
+			socket.emit('save_quiz');
+		}
 		socket.emit('get_export_token');
 	};
 	const save_quiz = () => {
 		socket.emit('save_quiz');
 	};
+
+	$effect(() => {
+		if (show_final_results && !results_saved) {
+			socket.emit('save_quiz');
+		}
+	});
 
 	let darkMode = false;
 	if (browser) {
@@ -268,55 +290,30 @@ SPDX-License-Identifier: MPL-2.0
 		/>
 	{:else if JSON.stringify(game_state.final_results) !== JSON.stringify([null])}
 		{#if game_state.control_visible}
-			<div class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-wrap items-center justify-center gap-3 w-full max-w-2xl px-4 pointer-events-auto">
-				<!-- Tlačidlo na export / stiahnutie výsledkov -->
-				{#if export_token === undefined}
-					<button
-						onclick={request_answer_export}
-						class="group flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-slate-900/95 dark:bg-black/95 backdrop-blur-xl border-2 border-indigo-400/60 shadow-2xl shadow-indigo-500/25 text-white font-extrabold text-sm sm:text-base hover:scale-105 active:scale-95 transition-all cursor-pointer ring-4 ring-indigo-500/20"
-					>
-						<div class="p-1 rounded-lg bg-indigo-500/20 text-indigo-300 group-hover:scale-110 transition-transform">
-							<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+			<div class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center justify-center w-full max-w-xl px-4 pointer-events-auto">
+				<!-- Jedno samostatné tlačidlo, ktoré rovno stiahne výsledky -->
+				<button
+					onclick={request_answer_export}
+					disabled={downloading}
+					class="group flex items-center gap-3 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 text-white font-extrabold text-sm sm:text-base hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-emerald-600/30 border-2 border-emerald-300 ring-4 ring-emerald-500/25 cursor-pointer disabled:opacity-75 disabled:cursor-wait"
+				>
+					{#if downloading}
+						<div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+						<span>{$t('admin_page.downloading_export_results', { default: 'Sťahujem výsledky...' })}</span>
+					{:else if download_success}
+						<div class="p-1 rounded-lg bg-black/20 text-white">
+							<svg class="w-5 h-5 text-emerald-200" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
 							</svg>
 						</div>
-						<span>{$t('admin_page.request_export_results', { default: 'Stiahnuť výsledky' })}</span>
-					</button>
-				{:else}
-					<a
-						target="_blank"
-						href="/api/v1/quiz/export_data/{export_token}?ts={new Date().getTime()}&game_pin={game_pin}"
-						class="group flex items-center gap-2.5 px-7 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 text-white font-black text-sm sm:text-base hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-emerald-600/30 border-2 border-emerald-300 ring-4 ring-emerald-500/25 animate-pulse cursor-pointer"
-					>
+						<span class="text-white font-black">{$t('admin_page.download_export_success', { default: 'Výsledky stiahnuté!' })}</span>
+					{:else}
 						<div class="p-1 rounded-lg bg-black/20 text-white group-hover:scale-110 transition-transform">
 							<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
 							</svg>
 						</div>
 						<span>{$t('admin_page.download_export_results', { default: 'Stiahnuť výsledky' })}</span>
-					</a>
-				{/if}
-
-				<!-- Tlačidlo na uloženie výsledkov -->
-				<button
-					onclick={save_quiz}
-					disabled={results_saved}
-					class="group flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-slate-900/95 dark:bg-black/95 backdrop-blur-xl border-2 border-emerald-400/60 shadow-2xl shadow-emerald-500/25 text-white font-extrabold text-sm sm:text-base hover:scale-105 active:scale-95 transition-all cursor-pointer ring-4 ring-emerald-500/20 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
-				>
-					{#if results_saved}
-						<div class="p-1 rounded-lg bg-emerald-500/20 text-emerald-400">
-							<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-							</svg>
-						</div>
-						<span class="text-emerald-300 font-black">{$t('admin_page.results_saved', { default: 'Výsledky uložené' })}</span>
-					{:else}
-						<div class="p-1 rounded-lg bg-emerald-500/20 text-emerald-300 group-hover:scale-110 transition-transform">
-							<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-							</svg>
-						</div>
-						<span>{$t('admin_page.save_results', { default: 'Uložiť výsledky' })}</span>
 					{/if}
 				</button>
 			</div>
@@ -332,10 +329,9 @@ SPDX-License-Identifier: MPL-2.0
 	{/if}
 </div>
 <a
-	onclick={request_answer_export}
 	href="#"
 	target="_blank"
 	bind:this={dataexport_download_a}
 	download=""
-	class="absolute size-px overflow-hidden whitespace-nowrap opacity-0">Download</a
+	class="absolute size-px overflow-hidden whitespace-nowrap opacity-0 pointer-events-none">Download</a
 >
