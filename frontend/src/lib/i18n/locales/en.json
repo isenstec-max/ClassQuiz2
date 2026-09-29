@@ -246,11 +246,11 @@
     },
     "admin_page": {
         "already_registered_as_admin": "There is already an admin registered for this game.",
-        "start_game": "Start Quiz",
+        "start_game": "Spustiť kvíz",
         "time_left": "Time left",
         "get_results": "Get results",
         "get_results_and_stop_time": "Get results and stop time",
-        "get_final_results": "Get final results",
+        "get_final_results": "Zobraziť stupne víťazov",
         "show_next_question": "Show next question",
         "start_by_showing_first_question": "Start by showing the first question.",
         "no_answers": "No answers!",

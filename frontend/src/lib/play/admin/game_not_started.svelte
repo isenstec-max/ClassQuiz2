@@ -121,14 +121,14 @@ SPDX-License-Identifier: MPL-2.0
 			</div>
 		</div>
 
-		<!-- 4. Tlačidlo "Start Quiz" vo vizuálnom štýle moderných tlačidiel -->
+		<!-- 4. Tlačidlo "Spustiť kvíz" vo vizuálnom štýle moderných tlačidiel -->
 		<div class="mt-7 flex flex-col items-center">
 			<button
 				disabled={playerCount < 1}
 				onclick={() => {
 					socket_game_controls.start_game();
 				}}
-				class="px-8 sm:px-12 py-3.5 sm:py-4 rounded-2xl font-black text-lg sm:text-xl tracking-wider uppercase transition-all duration-300 flex items-center gap-3 shadow-2xl {
+				class="px-8 sm:px-12 py-3.5 sm:py-4 rounded-2xl font-black text-lg sm:text-xl tracking-wide transition-all duration-300 flex items-center gap-3 shadow-2xl {
 					playerCount < 1
 						? 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed opacity-60'
 						: 'bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-500 text-white shadow-emerald-500/40 hover:shadow-emerald-500/60 hover:scale-105 active:scale-95 cursor-pointer ring-4 ring-emerald-400/30'
@@ -137,21 +137,17 @@ SPDX-License-Identifier: MPL-2.0
 				<svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
 					<path d="M8 5v14l11-7z" />
 				</svg>
-				<span>Start Quiz</span>
+				<span>{$t('admin_page.start_game', { defaultValue: 'Spustiť kvíz' })}</span>
 			</button>
 		</div>
 
-		<!-- 5. "players are waiting" a zoznam hráčov POD tlačidlom Start Quiz -->
+		<!-- 5. Počet čakajúcich študentov a zoznam hráčov POD tlačidlom Spustiť kvíz -->
 		<div class="mt-7 pt-6 border-t border-white/10 w-full flex flex-col items-center">
-			<!-- Indikátor počtu čakajúcich hráčov -->
-			<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-800/90 border border-slate-700 text-slate-200 text-sm font-bold shadow-md mb-4">
+			<!-- Indikátor počtu čakajúcich študentov -->
+			<div class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-slate-800/90 border border-slate-700 text-slate-200 text-sm font-bold shadow-md mb-4">
 				<span class="w-2.5 h-2.5 rounded-full {playerCount > 0 ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}"></span>
 				<span class="font-bold">
-					{#if playerCount === 1}
-						{$t('play_page.players_waiting', { count: playerCount })}
-					{:else}
-						{$t('play_page.players_waiting_plural', { count: playerCount })}
-					{/if}
+					Počet čakajúcich študentov na kvíz: <span class="text-emerald-400 font-extrabold">{playerCount}</span>
 				</span>
 			</div>
 
