@@ -297,6 +297,8 @@
         "and_import_it": "and import it!"
     },
     "play_page": {
+        "enter_game": "Prihlásiť sa do quízu",
+        "enter_pin_description": "Zadaj 6-miestny kód z obrazovky alebo projektora",
         "end_sentence": "That's it! This was the quiz.",
         "1st_place": "1st Place",
         "2nd_place": "2nd Place",
@@ -310,6 +312,10 @@
         "your_place": "You're on place {{place}}!",
         "players_waiting": "{{count}} player is waiting",
         "players_waiting_plural": "{{count}} players are waiting"
+    },
+    "play": {
+        "enter_game": "Prihlásiť sa do quízu",
+        "enter_pin_description": "Zadaj 6-miestny kód z obrazovky alebo projektora"
     },
     "editor_page": {
         "add_an_answer": "Add an answer",
