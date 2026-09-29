@@ -101,163 +101,249 @@ SPDX-License-Identifier: MPL-2.0
 </script>
 
 <svelte:head>
-	<title>ClassQuiz2 - Import</title>
+	<title>ClassQuiz2 - {$t('words.import', { default: 'Importovať' })}</title>
 </svelte:head>
 
-<div class="flex items-center justify-center h-full px-4">
-	<div>
-		<span class="p-4"></span>
+<div class="min-h-[calc(100vh-5rem)] flex items-center justify-center py-10 px-4 sm:px-6 lg:px-8">
+	<div class="w-full max-w-5xl flex flex-col gap-8">
+		<!-- Hlavička stránky -->
+		<div class="text-center space-y-2">
+			<div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-600 dark:text-emerald-400 text-xs font-black uppercase tracking-wider shadow-2xs">
+				<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+				</svg>
+				<span>{$t('words.import', { default: 'Import kvízov' })}</span>
+			</div>
+			<h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight">
+				{$t('words.import', { default: 'Importovať kvíz' })}
+			</h1>
+			<p class="text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-2xl mx-auto">
+				Jednoducho preveďte svoje kvízy z Kahoot! alebo nahrajte exportované súbory z ClassQuiz2 a Excel tabuliek.
+			</p>
+		</div>
 
-		<div
-			class="lg:w-[64rem] lg:max-w-[64rem] w-screen max-w-screen mx-auto overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-800"
-		>
-			<div class="px-6 py-4">
-				<h2 class="text-3xl font-bold text-center text-gray-700 dark:text-white">
-					{$t('words.import')}
-				</h2>
+		<!-- Dva hlavné stĺpce / karty -->
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-stretch">
+			
+			<!-- KARTA 1: Import z Kahoot! -->
+			<div class="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/50 dark:shadow-none flex flex-col justify-between relative overflow-hidden group">
+				<div class="space-y-6">
+					<!-- Hlavička karty -->
+					<div class="flex items-start gap-4">
+						<div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-500 text-white flex items-center justify-center shrink-0 shadow-lg shadow-purple-600/30 border border-purple-400/40">
+							<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+							</svg>
+						</div>
+						<div>
+							<h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+								{$t('import_page.a_kahoot_quiz', { default: 'Kvíz z Kahoot!' })}
+							</h2>
+							<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+								{$t('import_page.side_import_kahoot', { default: 'Na tejto stránke môžete importovať verejné kvízy vytvorené v Kahoot!.' })}
+							</p>
+						</div>
+					</div>
 
-				<!--				<h3 class="mt-1 text-xl font-medium text-center text-gray-600 dark:text-gray-200">
-									Welcome Back
-								</h3>-->
-
-				<!--				<p class="mt-1 text-center text-gray-500 dark:text-gray-400">
-									Login or create account
-								</p>-->
-				<div class="grid grid-cols-2">
-					<form onsubmit={submit}>
-						<div class="w-full mt-4 h-full flex flex-col">
-							<h2 class="text-center text-2xl">{$t('import_page.a_kahoot_quiz')}</h2>
-							<div class="dark:bg-gray-800 bg-white p-4 rounded-lg">
-								<div class="relative bg-inherit w-full">
-									<input
-										id="url"
-										bind:value={url_input}
-										name="email"
-										type="url"
-										class="w-full peer bg-transparent h-10 rounded-lg text-gray-700 dark:text-white placeholder-transparent ring-2 px-2 ring-gray-500 focus:ring-sky-600 focus:outline-hidden focus:border-rose-600"
-										placeholder="https://create.kahoot.it/details/something"
-										class:ring-red-700={!url_valid}
-										class:ring-green-600={url_valid}
-									/>
-									<label
-										for="url"
-										class="absolute cursor-text left-0 -top-3 text-sm text-gray-700 dark:text-white bg-inherit mx-1 px-1 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-2 peer-focus:-top-3 peer-focus:text-sky-600 peer-focus:text-sm transition-all"
-									>
-										{$t('words.url')}
-									</label>
-									<p class="text-sm">
-										{$t('import_page.url_should_look_like_this')}
-									</p>
+					<form onsubmit={submit} class="space-y-5">
+						<!-- URL vstup -->
+						<div class="space-y-2">
+							<label for="url" class="block text-xs font-black uppercase tracking-wider text-slate-600 dark:text-slate-300">
+								{$t('words.url', { default: 'URL adresa kvízu' })}
+							</label>
+							<div class="relative">
+								<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+									<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+									</svg>
 								</div>
-								<p class="mt-2">
-									{$t('import_page.side_import_kahoot')}
-								</p>
+								<input
+									id="url"
+									bind:value={url_input}
+									type="url"
+									placeholder="https://create.kahoot.it/details/..."
+									class="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border text-sm font-medium text-slate-900 dark:text-white placeholder-slate-400 focus:outline-hidden transition-all {url_input.length === 0 ? 'border-slate-200 dark:border-slate-700 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20' : url_valid ? 'border-emerald-500 ring-2 ring-emerald-500/20 bg-emerald-50/20 dark:bg-emerald-950/20' : 'border-rose-400 ring-2 ring-rose-500/20 bg-rose-50/20 dark:bg-rose-950/20'}"
+								/>
 							</div>
 
-							<div class="flex items-center justify-center mt-auto">
-								<span></span>
-
-								<button
-									class="px-4 py-2 leading-5 text-white transition-colors duration-200 transform bg-gray-700 rounded-sm hover:bg-gray-600 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50"
-									disabled={!url_valid || is_loading}
-									type="submit"
-								>
-									{#if is_loading}
-										<svg
-											class="h-4 w-4 animate-spin mx-auto"
-											viewBox="3 3 18 18"
-										>
-											<path
-												class="fill-black"
-												d="M12 5C8.13401 5 5 8.13401 5 12C5 15.866 8.13401 19 12 19C15.866 19 19 15.866 19 12C19 8.13401 15.866 5 12 5ZM3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12Z"
-											/>
-											<path
-												class="fill-blue-100"
-												d="M16.9497 7.05015C14.2161 4.31648 9.78392 4.31648 7.05025 7.05015C6.65973 7.44067 6.02656 7.44067 5.63604 7.05015C5.24551 6.65962 5.24551 6.02646 5.63604 5.63593C9.15076 2.12121 14.8492 2.12121 18.364 5.63593C18.7545 6.02646 18.7545 6.65962 18.364 7.05015C17.9734 7.44067 17.3403 7.44067 16.9497 7.05015Z"
-											/>
+							<!-- Nápoveda a stav -->
+							{#if url_input.length > 0}
+								{#if url_valid}
+									<p class="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 animate-fade">
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
 										</svg>
-									{:else}
-										{$t('words.submit')}
-									{/if}
-								</button>
+										<span>Platná URL adresa Kahoot kvízu</span>
+									</p>
+								{:else}
+									<p class="text-xs font-bold text-rose-500 flex items-center gap-1.5 animate-fade">
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+										</svg>
+										<span>Zadajte celú URL adresu detailu kvízu z Kahoot!</span>
+									</p>
+								{/if}
+							{/if}
+
+							<div class="p-3 rounded-xl bg-purple-50/60 dark:bg-purple-950/30 border border-purple-100 dark:border-purple-900/40 text-[11px] text-purple-900 dark:text-purple-300 space-y-1">
+								<div class="font-bold flex items-center gap-1">
+									<span>💡</span>
+									<span>Správny formát odkazu:</span>
+								</div>
+								<p class="font-mono break-all text-purple-700 dark:text-purple-300/80">
+									https://create.kahoot.it/details/&lt;uuid-kvízu&gt;
+								</p>
 							</div>
 						</div>
-					</form>
-					<form onsubmit={file_submit}>
-						<div class="w-full mt-4 border-l-2 border-gray-600 h-full flex flex-col">
-							<h2 class="text-center text-2xl">{$t('import_page.ClassQuiz2_quiz')}</h2>
-							<div class="dark:bg-gray-800 bg-white p-4 rounded-lg">
-								<div class="relative bg-inherit w-full">
-									<input
-										id="file"
-										bind:files={file_input}
-										name="file"
-										type="file"
-										accept=".cqa,.xlsx"
-										class="w-full peer bg-transparent h-10 rounded-lg py-1.5 text-gray-700 dark:text-white placeholder-transparent ring-2 px-2 ring-gray-500 focus:ring-sky-600 focus:outline-hidden focus:border-rose-600"
-										class:ring-red-700={!file_input}
-										class:ring-green-600={file_input}
-									/>
-									<p class="text-sm">{$t('import_page.upload_file_ending')}</p>
-								</div>
-								<p class="mt-2">
-									{$t('import_page.this_side_ClassQuiz2')}
-									<br />
-									{$t('import_page.this_side_ClassQuiz2_excel')}
-								</p>
-								<a
-									class="text-sm underline font-bold text-blue-500 dark:text-blue-400"
-									download
-									href="https://blog.web.garage.realux.mawoka.eu/ClassQuiz2/ClassQuiz2ImportTemplate.xlsx"
-									>{$t('import_page.download_template_here')}</a
-								>
-							</div>
 
-							<div class="flex items-center justify-center mt-auto">
-								<span></span>
-
-								<button
-									class="px-4 py-2 leading-5 text-white transition-colors duration-200 transform bg-gray-700 rounded-sm hover:bg-gray-600 focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50"
-									disabled={!file_input || is_loading}
-									type="submit"
-								>
-									{#if is_loading}
-										<svg
-											class="h-4 w-4 animate-spin mx-auto"
-											viewBox="3 3 18 18"
-										>
-											<path
-												class="fill-black"
-												d="M12 5C8.13401 5 5 8.13401 5 12C5 15.866 8.13401 19 12 19C15.866 19 19 15.866 19 12C19 8.13401 15.866 5 12 5ZM3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12Z"
-											/>
-											<path
-												class="fill-blue-100"
-												d="M16.9497 7.05015C14.2161 4.31648 9.78392 4.31648 7.05025 7.05015C6.65973 7.44067 6.02656 7.44067 5.63604 7.05015C5.24551 6.65962 5.24551 6.02646 5.63604 5.63593C9.15076 2.12121 14.8492 2.12121 18.364 5.63593C18.7545 6.02646 18.7545 6.65962 18.364 7.05015C17.9734 7.44067 17.3403 7.44067 16.9497 7.05015Z"
-											/>
-										</svg>
-									{:else}
-										{$t('words.submit')}
-									{/if}
-								</button>
-							</div>
+						<!-- Tlačidlo odoslať -->
+						<div class="pt-2">
+							<button
+								type="submit"
+								disabled={!url_valid || is_loading}
+								class="w-full flex items-center justify-center gap-2.5 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-500 text-white font-extrabold text-sm sm:text-base hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-purple-600/30 border border-purple-400/40 ring-4 ring-purple-500/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none cursor-pointer"
+							>
+								{#if is_loading}
+									<div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+									<span>Importujem kvíz...</span>
+								{:else}
+									<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+									</svg>
+									<span>{$t('words.submit', { default: 'Importovať z Kahoot!' })}</span>
+								{/if}
+							</button>
 						</div>
 					</form>
 				</div>
 			</div>
-			<div
-				class="flex items-center justify-center py-4 text-center bg-gray-50 dark:bg-gray-700 mt-4"
-			>
-				<span class="text-sm text-gray-600 dark:text-gray-200"
-					>{$t('import_page.need_help')}</span
-				>
 
-				<a
-					href="/docs/import-from-kahoot"
-					class="mx-2 text-sm font-bold text-blue-500 dark:text-blue-400 hover:underline transition-all"
-					>{$t('import_page.visit_docs')}</a
-				>
+			<!-- KARTA 2: Súborový import (ClassQuiz2 / Excel) -->
+			<div class="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/50 dark:shadow-none flex flex-col justify-between relative overflow-hidden group">
+				<div class="space-y-6">
+					<!-- Hlavička karty -->
+					<div class="flex items-start gap-4">
+						<div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shrink-0 shadow-lg shadow-emerald-600/30 border border-emerald-400/40">
+							<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+							</svg>
+						</div>
+						<div>
+							<h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+								{$t('import_page.ClassQuiz2_quiz', { default: 'ClassQuiz2 súbor / Excel' })}
+							</h2>
+							<p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+								{$t('import_page.this_side_ClassQuiz2', { default: 'Importujte exportované kvízy (.cqa) alebo tabuľky Excel (.xlsx).' })}
+							</p>
+						</div>
+					</div>
+
+					<form onsubmit={file_submit} class="space-y-5">
+						<!-- Interaktívny File Dropzone -->
+						<div class="space-y-2">
+							<label for="file" class="block text-xs font-black uppercase tracking-wider text-slate-600 dark:text-slate-300">
+								{$t('words.select', { default: 'Vyberte súbor' })}
+							</label>
+
+							<label
+								for="file"
+								class="relative flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all hover:border-emerald-500 hover:bg-emerald-50/20 dark:hover:bg-emerald-950/20 {file_input && file_input.length > 0 ? 'border-emerald-500 bg-emerald-50/30 dark:bg-emerald-950/20' : 'border-slate-300 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/40'}"
+							>
+								<input
+									id="file"
+									bind:files={file_input}
+									type="file"
+									accept=".cqa,.xlsx"
+									class="sr-only"
+								/>
+
+								{#if file_input && file_input.length > 0}
+									<div class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-2">
+										<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+										</svg>
+									</div>
+									<p class="text-sm font-black text-slate-900 dark:text-white truncate max-w-[280px]">
+										{file_input[0].name}
+									</p>
+									<p class="text-xs text-slate-400 font-mono mt-0.5">
+										{(file_input[0].size / 1024).toFixed(1)} KB • Kliknite pre zmenu súboru
+									</p>
+								{:else}
+									<div class="w-12 h-12 rounded-2xl bg-slate-200/60 dark:bg-slate-700/60 text-slate-500 dark:text-slate-400 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+										<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+										</svg>
+									</div>
+									<p class="text-sm font-bold text-slate-700 dark:text-slate-200">
+										Kliknite sem pre výber súboru
+									</p>
+									<p class="text-xs text-slate-400 mt-1">
+										{$t('import_page.upload_file_ending', { default: 'Podporované formáty: .cqa alebo .xlsx' })}
+									</p>
+								{/if}
+							</label>
+
+							<!-- Informácia o Excel šablóne -->
+							<div class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 text-xs">
+								<div class="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+									<span class="text-emerald-500 text-base">📊</span>
+									<span class="font-medium">Potrebujete Excel formát?</span>
+								</div>
+								<a
+									href="https://blog.web.garage.realux.mawoka.eu/ClassQuiz2/ClassQuiz2ImportTemplate.xlsx"
+									download
+									class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-extrabold transition-all border border-emerald-500/30 shrink-0"
+								>
+									<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+									</svg>
+									<span>{$t('import_page.download_template_here', { default: 'Stiahnuť šablónu' })}</span>
+								</a>
+							</div>
+						</div>
+
+						<!-- Tlačidlo odoslať -->
+						<div class="pt-2">
+							<button
+								type="submit"
+								disabled={!file_input || file_input.length === 0 || is_loading}
+								class="w-full flex items-center justify-center gap-2.5 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 text-white font-extrabold text-sm sm:text-base hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-emerald-600/30 border border-emerald-400/40 ring-4 ring-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none cursor-pointer"
+							>
+								{#if is_loading}
+									<div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+									<span>Nahrávam a spracúvam súbor...</span>
+								{:else}
+									<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+										<path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+									</svg>
+									<span>{$t('words.submit', { default: 'Importovať súbor' })}</span>
+								{/if}
+							</button>
+						</div>
+					</form>
+				</div>
 			</div>
+
 		</div>
+
+		<!-- Spodná nápovedná lišta -->
+		<div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 sm:p-5 rounded-2xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+			<div class="flex items-center gap-2.5">
+				<span class="text-xl">📚</span>
+				<span>{$t('import_page.need_help', { default: 'Neviete ako exportovať kvíz z Kahoot alebo pripraviť Excel súbor?' })}</span>
+			</div>
+			<a
+				href="/docs/import-from-kahoot"
+				class="inline-flex items-center gap-1.5 font-extrabold text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 transition-colors shrink-0"
+			>
+				<span>{$t('import_page.visit_docs', { default: 'Otvoriť návod v dokumentácii' })}</span>
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+				</svg>
+			</a>
+		</div>
+
 	</div>
 </div>
 <!--{/if}-->
