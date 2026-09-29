@@ -298,26 +298,48 @@ SPDX-License-Identifier: MPL-2.0
 		/>
 	{:else if JSON.stringify(game_state.final_results) !== JSON.stringify([null])}
 		{#if game_state.control_visible}
-			<div class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-wrap items-center justify-center gap-3 w-full max-w-2xl px-4 pointer-events-auto">
+			<div class="fixed top-3 left-1/2 -translate-x-1/2 z-50 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 w-full max-w-3xl px-4 pointer-events-auto">
+				<!-- Tlačidlo na uloženie výsledkov -->
+				<button
+					onclick={save_quiz}
+					class="group flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 text-white font-extrabold text-sm sm:text-base hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-blue-600/30 border-2 border-blue-300 ring-4 ring-blue-500/25 cursor-pointer disabled:opacity-75"
+				>
+					{#if results_saved}
+						<div class="p-1 rounded-lg bg-black/20 text-white">
+							<svg class="w-4 h-4 text-emerald-300" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+							</svg>
+						</div>
+						<span class="text-white font-black">{$t('admin_page.results_saved', { default: 'Uložené!' })}</span>
+					{:else}
+						<div class="p-1 rounded-lg bg-black/20 text-white group-hover:scale-110 transition-transform">
+							<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+							</svg>
+						</div>
+						<span>{$t('admin_page.save_results', { default: 'Uložiť výsledky' })}</span>
+					{/if}
+				</button>
+
 				<!-- Tlačidlo na stiahnutie výsledkov -->
 				<button
 					onclick={request_answer_export}
 					disabled={downloading}
-					class="group flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 text-white font-extrabold text-sm sm:text-base hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-emerald-600/30 border-2 border-emerald-300 ring-4 ring-emerald-500/25 cursor-pointer disabled:opacity-75 disabled:cursor-wait"
+					class="group flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 text-white font-extrabold text-sm sm:text-base hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-emerald-600/30 border-2 border-emerald-300 ring-4 ring-emerald-500/25 cursor-pointer disabled:opacity-75 disabled:cursor-wait"
 				>
 					{#if downloading}
-						<div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-						<span>{$t('admin_page.downloading_export_results', { default: 'Sťahujem výsledky...' })}</span>
+						<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+						<span>{$t('admin_page.downloading_export_results', { default: 'Sťahujem...' })}</span>
 					{:else if download_success}
 						<div class="p-1 rounded-lg bg-black/20 text-white">
-							<svg class="w-5 h-5 text-emerald-200" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+							<svg class="w-4 h-4 text-emerald-200" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
 							</svg>
 						</div>
-						<span class="text-white font-black">{$t('admin_page.download_export_success', { default: 'Výsledky stiahnuté!' })}</span>
+						<span class="text-white font-black">{$t('admin_page.download_export_success', { default: 'Stiahnuté!' })}</span>
 					{:else}
 						<div class="p-1 rounded-lg bg-black/20 text-white group-hover:scale-110 transition-transform">
-							<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+							<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
 							</svg>
 						</div>
@@ -328,10 +350,10 @@ SPDX-License-Identifier: MPL-2.0
 				<!-- Tlačidlo na ukončenie kvízu -->
 				<button
 					onclick={exit_quiz}
-					class="group flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-slate-900/95 dark:bg-black/95 backdrop-blur-xl border-2 border-rose-500/60 shadow-xl shadow-rose-950/30 text-white font-extrabold text-sm sm:text-base hover:bg-rose-600 hover:border-rose-400 hover:scale-105 active:scale-95 transition-all cursor-pointer ring-4 ring-rose-500/20"
+					class="group flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-slate-900/95 dark:bg-black/95 backdrop-blur-xl border-2 border-rose-500/60 shadow-xl shadow-rose-950/30 text-white font-extrabold text-sm sm:text-base hover:bg-rose-600 hover:border-rose-400 hover:scale-105 active:scale-95 transition-all cursor-pointer ring-4 ring-rose-500/20"
 				>
 					<div class="p-1 rounded-lg bg-rose-500/20 group-hover:bg-black/20 text-rose-300 group-hover:text-white group-hover:scale-110 transition-transform">
-						<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
 						</svg>
 					</div>

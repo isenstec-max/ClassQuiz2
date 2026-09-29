@@ -41,13 +41,16 @@ SPDX-License-Identifier: MPL-2.0
 		class="w-full h-full -rotate-90 transform"
 		style="overflow: visible;"
 	>
+		<!-- Vnútorný polopriehľadný tmavý disk pre 100% čitateľnosť čísla na akomkoľvek pozadí -->
+		<circle cx="20" cy="20" r="13.5" fill="rgba(15, 23, 42, 0.75)" />
+
 		<!-- Červený podklad (Nesprávne odpovede / celok) -->
 		<circle
 			cx="20"
 			cy="20"
 			{r}
 			fill="transparent"
-			class="{calculatedTotal === 0 ? 'stroke-slate-300 dark:stroke-slate-700' : 'stroke-rose-500'}"
+			class="{calculatedTotal === 0 ? 'stroke-slate-600' : 'stroke-rose-500'}"
 			stroke-width={strokeWidth}
 		/>
 
@@ -58,7 +61,7 @@ SPDX-License-Identifier: MPL-2.0
 				cy="20"
 				{r}
 				fill="transparent"
-				class="stroke-emerald-500 transition-all duration-700 ease-out"
+				class="stroke-emerald-400 transition-all duration-700 ease-out"
 				stroke-width={strokeWidth}
 				stroke-dasharray="{pct} {100 - pct}"
 				stroke-dashoffset="0"
@@ -67,16 +70,16 @@ SPDX-License-Identifier: MPL-2.0
 		{/if}
 	</svg>
 
-	<!-- Percento v strede krúžku -->
+	<!-- Percentuálna úspešnosť v strede krúžku (číslo od 0 do 100 s vysokým kontrastom) -->
 	{#if showPercent}
 		<span
-			class="absolute inset-0 flex items-center justify-center font-mono font-black select-none pointer-events-none text-slate-900 dark:text-white leading-none"
-			style="font-size: {Math.max(9, Math.round(size * 0.25))}px;"
+			class="absolute inset-0 flex items-center justify-center font-mono font-black select-none pointer-events-none text-white leading-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]"
+			style="font-size: {Math.max(10, Math.round(size * 0.28))}px;"
 		>
 			{#if calculatedTotal === 0}
-				—
+				0<span class="text-[0.62em] font-bold opacity-80">%</span>
 			{:else}
-				{pct}<span class="text-[0.68em] font-bold opacity-80">%</span>
+				{pct}<span class="text-[0.62em] font-bold opacity-85">%</span>
 			{/if}
 		</span>
 	{/if}

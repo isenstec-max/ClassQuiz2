@@ -173,7 +173,7 @@ SPDX-License-Identifier: MPL-2.0
 </script>
 
 {#if show_final_results}
-	<div class="min-h-screen w-full flex flex-col justify-between items-center px-4 {username ? 'pt-4 sm:pt-6' : 'pt-24 sm:pt-28'} pb-8 relative overflow-hidden select-none">
+	<div class="min-h-screen w-full flex flex-col justify-between items-center px-4 {username ? 'pt-4 sm:pt-6' : 'pt-28 sm:pt-36'} pb-8 relative overflow-hidden select-none">
 		<!-- Nadpis pódia -->
 		<div class="text-center z-10 mb-4 sm:mb-6 flex flex-col items-center animate-fade-down">
 			<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/90 text-amber-300 border-2 border-amber-400/50 text-xs sm:text-sm font-black tracking-widest uppercase mb-2 shadow-xl backdrop-blur-md ring-2 ring-amber-400/20">
@@ -352,14 +352,15 @@ SPDX-License-Identifier: MPL-2.0
 
 								<!-- Kruhový graf úspešnosti -->
 								{#if acc}
-									<div class="mt-2.5">
+									<div class="mt-2.5 flex flex-col items-center gap-1">
 										<AccuracyDonut
 											correct={acc.correct}
 											incorrect={acc.incorrect}
 											total={acc.total}
-											size={42}
-											strokeWidth={4.5}
+											size={54}
+											strokeWidth={4.8}
 										/>
+										<span class="text-[10px] uppercase font-extrabold text-slate-300 tracking-wider">Úspešnosť</span>
 									</div>
 								{/if}
 							</div>
@@ -416,14 +417,15 @@ SPDX-License-Identifier: MPL-2.0
 
 								<!-- Kruhový graf úspešnosti -->
 								{#if acc}
-									<div class="mt-3">
+									<div class="mt-3 flex flex-col items-center gap-1">
 										<AccuracyDonut
 											correct={acc.correct}
 											incorrect={acc.incorrect}
 											total={acc.total}
-											size={46}
-											strokeWidth={4.5}
+											size={60}
+											strokeWidth={5}
 										/>
+										<span class="text-[10px] uppercase font-extrabold text-amber-200 tracking-wider">Úspešnosť</span>
 									</div>
 								{/if}
 							</div>
@@ -479,14 +481,15 @@ SPDX-License-Identifier: MPL-2.0
 
 								<!-- Kruhový graf úspešnosti -->
 								{#if acc}
-									<div class="mt-2">
+									<div class="mt-2 flex flex-col items-center gap-1">
 										<AccuracyDonut
 											correct={acc.correct}
 											incorrect={acc.incorrect}
 											total={acc.total}
-											size={40}
-											strokeWidth={4.5}
+											size={50}
+											strokeWidth={4.8}
 										/>
+										<span class="text-[10px] uppercase font-extrabold text-amber-200/90 tracking-wider">Úspešnosť</span>
 									</div>
 								{/if}
 							</div>
