@@ -151,12 +151,12 @@ SPDX-License-Identifier: MPL-2.0
 		});
 
 		const maxCount = Math.max(1, ...counts);
-		const maxBarHeightPx = 250;
+		const maxBarHeightPx = 160;
 		return answers.map((ans, idx) => {
 			const count = counts[idx];
 			const percent = total > 0 ? Math.round((count / total) * 100) : 0;
 			const barHeightPx = count > 0
-				? Math.round((count / maxCount) * (maxBarHeightPx - 36)) + 36
+				? Math.round((count / maxCount) * (maxBarHeightPx - 30)) + 30
 				: 6;
 			return {
 				answer: ans.answer,
@@ -193,12 +193,12 @@ SPDX-License-Identifier: MPL-2.0
 
 			<!-- Stĺpcový graf vyhodnotenia a bloky odpovedí -->
 			<div class="flex-1 flex flex-col justify-between bg-slate-900/50 dark:bg-black/50 backdrop-blur-md rounded-3xl p-5 md:p-6 border border-white/10 shadow-2xl">
-				<!-- Stĺpcový graf (Bar Chart) -->
-				<div class="h-[320px] md:h-[350px] flex items-end justify-center gap-4 sm:gap-6 md:gap-8 pb-5 px-3 border-b border-white/10">
+				<!-- Stĺpcový graf (Bar Chart) s dostatočným voľným priestorom hore -->
+				<div class="h-[290px] md:h-[320px] flex items-end justify-center gap-4 sm:gap-6 md:gap-8 pt-8 pb-5 px-3 border-b border-white/10">
 				{#each answerStats as stat, i}
 					<div class="flex flex-col items-center justify-end h-full flex-1 max-w-[130px] group">
-						<!-- Počet a percentá nad stĺpcom -->
-						<div class="mb-2 text-center">
+						<!-- Počet a percentá nad stĺpcom s príjemným odstupom -->
+						<div class="mb-3 text-center">
 							<span class="text-xl md:text-3xl font-black text-white drop-shadow">
 								{stat.count}
 							</span>
@@ -211,8 +211,8 @@ SPDX-License-Identifier: MPL-2.0
 						<div class="w-full flex flex-col justify-end items-center relative">
 							<!-- Zelená fajka nad správnym stĺpcom -->
 							{#if stat.right}
-								<div class="absolute -top-9 z-10 w-8 h-8 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-white shadow-lg animate-bounce">
-									<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+								<div class="absolute -top-7 z-10 w-7 h-7 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-white shadow-lg animate-bounce">
+									<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
 								</div>
 							{/if}
 

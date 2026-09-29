@@ -51,7 +51,7 @@ SPDX-License-Identifier: MPL-2.0
 		Winners
 	}
 
-	let selected_create_thing = $state(SelectedCreateThing.Create);
+	let selected_create_thing = $state(SelectedCreateThing.Find);
 	let selected_play_thing = $state(SelectedPlayThing.Select);
 
 	const ClassQuiz2_reasons = [
