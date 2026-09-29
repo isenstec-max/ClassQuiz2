@@ -89,11 +89,11 @@ SPDX-License-Identifier: MPL-2.0
 	});
 </script>
 
-<div class="w-fit rounded-lg border-gray-500 border">
+<div class="w-full max-w-xl flex justify-center">
 	<div
 		bind:this={html_el}
 		contenteditable="true"
-		class="rounded-lg border-gray-500 border text-center w-fit h-fit resize-none dark:bg-gray-500 min-w-[5rem] dark:text-white"
+		class="w-full text-center px-4 py-2.5 rounded-2xl border border-slate-300 dark:border-slate-700 bg-white/90 dark:bg-slate-800/90 text-slate-800 dark:text-white font-bold text-xl md:text-2xl shadow-inner focus:outline-hidden focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all min-w-[12rem] cursor-text"
 	></div>
 </div>
 

@@ -21,28 +21,28 @@ SPDX-License-Identifier: MPL-2.0
 	let iconSize = $derived.by(() => {
 		switch (size) {
 			case 'sm':
-				return 'w-6 h-6';
+				return 'w-7 h-7';
 			case 'lg':
-				return 'w-9 h-9';
+				return 'w-11 h-11';
 			case 'hero':
 				return 'w-16 h-16 sm:w-24 sm:h-24';
 			case 'md':
 			default:
-				return 'w-8 h-8';
+				return 'w-9 h-9 sm:w-10 sm:h-10';
 		}
 	});
 
 	let textSize = $derived.by(() => {
 		switch (size) {
 			case 'sm':
-				return 'text-lg';
+				return 'text-lg sm:text-xl';
 			case 'lg':
-				return 'text-2xl';
+				return 'text-2xl sm:text-3xl';
 			case 'hero':
 				return 'text-5xl sm:text-7xl';
 			case 'md':
 			default:
-				return 'text-xl sm:text-2xl';
+				return 'text-2xl sm:text-[1.65rem]';
 		}
 	});
 
