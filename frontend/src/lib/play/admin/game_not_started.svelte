@@ -67,9 +67,9 @@ SPDX-License-Identifier: MPL-2.0
 	</div>
 
 	<!-- Hlavná lobby karta -->
-	<div class="relative z-10 w-full max-w-3xl bg-slate-900/90 dark:bg-black/90 backdrop-blur-2xl rounded-3xl p-6 sm:p-8 md:p-10 border border-white/20 shadow-2xl flex flex-col items-center text-center">
-		<!-- 1. Text Join NAD QR kódom s medzerou -->
-		<div class="flex flex-col items-center gap-2 mb-7 w-full">
+	<div class="relative z-10 w-full max-w-4xl bg-slate-900/90 dark:bg-black/90 backdrop-blur-2xl rounded-3xl p-6 sm:p-8 md:p-10 border border-white/20 shadow-2xl flex flex-col items-center text-center">
+		<!-- 1. Text Join NAD QR kódom a PIN kódom -->
+		<div class="flex flex-col items-center gap-2 mb-6 w-full">
 			<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs md:text-sm font-black tracking-widest uppercase shadow-inner">
 				<span class="relative flex h-2 w-2">
 					<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -87,37 +87,44 @@ SPDX-License-Identifier: MPL-2.0
 			</div>
 		</div>
 
-		<!-- 2. QR kód s rámom a ambientným glow efektom -->
-		<div
-			class="relative group cursor-pointer"
-			onclick={() => (fullscreen_open = true)}
-			onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (fullscreen_open = true)}
-			tabindex="0"
-			role="button"
-			aria-label="Zväčšiť QR kód"
-		>
-			<div class="absolute -inset-2 bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 rounded-3xl blur-md opacity-45 group-hover:opacity-85 transition duration-500"></div>
-			<div class="relative bg-white p-3.5 sm:p-4 rounded-2xl shadow-2xl transition-transform duration-300 group-hover:scale-105 border-2 border-slate-800">
-				<img
-					alt="QR code to join the game"
-					src="/api/v1/utils/qr/{game_pin}"
-					class="w-48 h-48 sm:w-56 sm:h-56 md:w-60 md:h-60 object-contain rounded-lg block"
-				/>
-				<div class="text-center text-[11px] text-gray-500 mt-1.5 font-bold uppercase tracking-wider">
-					🔍 Kliknutím zväčšíte
+		<!-- 2. QR kód a PIN kód VEDĽA SEBA: QR menšie naľavo, väčší text PIN kód a pod ním veľké čitateľné číslo PIN napravo -->
+		<div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 lg:gap-12 w-full my-3">
+			<!-- Naskenujte QR kód (Naľavo, menšie) -->
+			<div
+				class="relative group cursor-pointer shrink-0"
+				onclick={() => (fullscreen_open = true)}
+				onkeydown={(e) => (e.key === 'Enter' || e.key === ' ') && (fullscreen_open = true)}
+				tabindex="0"
+				role="button"
+				aria-label="Zväčšiť QR kód"
+			>
+				<div class="absolute -inset-2 bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 rounded-3xl blur-md opacity-45 group-hover:opacity-85 transition duration-500"></div>
+				<div class="relative bg-white p-3 sm:p-3.5 rounded-2xl shadow-2xl transition-transform duration-300 group-hover:scale-105 border-2 border-slate-800">
+					<img
+						alt="QR code to join the game"
+						src="/api/v1/utils/qr/{game_pin}"
+						class="w-36 h-36 sm:w-44 sm:h-44 md:w-48 md:h-48 object-contain rounded-lg block"
+					/>
+					<div class="text-center text-[10px] sm:text-[11px] text-gray-500 mt-1.5 font-bold uppercase tracking-wider">
+						🔍 Kliknutím zväčšíte
+					</div>
 				</div>
 			</div>
-		</div>
 
-		<!-- 3. PIN s výraznou medzerou od QR kódu -->
-		<div class="mt-7 flex flex-col items-center">
-			<div class="inline-flex items-center gap-2 px-5 py-1.5 rounded-full bg-slate-800/90 border border-amber-400/50 text-amber-300 text-sm sm:text-base font-black tracking-widest uppercase mb-3 shadow-lg">
-				<span>🔑</span> <span>PIN KÓD HRY</span>
-			</div>
-			<div class="bg-slate-900/95 hover:bg-slate-900 border-4 border-amber-400 px-10 sm:px-16 py-4 sm:py-6 rounded-3xl shadow-2xl shadow-amber-500/25 ring-4 ring-amber-400/30 flex items-center justify-center transition-all hover:scale-105 select-all">
-				<span class="text-amber-400 font-mono font-black text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-widest drop-shadow-2xl">
-					{game_pin}
-				</span>
+			<!-- PIN kód (Napravo: väčší text PIN kód a pod ním číslo PIN kódu čitateľne veľké) -->
+			<div class="flex flex-col items-center justify-center">
+				<!-- Väčší text PIN kód -->
+				<div class="inline-flex items-center gap-2 px-5 py-2 rounded-2xl bg-slate-800/95 border-2 border-amber-400/80 text-amber-300 text-lg sm:text-xl md:text-2xl font-black tracking-widest uppercase mb-3 shadow-xl ring-2 ring-amber-400/25">
+					<span class="text-xl sm:text-2xl">🔑</span>
+					<span>PIN KÓD HRY</span>
+				</div>
+
+				<!-- Podtým číslo PIN kódu čitateľne veľké -->
+				<div class="bg-slate-900/95 hover:bg-slate-900 border-4 border-amber-400 px-8 sm:px-12 md:px-14 py-4 sm:py-6 rounded-3xl shadow-2xl shadow-amber-500/25 ring-4 ring-amber-400/30 flex items-center justify-center transition-all hover:scale-105 select-all">
+					<span class="text-amber-400 font-mono font-black text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-widest drop-shadow-2xl">
+						{game_pin}
+					</span>
+				</div>
 			</div>
 		</div>
 
