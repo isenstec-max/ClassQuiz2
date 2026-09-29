@@ -114,12 +114,12 @@ SPDX-License-Identifier: MPL-2.0
 				>
 			{/if}
 
-			<div class="fit-content flex items-center justify-center gap-3">
+			<div class="fit-content flex items-center justify-center">
 				<BrownButton href="https://mawoka.eu/donate" target="_blank" aria-label="Donate" title="Donate"
 					><span class="text-base leading-none">❤️</span></BrownButton
 				>
 
-				<div class="lg:flex items-center justify-center mx-2.5">
+				<div class="lg:flex items-center justify-center mx-4">
 					{#if darkMode}
 						<button
 							onclick={() => {
