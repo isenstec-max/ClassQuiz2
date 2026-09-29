@@ -5,15 +5,14 @@ SPDX-License-Identifier: MPL-2.0
 -->
 
 <script lang="ts">
-	// import AudioPlayer from '$lib/play/audio_player.svelte';
 	import ControllerCodeDisplay from '$lib/components/controller/code.svelte';
 	import { getLocalization } from '$lib/i18n';
-	import GrayButton from '$lib/components/buttons/gray.svelte';
 	import { fade } from 'svelte/transition';
 	import { SocketGameControls } from '$lib/play/admin/socket_game_controls.ts';
 	import type { GameState } from '$lib/play/admin/game_state';
 	import AnimalAvatar from '$lib/components/AnimalAvatar.svelte';
 	import { parsePlayer } from '$lib/avatars';
+	import AnswerShape from '$lib/components/AnswerShape.svelte';
 
 	interface Props {
 		game_pin: string;
@@ -31,11 +30,20 @@ SPDX-License-Identifier: MPL-2.0
 
 	let fullscreen_open = $state(false);
 	const { t } = getLocalization();
-	let play_music = $state(false);
 
 	if (cqc_code === 'null') {
 		cqc_code = null;
 	}
+
+	let joinUrl = $derived(
+		typeof window !== 'undefined'
+			? window.location.host === 'ClassQuiz2.de'
+				? 'cquiz.de'
+				: `${window.location.host}/play`
+			: 'cquiz.de'
+	);
+
+	let playerCount = $derived(game_state?.players?.length ?? 0);
 </script>
 
 <div class="relative min-h-[90vh] w-full flex flex-col items-center justify-center py-6 px-3 sm:px-6 overflow-hidden">
@@ -116,12 +124,12 @@ SPDX-License-Identifier: MPL-2.0
 		<!-- 4. Tlačidlo "Start Quiz" vo vizuálnom štýle moderných tlačidiel -->
 		<div class="mt-7 flex flex-col items-center">
 			<button
-				disabled={game_state.players.length < 1}
+				disabled={playerCount < 1}
 				onclick={() => {
 					socket_game_controls.start_game();
 				}}
 				class="px-8 sm:px-12 py-3.5 sm:py-4 rounded-2xl font-black text-lg sm:text-xl tracking-wider uppercase transition-all duration-300 flex items-center gap-3 shadow-2xl {
-					game_state.players.length < 1
+					playerCount < 1
 						? 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed opacity-60'
 						: 'bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-500 text-white shadow-emerald-500/40 hover:shadow-emerald-500/60 hover:scale-105 active:scale-95 cursor-pointer ring-4 ring-emerald-400/30'
 				}"
@@ -137,18 +145,18 @@ SPDX-License-Identifier: MPL-2.0
 		<div class="mt-7 pt-6 border-t border-white/10 w-full flex flex-col items-center">
 			<!-- Indikátor počtu čakajúcich hráčov -->
 			<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-800/90 border border-slate-700 text-slate-200 text-sm font-bold shadow-md mb-4">
-				<span class="w-2.5 h-2.5 rounded-full {game_state.players.length > 0 ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}"></span>
+				<span class="w-2.5 h-2.5 rounded-full {playerCount > 0 ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}"></span>
 				<span class="font-bold">
-					{#if game_state.players.length === 1}
-						{$t('play_page.players_waiting', { count: game_state.players.length })}
+					{#if playerCount === 1}
+						{$t('play_page.players_waiting', { count: playerCount })}
 					{:else}
-						{$t('play_page.players_waiting_plural', { count: game_state.players.length ?? 0 })}
+						{$t('play_page.players_waiting_plural', { count: playerCount })}
 					{/if}
 				</span>
 			</div>
 
 			<!-- Zoznam prihlásených hráčov s avatarmi -->
-			{#if game_state.players.length > 0}
+			{#if playerCount > 0 && game_state?.players}
 				<div class="flex flex-row w-full px-2 flex-wrap justify-center gap-2.5 max-h-48 overflow-y-auto">
 					{#each game_state.players as player}
 						{@const { avatarId, name } = parsePlayer(player.username)}

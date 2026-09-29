@@ -294,7 +294,14 @@ SPDX-License-Identifier: MPL-2.0
 	{/if}
 	{#if !success}
 		{#if errorMessage !== ''}
-			<p class="text-red-700">{errorMessage}</p>
+			<div class="flex justify-center items-center min-h-[60vh]">
+				<p class="text-red-700 bg-red-100 p-4 rounded-xl border border-red-300 font-bold">{errorMessage}</p>
+			</div>
+		{:else}
+			<div class="flex flex-col justify-center items-center min-h-[60vh] gap-3">
+				<div class="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+				<p class="text-slate-700 dark:text-slate-200 font-bold">Pripájanie k hre...</p>
+			</div>
 		{/if}
 	{:else if !game_state.game_started}
 		<GameNotStarted
