@@ -141,17 +141,20 @@ SPDX-License-Identifier: MPL-2.0
 		});
 
 		const maxCount = Math.max(1, ...counts);
+		const maxBarHeightPx = 170;
 		return answers.map((ans, idx) => {
 			const count = counts[idx];
 			const percent = total > 0 ? Math.round((count / total) * 100) : 0;
-			const heightPercent = total > 0 && count > 0 ? Math.round((count / maxCount) * 85) + 15 : 15;
+			const barHeightPx = count > 0
+				? Math.round((count / maxCount) * (maxBarHeightPx - 30)) + 30
+				: 4;
 			return {
 				answer: ans.answer,
 				right: ans.right,
 				color: ans.color ?? DEFAULT_ANSWER_COLORS[idx % DEFAULT_ANSWER_COLORS.length],
 				count,
 				percent,
-				heightPercent
+				barHeightPx
 			};
 		});
 	});
@@ -201,10 +204,10 @@ SPDX-License-Identifier: MPL-2.0
 								</div>
 							{/if}
 
-							<!-- Farebný stĺpec stúpajúci nahor -->
+							<!-- Farebný stĺpec stúpajúci nahor s priamou výškou v pixeloch -->
 							<div
 								class="w-full rounded-t-xl transition-all duration-700 ease-out shadow-lg relative overflow-hidden"
-								style="height: {stat.heightPercent}%; background-color: {stat.color};"
+								style="height: {stat.barHeightPx}px; background-color: {stat.color};"
 								class:ring-4={stat.right}
 								class:ring-emerald-400={stat.right}
 								class:opacity-75={!stat.right}
