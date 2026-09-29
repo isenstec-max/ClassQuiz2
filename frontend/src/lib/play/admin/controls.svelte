@@ -28,15 +28,9 @@ SPDX-License-Identifier: MPL-2.0
 </script>
 
 <div
-	class="fixed top-0 w-full h-10 z-20 grid grid-cols-2"
-	style="background: {bg_color ? bg_color : 'transparent'}"
-	class:text-black={bg_color}
+	class="fixed top-3 right-4 z-30 flex items-center justify-end pointer-events-none"
 >
-	<p class="mr-auto ml-0 col-start-1 col-end-1">
-		{game_state.selected_question === -1 ? '0' : game_state.selected_question + 1}
-		/{game_state.quiz_data.questions.length}
-	</p>
-	<div class="justify-self-end ml-auto mr-0 col-start-3 col-end-3">
+	<div class="pointer-events-auto">
 		{#if game_state.selected_question + 1 === game_state.quiz_data.questions.length && ((game_state.timer_res === '0' && game_state.question_results !== null) || game_state.quiz_data?.questions?.[game_state.selected_question]?.type === QuizQuestionType.SLIDE)}
 			{#if JSON.stringify(game_state.final_results) === JSON.stringify([null])}
 				<button

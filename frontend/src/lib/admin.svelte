@@ -101,9 +101,10 @@ SPDX-License-Identifier: MPL-2.0
 {/if}
 
 <div
-	class="w-full h-full"
-	class:pt-28={game_state.control_visible}
-	class:pt-12={!game_state.control_visible}
+	class="w-full h-full min-h-screen"
+	class:pt-12={game_state.control_visible}
+	class:md:pt-14={game_state.control_visible}
+	class:pt-6={!game_state.control_visible}
 >
 	{#if game_state.timer_res !== undefined && !final_results_clicked && !game_state.question_results}
 		<!-- Question is shown -->
@@ -126,7 +127,6 @@ SPDX-License-Identifier: MPL-2.0
 			/>
 		{/if}
 	{/if}
-	<br />
 	{#if game_state.timer_res === '0' && JSON.stringify(game_state.final_results) === JSON.stringify( [null] ) && game_state.quiz_data.questions[game_state.selected_question].type !== QuizQuestionType.SLIDE && game_state.question_results !== null && game_state.quiz_data.questions[game_state.selected_question]?.hide_results !== true}
 		{#if game_state.question_results === undefined}
 			{#if !final_results_clicked}
@@ -144,6 +144,8 @@ SPDX-License-Identifier: MPL-2.0
 					new_data={game_state.question_results}
 					{game_pin}
 					players={game_state.players}
+					question_index={game_state.selected_question + 1}
+					total_questions={game_state.quiz_data?.questions?.length || 1}
 				/>
 			{/await}
 		{:else}
@@ -156,6 +158,8 @@ SPDX-License-Identifier: MPL-2.0
 					new_data={game_state.question_results}
 					{game_pin}
 					players={game_state.players}
+					question_index={game_state.selected_question + 1}
+					total_questions={game_state.quiz_data?.questions?.length || 1}
 				/>
 			{/await}
 		{/if}

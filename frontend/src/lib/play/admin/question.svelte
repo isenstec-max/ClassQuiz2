@@ -55,7 +55,16 @@ SPDX-License-Identifier: MPL-2.0
 	</h1>
 	<!--			<span class='text-center py-2 text-lg'>{$t('admin_page.time_left')}: {timer_res}</span>-->
 	<div class="grid grid-cols-3 my-2">
-		<span></span>
+		<div class="m-auto flex items-center">
+			<div class="bg-slate-900/85 backdrop-blur-md rounded-2xl py-2 px-4 border border-white/15 shadow-xl flex items-center gap-2.5">
+				<span class="text-xs uppercase font-black tracking-widest text-amber-400 bg-amber-400/20 px-2.5 py-0.5 rounded-lg border border-amber-400/30">Otázka</span>
+				<span class="font-decorative text-2xl md:text-3xl font-black text-white flex items-center gap-1">
+					<span class="text-amber-300 drop-shadow">{selected_question + 1}</span>
+					<span class="text-slate-400 text-xl font-light">/</span>
+					<span class="text-slate-200">{quiz_data.questions.length}</span>
+				</span>
+			</div>
+		</div>
 		<div class="m-auto">
 			<CircularTimer text={timer_res} progress={circular_progress} color="#ef4444" />
 		</div>
