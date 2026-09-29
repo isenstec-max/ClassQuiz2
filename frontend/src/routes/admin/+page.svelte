@@ -248,7 +248,25 @@ SPDX-License-Identifier: MPL-2.0
 		: `unset`}; background-color: {bg_color ? bg_color : 'transparent'}"
 	class:text-black={bg_color}
 >
-	{#if JSON.stringify(game_state.final_results) !== JSON.stringify([null])}
+	{#if !success}
+		{#if errorMessage !== ''}
+			<div class="flex justify-center items-center min-h-[60vh]">
+				<p class="text-red-700 bg-red-100 p-4 rounded-xl border border-red-300 font-bold">{errorMessage}</p>
+			</div>
+		{:else}
+			<div class="flex flex-col justify-center items-center min-h-[60vh] gap-3">
+				<div class="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+				<p class="text-slate-700 dark:text-slate-200 font-bold">Pripájanie k hre...</p>
+			</div>
+		{/if}
+	{:else if !game_state.game_started}
+		<GameNotStarted
+			{game_pin}
+			bind:game_state
+			{socket_game_controls}
+			cqc_code={page.url.searchParams.get('cqc_code')}
+		/>
+	{:else if JSON.stringify(game_state.final_results) !== JSON.stringify([null])}
 		{#if game_state.control_visible}
 			<div class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-wrap items-center justify-center gap-3 w-full max-w-2xl px-4 pointer-events-auto">
 				<!-- Tlačidlo na export / stiahnutie výsledkov -->
@@ -303,25 +321,11 @@ SPDX-License-Identifier: MPL-2.0
 				</button>
 			</div>
 		{/if}
-		<FinalResults bind:data={game_state.player_scores} {show_final_results} />
-	{/if}
-	{#if !success}
-		{#if errorMessage !== ''}
-			<div class="flex justify-center items-center min-h-[60vh]">
-				<p class="text-red-700 bg-red-100 p-4 rounded-xl border border-red-300 font-bold">{errorMessage}</p>
-			</div>
-		{:else}
-			<div class="flex flex-col justify-center items-center min-h-[60vh] gap-3">
-				<div class="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-				<p class="text-slate-700 dark:text-slate-200 font-bold">Pripájanie k hre...</p>
-			</div>
-		{/if}
-	{:else if !game_state.game_started}
-		<GameNotStarted
-			{game_pin}
-			bind:game_state
-			{socket_game_controls}
-			cqc_code={page.url.searchParams.get('cqc_code')}
+		<FinalResults
+			bind:data={game_state.player_scores}
+			final_results={game_state.final_results}
+			players={game_state.players}
+			{show_final_results}
 		/>
 	{:else}
 		<SomeAdminScreen {game_token} {game_pin} {bg_color} bind:game_state />

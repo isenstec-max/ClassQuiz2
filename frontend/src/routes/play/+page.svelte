@@ -176,7 +176,7 @@ SPDX-License-Identifier: MPL-2.0
 		{#if !gameMeta.started && gameData === undefined}
 			<JoinGame bind:game_pin bind:game_mode bind:username />
 		{:else if JSON.stringify(final_results) !== JSON.stringify([null])}
-			<ShowEndScreen bind:data={scores} show_final_results={true} {username} />
+			<ShowEndScreen bind:data={scores} {final_results} show_final_results={true} {username} />
 		{:else if gameData !== undefined && question_index === ''}
 			<ShowTitle
 				title={gameData.title}
