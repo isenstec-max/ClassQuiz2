@@ -24,10 +24,12 @@ SPDX-License-Identifier: MPL-2.0
 
 	let searchQuery = $state('');
 
-	// Výpočet správnych odpovedí pre každého hráča
+	// Výpočet správnych odpovedí a času pre každého hráča
 	let playerStats = $derived.by(() => {
 		const correctMap: Record<string, number> = {};
 		const totalMap: Record<string, number> = {};
+		const totalTimeMap: Record<string, number> = {};
+		const timeCountMap: Record<string, number> = {};
 
 		if (Array.isArray(answers)) {
 			for (const qAnswers of answers) {
@@ -37,10 +39,16 @@ SPDX-License-Identifier: MPL-2.0
 						const user = a.username;
 						if (!correctMap[user]) correctMap[user] = 0;
 						if (!totalMap[user]) totalMap[user] = 0;
+						if (!totalTimeMap[user]) totalTimeMap[user] = 0;
+						if (!timeCountMap[user]) timeCountMap[user] = 0;
 
 						totalMap[user]++;
 						if (a.right) {
 							correctMap[user]++;
+						}
+						if (a.time_taken !== undefined && a.time_taken !== null && !isNaN(Number(a.time_taken))) {
+							totalTimeMap[user] += Math.max(0, Number(a.time_taken));
+							timeCountMap[user]++;
 						}
 					}
 				}
@@ -57,6 +65,10 @@ SPDX-License-Identifier: MPL-2.0
 				const answered = totalMap[uname] || 0;
 				const total = totalQuestions > 0 ? totalQuestions : answered;
 				const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+				const countWithTime = timeCountMap[uname] || 0;
+				const avgTimeMs = countWithTime > 0 ? totalTimeMap[uname] / countWithTime : null;
+				const avgTimeSec = avgTimeMs !== null ? (avgTimeMs / 1000).toFixed(2) : null;
+				const totalTimeSec = countWithTime > 0 ? (totalTimeMap[uname] / 1000).toFixed(2) : null;
 
 				return {
 					username: uname,
@@ -66,6 +78,8 @@ SPDX-License-Identifier: MPL-2.0
 					correct,
 					total,
 					pct,
+					avgTimeSec,
+					totalTimeSec,
 					customField: custom_field[uname] || ''
 				};
 			})
@@ -100,7 +114,7 @@ SPDX-License-Identifier: MPL-2.0
 				<h2 class="text-base sm:text-lg font-black text-slate-900 dark:text-white">
 					{$t('words.player', { count: 2, default: 'Výsledky hráčov' })}
 				</h2>
-				<p class="text-xs text-slate-400 dark:text-slate-500 font-medium">Rebríček a presnosť odpovedí všetkých účastníkov</p>
+				<p class="text-xs text-slate-400 dark:text-slate-500 font-medium">Rebríček, presnosť odpovedí a reakčné časy všetkých účastníkov</p>
 			</div>
 		</div>
 
@@ -131,8 +145,9 @@ SPDX-License-Identifier: MPL-2.0
 					<tr class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
 						<th class="px-4 py-2 w-16">Poradie</th>
 						<th class="px-4 py-2">Hráč</th>
-						<th class="px-4 py-2 w-48">Správne odpovede</th>
-						<th class="px-4 py-2 text-right w-36">Body</th>
+						<th class="px-4 py-2 w-44">Správne odpovede</th>
+						<th class="px-4 py-2 text-right w-36">Priemerný čas</th>
+						<th class="px-4 py-2 text-right w-32">Body</th>
 						{#if hasCustomFields}
 							<th class="px-4 py-2 w-40">{$t('result_page.custom_field', { default: 'Vlastné pole' })}</th>
 						{/if}
@@ -188,6 +203,27 @@ SPDX-License-Identifier: MPL-2.0
 										></div>
 									</div>
 								</div>
+							</td>
+
+							<!-- Čas odpovede (Priemerný čas na otázku s dvoma desatinnými miestami) -->
+							<td class="px-4 py-3 text-right">
+								{#if p.avgTimeSec !== null}
+									<div class="flex flex-col items-end">
+										<span class="inline-flex items-center gap-1 font-mono font-bold text-xs sm:text-sm text-slate-700 dark:text-slate-200">
+											<svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+											</svg>
+											<span>{p.avgTimeSec}s</span>
+										</span>
+										{#if p.totalTimeSec !== null}
+											<span class="text-[10px] text-slate-400 dark:text-slate-500 font-mono">
+												spolu {p.totalTimeSec}s
+											</span>
+										{/if}
+									</div>
+								{:else}
+									<span class="text-xs text-slate-400 font-mono">—</span>
+								{/if}
 							</td>
 
 							<!-- Skóre (Body) -->

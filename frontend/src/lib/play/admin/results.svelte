@@ -70,6 +70,16 @@ SPDX-License-Identifier: MPL-2.0
 		return ret_data;
 	});
 
+	let time_by_username = $derived.by(() => {
+		const ret_data: Record<string, number> = {};
+		for (const i of parsedNewData) {
+			if (i && i.username && i.time_taken !== undefined && i.time_taken !== null && !isNaN(Number(i.time_taken))) {
+				ret_data[i.username] = Math.max(0, Number(i.time_taken));
+			}
+		}
+		return ret_data;
+	});
+
 	// Zjednotenie a zoradenie všetkých účastníkov
 	let allPlayerUsernames = $derived.by(() => {
 		const set = new Set<string>();
@@ -311,6 +321,11 @@ SPDX-License-Identifier: MPL-2.0
 							</div>
 
 							<div class="flex items-center gap-2 shrink-0">
+								{#if time_by_username[player] !== undefined}
+									<span class="text-[11px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700/60" title="Čas odpovede">
+										{(time_by_username[player] / 1000).toFixed(2)}s
+									</span>
+								{/if}
 								{#if show_new_score_clicked && (score_by_username[player] ?? 0) > 0}
 									<span class="text-xs font-extrabold text-emerald-400 bg-emerald-500/20 px-1.5 py-0.5 rounded transition-all">
 										+{score_by_username[player]}

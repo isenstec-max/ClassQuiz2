@@ -127,8 +127,8 @@ SPDX-License-Identifier: MPL-2.0
 								<td class="py-2.5 px-3 text-slate-700 dark:text-slate-300 font-medium">
 									{ans.answer || '—'}
 								</td>
-								<td class="py-2.5 px-3 text-right font-mono text-slate-500 dark:text-slate-400">
-									{ans.time_taken ? (ans.time_taken / 1000).toFixed(2) + ' s' : '—'}
+								<td class="py-2.5 px-3 text-right font-mono font-medium text-slate-600 dark:text-slate-300">
+									{ans.time_taken !== undefined && ans.time_taken !== null && !isNaN(Number(ans.time_taken)) ? (Math.max(0, Number(ans.time_taken)) / 1000).toFixed(2) + 's' : '—'}
 								</td>
 								{#if question.type !== QuizQuestionType.VOTING}
 									<td class="py-2.5 px-3 text-right font-mono font-bold text-slate-800 dark:text-slate-200">
