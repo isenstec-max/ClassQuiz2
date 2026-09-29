@@ -83,8 +83,12 @@ SPDX-License-Identifier: MPL-2.0
 	</div>
 
 	<!-- Inštrukcie -->
-	<div class="text-[11px] text-slate-300/80 font-medium leading-tight max-w-[180px] mt-1">
-		<span>Otvorte <span class="text-white font-bold underline decoration-emerald-400">{joinUrl}</span> alebo načítajte QR kód</span>
+	<div class="flex flex-col items-center gap-0.5 mt-2 text-center leading-snug w-full px-1">
+		<span class="text-xs sm:text-sm text-slate-300 font-medium">Otvorte</span>
+		<span class="text-sm sm:text-base font-bold text-white underline decoration-emerald-400 tracking-wide break-all select-text">
+			{joinUrl}
+		</span>
+		<span class="text-xs sm:text-sm text-slate-300/90 font-medium">alebo načítajte QR kód</span>
 	</div>
 </div>
 

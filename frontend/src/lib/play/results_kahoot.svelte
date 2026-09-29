@@ -102,7 +102,7 @@ SPDX-License-Identifier: MPL-2.0
 					✓
 				</div>
 				<h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight">
-					{$t('play_page.correct', { default: 'Správne!' })}
+					{$t('play_page.correct', { defaultValue: 'Správna odpoveď', default: 'Správna odpoveď' })}
 				</h2>
 			{:else}
 				<div
@@ -111,7 +111,7 @@ SPDX-License-Identifier: MPL-2.0
 					✕
 				</div>
 				<h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight">
-					{$t('play_page.incorrect', { default: 'Nesprávne' })}
+					{$t('play_page.incorrect', { defaultValue: 'Nesprávna odpoveď', default: 'Nesprávna odpoveď' })}
 				</h2>
 			{/if}
 		{:else}

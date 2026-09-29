@@ -38,6 +38,9 @@ export class I18nService {
 		this.initialize();
 	}
 	t(key: string, replacements?: Record<string, unknown>): string {
+		if (replacements && 'default' in replacements && !('defaultValue' in replacements)) {
+			replacements.defaultValue = replacements.default;
+		}
 		return this.i18n.t(key, replacements);
 	}
 

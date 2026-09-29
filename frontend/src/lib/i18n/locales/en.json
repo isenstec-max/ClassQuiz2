@@ -313,7 +313,9 @@
         "players_waiting": "{{count}} player is waiting",
         "players_waiting_plural": "{{count}} players are waiting",
         "total_score": "Total score",
-        "points_gained": "Points gained"
+        "points_gained": "Points gained",
+        "correct": "Correct answer!",
+        "incorrect": "Incorrect answer"
     },
     "play": {
         "enter_game": "Prihlásiť sa do kvízu",

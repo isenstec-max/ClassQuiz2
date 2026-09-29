@@ -239,7 +239,9 @@
         "end_sentence": "Skvelá hra!",
         "your_place": "Ste na {{place}}. mieste!",
         "total_score": "Celkové skóre",
-        "points_gained": "Získané body"
+        "points_gained": "Získané body",
+        "correct": "Správna odpoveď",
+        "incorrect": "Nesprávna odpoveď"
     },
     "play": {
         "enter_game": "Prihlásiť sa do kvízu",
