@@ -1,0 +1,26 @@
+<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+	<defs>
+		<linearGradient id="cq-gold" x1="20" y1="25" x2="45" y2="75" gradientUnits="userSpaceOnUse">
+			<stop offset="0%" stop-color="#FDE047" />
+			<stop offset="100%" stop-color="#F59E0B" />
+		</linearGradient>
+		<linearGradient id="cq-coral" x1="55" y1="20" x2="85" y2="75" gradientUnits="userSpaceOnUse">
+			<stop offset="0%" stop-color="#FB923C" />
+			<stop offset="100%" stop-color="#E11D48" />
+		</linearGradient>
+		<linearGradient id="cq-q-fill" x1="32" y1="28" x2="78" y2="78" gradientUnits="userSpaceOnUse">
+			<stop offset="0%" stop-color="#10B981" />
+			<stop offset="35%" stop-color="#06B6D4" />
+			<stop offset="70%" stop-color="#6366F1" />
+			<stop offset="100%" stop-color="#8B5CF6" />
+		</linearGradient>
+	</defs>
+	<path d="M 33 13 C 33 21 28 25 21 25 C 28 25 33 29 33 37 C 33 29 38 25 45 25 C 38 25 33 21 33 13 Z" fill="#FBBF24" />
+	<path d="M 48 10 C 48 14.5 45 16.5 41 16.5 C 45 16.5 48 18.5 48 23 C 48 18.5 51 16.5 55 16.5 C 51 16.5 48 14.5 48 10 Z" fill="#FDE047" />
+	<rect x="18" y="32" width="34" height="44" rx="8" transform="rotate(-20 35 54)" fill="url(#cq-gold)" />
+	<rect x="52" y="24" width="34" height="44" rx="8" transform="rotate(24 69 46)" fill="url(#cq-coral)" />
+	<path d="M 76.5 43.5 A 23 23 0 1 0 78.5 65" stroke="white" stroke-width="18" stroke-linecap="round" fill="none" />
+	<path d="M 64 62 L 81 79" stroke="white" stroke-width="18" stroke-linecap="round" />
+	<path d="M 76.5 43.5 A 23 23 0 1 0 78.5 65" stroke="url(#cq-q-fill)" stroke-width="12" stroke-linecap="round" fill="none" />
+	<path d="M 64 62 L 81 79" stroke="url(#cq-q-fill)" stroke-width="12" stroke-linecap="round" />
+</svg>
