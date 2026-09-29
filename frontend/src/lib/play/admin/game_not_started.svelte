@@ -78,12 +78,12 @@ SPDX-License-Identifier: MPL-2.0
 				<span>Pripojenie k hre</span>
 			</div>
 
-			<div class="text-xl sm:text-2xl md:text-3xl font-extrabold text-white tracking-tight flex items-center justify-center flex-wrap gap-2 leading-relaxed">
-				<span>Prejdite na</span>
-				<span class="bg-white/10 text-emerald-300 px-3.5 py-1 rounded-xl font-mono border border-emerald-400/40 shadow-md select-all">
+			<div class="w-full flex items-center justify-center flex-nowrap gap-1.5 sm:gap-2.5 text-xs sm:text-sm md:text-base lg:text-lg font-bold sm:font-extrabold text-white tracking-tight leading-normal whitespace-nowrap overflow-x-auto py-1">
+				<span class="text-white">Prejdite na</span>
+				<span class="bg-white/10 text-emerald-300 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-xl font-mono border border-emerald-400/40 shadow-xs select-all font-black">
 					{joinUrl}
 				</span>
-				<span>alebo naskenujte QR kód</span>
+				<span class="text-white">alebo naskenujte QR kód</span>
 			</div>
 		</div>
 
