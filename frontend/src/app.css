@@ -182,9 +182,36 @@ html:not([lang="sk"]) .lang-btn-sk:hover svg {
 	align-self: center;
 	margin: 0 2px;
 }
-:global(html.dark) .lang-divider,
-html.dark .lang-divider {
-	background-color: #4b5563;
+/* Sleek modern themed scrollbars */
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+::-webkit-scrollbar-thumb {
+	background: rgba(100, 116, 139, 0.35);
+	border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+	background: rgba(16, 185, 129, 0.6);
+}
+:global(html.dark) ::-webkit-scrollbar-thumb,
+html.dark ::-webkit-scrollbar-thumb {
+	background: rgba(148, 163, 184, 0.25);
+}
+:global(html.dark) ::-webkit-scrollbar-thumb:hover,
+html.dark ::-webkit-scrollbar-thumb:hover {
+	background: rgba(16, 185, 129, 0.5);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+	display: none;
+}
+.no-scrollbar {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
 }
 
 

@@ -281,16 +281,18 @@ SPDX-License-Identifier: MPL-2.0
 
 								<!-- 6 Farebných moderných akčných tlačidiel -->
 								<div class="grid grid-cols-3 gap-2 sm:gap-2.5 shrink-0 self-center">
-									<!-- 1. SPUSTIŤ / PLAY (Zelený / Smaragdový gradient) -->
+									<!-- 1. SPUSTIŤ / PLAY (Zelená farebná ikona) -->
 									{#if quiz.type === 'quiz'}
 										<button
 											onclick={() => (start_game = quiz.id)}
 											use:tippy={{ content: $t('dashboard.play_quiz', { default: 'Spustiť kvíz' }) }}
 											aria-label="Spustiť kvíz"
-											class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 via-emerald-500 to-teal-400 text-white shadow-lg shadow-emerald-500/30 border border-emerald-300/40 hover:scale-110 active:scale-95 transition-all flex items-center justify-center cursor-pointer ring-2 ring-emerald-400/20 group/btn"
+											class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white dark:bg-slate-800/90 hover:bg-emerald-50/60 dark:hover:bg-emerald-950/30 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 shadow-xs hover:shadow-lg hover:shadow-emerald-500/15 hover:scale-110 active:scale-95 transition-all flex items-center justify-center cursor-pointer group/btn"
 										>
-											<svg class="w-6 h-6 fill-current text-white drop-shadow group-hover/btn:scale-110 transition-transform" viewBox="0 0 24 24">
-												<path d="M8 5v14l11-7z" />
+											<svg class="w-6 h-6 group-hover/btn:scale-110 transition-transform" viewBox="0 0 24 24" fill="none">
+												<circle cx="12" cy="12" r="10" fill="#10B981" />
+												<path d="M10 8.5L16 12L10 15.5V8.5Z" fill="#FFFFFF" />
+												<path d="M10 8.5L16 12L13 12L10 10.3V8.5Z" fill="#D1FAE5" />
 											</svg>
 										</button>
 									{:else}
@@ -298,73 +300,87 @@ SPDX-License-Identifier: MPL-2.0
 											href="/quiztivity/play?id={quiz.id}"
 											use:tippy={{ content: $t('dashboard.play_quiz', { default: 'Spustiť aktivitu' }) }}
 											aria-label="Spustiť aktivitu"
-											class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 via-emerald-500 to-teal-400 text-white shadow-lg shadow-emerald-500/30 border border-emerald-300/40 hover:scale-110 active:scale-95 transition-all flex items-center justify-center cursor-pointer ring-2 ring-emerald-400/20 group/btn"
+											class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white dark:bg-slate-800/90 hover:bg-emerald-50/60 dark:hover:bg-emerald-950/30 border border-slate-200 dark:border-slate-700 hover:border-emerald-400 shadow-xs hover:shadow-lg hover:shadow-emerald-500/15 hover:scale-110 active:scale-95 transition-all flex items-center justify-center cursor-pointer group/btn"
 										>
-											<svg class="w-6 h-6 fill-current text-white drop-shadow group-hover/btn:scale-110 transition-transform" viewBox="0 0 24 24">
-												<path d="M8 5v14l11-7z" />
+											<svg class="w-6 h-6 group-hover/btn:scale-110 transition-transform" viewBox="0 0 24 24" fill="none">
+												<circle cx="12" cy="12" r="10" fill="#10B981" />
+												<path d="M10 8.5L16 12L10 15.5V8.5Z" fill="#FFFFFF" />
+												<path d="M10 8.5L16 12L13 12L10 10.3V8.5Z" fill="#D1FAE5" />
 											</svg>
 										</a>
 									{/if}
 
-									<!-- 2. ŠTATISTIKY / ANALYTICS (Modrý / Indigo gradient) -->
+									<!-- 2. ŠTATISTIKY / ANALYTICS (Farebný stĺpcový graf) -->
 									<button
 										onclick={() => (analytics_quiz_selected = quiz)}
 										use:tippy={{ content: $t('dashboard.analytics_quiz', { default: 'Štatistiky a výsledky' }) }}
 										aria-label="Štatistiky"
-										class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-indigo-500 via-indigo-600 to-blue-500 text-white shadow-lg shadow-indigo-500/30 border border-indigo-300/40 hover:scale-110 active:scale-95 transition-all flex items-center justify-center cursor-pointer ring-2 ring-indigo-400/20 group/btn"
+										class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white dark:bg-slate-800/90 hover:bg-indigo-50/60 dark:hover:bg-indigo-950/30 border border-slate-200 dark:border-slate-700 hover:border-indigo-400 shadow-xs hover:shadow-lg hover:shadow-indigo-500/15 hover:scale-110 active:scale-95 transition-all flex items-center justify-center cursor-pointer group/btn"
 									>
-										<svg class="w-5 h-5 text-white drop-shadow group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+										<svg class="w-6 h-6 group-hover/btn:scale-110 transition-transform" viewBox="0 0 24 24" fill="none">
+											<rect x="3" y="12" width="4.5" height="9" rx="1.5" fill="#3B82F6" />
+											<rect x="9.75" y="7" width="4.5" height="14" rx="1.5" fill="#8B5CF6" />
+											<rect x="16.5" y="3.5" width="4.5" height="17.5" rx="1.5" fill="#F59E0B" />
 										</svg>
 									</button>
 
-									<!-- 3. UPRAVIŤ / EDIT (Žltý / Oranžový gradient) -->
+									<!-- 3. UPRAVIŤ / EDIT (Farebná ceruzka s gumou a hrotom) -->
 									<a
 										href={quiz.type === 'quiz' ? `/edit?quiz_id=${quiz.id}` : `/quiztivity/edit?id=${quiz.id}`}
 										use:tippy={{ content: $t('dashboard.edit_quiz', { default: 'Upraviť kvíz' }) }}
 										aria-label="Upraviť"
-										class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-amber-500 via-amber-600 to-orange-500 text-white shadow-lg shadow-amber-500/30 border border-amber-300/40 hover:scale-110 active:scale-95 transition-all flex items-center justify-center cursor-pointer ring-2 ring-amber-400/20 group/btn"
+										class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white dark:bg-slate-800/90 hover:bg-amber-50/60 dark:hover:bg-amber-950/30 border border-slate-200 dark:border-slate-700 hover:border-amber-400 shadow-xs hover:shadow-lg hover:shadow-amber-500/15 hover:scale-110 active:scale-95 transition-all flex items-center justify-center cursor-pointer group/btn"
 									>
-										<svg class="w-5 h-5 text-white drop-shadow group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+										<svg class="w-6 h-6 group-hover/btn:scale-110 transition-transform" viewBox="0 0 24 24" fill="none">
+											<path d="M4 20L8 19L18.5 8.5L14.5 4.5L4 15L4 20Z" fill="#F59E0B" />
+											<path d="M14.5 4.5L18.5 8.5L20 7C20.8 6.2 20.8 4.8 20 4C19.2 3.2 17.8 3.2 17 4L14.5 4.5Z" fill="#FB7185" />
+											<path d="M4 20L7 20L4 17L4 20Z" fill="#1E293B" />
+											<path d="M13 6L17 10" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" />
 										</svg>
 									</a>
 
-									<!-- 4. NÁHĽAD / VIEW (Azúrový / Sky gradient) -->
+									<!-- 4. NÁHĽAD / VIEW (Farebné oko s modrou dúhovkou) -->
 									<a
 										href="/view/{quiz.id}"
 										use:tippy={{ content: quiz.public ? $t('dashboard.view_quiz', { default: 'Náhľad kvízu' }) : 'Náhľad (iba pre verejné kvízy)' }}
 										aria-label="Náhľad"
-										class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 via-cyan-600 to-sky-500 text-white shadow-lg shadow-cyan-500/30 border border-cyan-300/40 hover:scale-110 active:scale-95 transition-all flex items-center justify-center cursor-pointer ring-2 ring-cyan-400/20 group/btn {quiz.public ? '' : 'opacity-40 pointer-events-none'}"
+										class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white dark:bg-slate-800/90 hover:bg-sky-50/60 dark:hover:bg-sky-950/30 border border-slate-200 dark:border-slate-700 hover:border-sky-400 shadow-xs hover:shadow-lg hover:shadow-sky-500/15 hover:scale-110 active:scale-95 transition-all flex items-center justify-center cursor-pointer group/btn {quiz.public ? '' : 'opacity-40 pointer-events-none'}"
 									>
-										<svg class="w-5 h-5 text-white drop-shadow group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-											<path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+										<svg class="w-6 h-6 group-hover/btn:scale-110 transition-transform" viewBox="0 0 24 24" fill="none">
+											<path d="M2 12C2 12 5.5 5 12 5C18.5 5 22 12 22 12C22 12 18.5 19 12 19C5.5 19 2 12 2 12Z" fill="#E0F2FE" stroke="#0284C7" stroke-width="1.8" />
+											<circle cx="12" cy="12" r="4.5" fill="#0EA5E9" />
+											<circle cx="12" cy="12" r="2.2" fill="#0F172A" />
+											<circle cx="13.2" cy="10.8" r="1.1" fill="#FFFFFF" />
 										</svg>
 									</a>
 
-									<!-- 5. VYMAZAŤ / DELETE (Červený / Rose gradient) -->
+									<!-- 5. VYMAZAŤ / DELETE (Červený odpadkový kôš so sivým vekom) -->
 									<button
 										onclick={() => deleteQuiz(quiz.id, quiz.type)}
 										use:tippy={{ content: $t('dashboard.delete_quiz', { default: 'Vymazať kvíz' }) }}
 										aria-label="Vymazať"
-										class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-rose-500 via-red-600 to-rose-700 text-white shadow-lg shadow-red-500/30 border border-red-300/40 hover:scale-110 active:scale-95 transition-all flex items-center justify-center cursor-pointer ring-2 ring-red-400/20 group/btn"
+										class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white dark:bg-slate-800/90 hover:bg-rose-50/60 dark:hover:bg-rose-950/30 border border-slate-200 dark:border-slate-700 hover:border-rose-400 shadow-xs hover:shadow-lg hover:shadow-rose-500/15 hover:scale-110 active:scale-95 transition-all flex items-center justify-center cursor-pointer group/btn"
 									>
-										<svg class="w-5 h-5 text-white drop-shadow group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+										<svg class="w-6 h-6 group-hover/btn:scale-110 transition-transform" viewBox="0 0 24 24" fill="none">
+											<path d="M6 7L7.5 19.5C7.6 20.4 8.4 21 9.3 21H14.7C15.6 21 16.4 20.4 16.5 19.5L18 7H6Z" fill="#EF4444" />
+											<path d="M4 6C4 5.4 4.4 5 5 5H19C19.6 5 20 5.4 20 6C20 6.6 19.6 7 19 7H5C4.4 7 4 6.6 4 6Z" fill="#DC2626" />
+											<path d="M9 5V4C9 3.4 9.4 3 10 3H14C14.6 3 15 3.4 15 4V5H9Z" fill="#B91C1C" />
+											<line x1="9.5" y1="10" x2="9.5" y2="17" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" opacity="0.8" />
+											<line x1="14.5" y1="10" x2="14.5" y2="17" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" opacity="0.8" />
 										</svg>
 									</button>
 
-									<!-- 6. STIAHNUŤ / EXPORT (Fialový / Indigo gradient) -->
+									<!-- 6. STIAHNUŤ / EXPORT (Fialový podnos a zelená šípka) -->
 									<button
 										onclick={() => (download_id = quiz.id)}
 										disabled={quiz.type !== 'quiz'}
 										use:tippy={{ content: $t('dashboard.export_quiz', { default: 'Stiahnuť / Exportovať kvíz' }) }}
 										aria-label="Stiahnuť"
-										class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-violet-500 via-purple-600 to-indigo-500 text-white shadow-lg shadow-purple-500/30 border border-purple-300/40 hover:scale-110 active:scale-95 transition-all flex items-center justify-center cursor-pointer ring-2 ring-purple-400/20 group/btn disabled:opacity-40 disabled:cursor-not-allowed"
+										class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-white dark:bg-slate-800/90 hover:bg-purple-50/60 dark:hover:bg-purple-950/30 border border-slate-200 dark:border-slate-700 hover:border-purple-400 shadow-xs hover:shadow-lg hover:shadow-purple-500/15 hover:scale-110 active:scale-95 transition-all flex items-center justify-center cursor-pointer group/btn disabled:opacity-40 disabled:cursor-not-allowed"
 									>
-										<svg class="w-5 h-5 text-white drop-shadow group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+										<svg class="w-6 h-6 group-hover/btn:scale-110 transition-transform" viewBox="0 0 24 24" fill="none">
+											<path d="M4 17V18C4 19.7 5.3 21 7 21H17C18.7 21 20 19.7 20 18V17" stroke="#8B5CF6" stroke-width="2.2" stroke-linecap="round" />
+											<path d="M12 3V15M12 15L7.5 10.5M12 15L16.5 10.5" stroke="#10B981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
 										</svg>
 									</button>
 								</div>
