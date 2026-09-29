@@ -15,6 +15,7 @@ SPDX-License-Identifier: MPL-2.0
 	import AnimalAvatar from '$lib/components/AnimalAvatar.svelte';
 	import { ANIMAL_AVATARS, formatPlayer } from '$lib/avatars';
 	import { APP_VERSION } from '$lib/version';
+	import BrandLogo from '$lib/components/BrandLogo.svelte';
 
 	const { t } = getLocalization();
 
@@ -243,75 +244,79 @@ SPDX-License-Identifier: MPL-2.0
 {#if game_pin === '' || game_pin.length < 6}
 	<div class="min-h-screen w-screen flex flex-col justify-between items-center bg-gradient-to-br from-slate-100 via-emerald-50/30 to-slate-200 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 px-4 py-6 transition-colors selection:bg-emerald-500 selection:text-white">
 		
-		<!-- Top Bar with Branding and Language/Theme Switcher -->
-		<header class="w-full max-w-4xl flex items-center justify-between px-2">
-			<a href="/" class="flex items-center gap-2 group cursor-pointer">
-				<span class="text-2xl font-black tracking-tight text-slate-800 dark:text-slate-100 group-hover:text-emerald-500 transition-colors">ClassQuiz2</span>
-				<span class="px-2 py-0.5 rounded-full text-[11px] font-black tracking-wider uppercase bg-emerald-500/10 dark:bg-emerald-400/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">{APP_VERSION}</span>
-			</a>
+		<!-- Empty spacer for vertical centering balance -->
+		<div></div>
 
-			<div class="flex items-center gap-2">
-				<!-- Dark mode switch -->
-				<button
-					type="button"
-					onclick={switchDarkMode}
-					class="p-2 rounded-xl bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-xs hover:shadow-md hover:scale-105 active:scale-95 transition-all text-amber-500 cursor-pointer"
-					title={darkMode ? 'Prepnúť na svetlý režim' : 'Prepnúť na tmavý režim'}
-					aria-label="Prepnúť režim"
-				>
-					{#if darkMode}
-						<svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-						</svg>
-					{:else}
-						<svg class="w-5 h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-						</svg>
-					{/if}
-				</button>
+		<!-- Main PIN card container -->
+		<main class="w-full max-w-md my-auto">
+			<!-- Header priamo nad rámčekom: vľavo originálne logo a názov z hlavnej stránky, vpravo jazyk a režim -->
+			<div class="w-full flex items-center justify-between gap-2 mb-3.5 px-1">
+				<!-- Vľavo: originálne logo aj text z hlavnej stránky -->
+				<a href="/" class="group flex items-center hover:opacity-90 transition-opacity cursor-pointer">
+					<BrandLogo size="md" showBadge={true} />
+				</a>
 
-				<!-- Language toggle SK / GB -->
-				<div class="flex items-center gap-1.5 p-1 rounded-2xl bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-xs">
+				<!-- Vpravo: prepínač režimu + zmena jazyka blízko nad rámčekom -->
+				<div class="flex items-center gap-1.5 sm:gap-2">
+					<!-- Dark mode switch -->
 					<button
 						type="button"
-						class="px-2.5 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer {currentLang === 'sk' ? 'bg-emerald-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-700/60'}"
-						onclick={() => setLang('sk')}
-						title="Slovenčina"
+						onclick={switchDarkMode}
+						class="p-2 rounded-xl bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-xs hover:shadow-md hover:scale-105 active:scale-95 transition-all text-amber-500 cursor-pointer"
+						title={darkMode ? 'Prepnúť na svetlý režim' : 'Prepnúť na tmavý režim'}
+						aria-label="Prepnúť režim"
 					>
-						<svg class="w-4 h-3 rounded-xs shadow-2xs shrink-0" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
-							<rect width="900" height="600" fill="#ee1c25"/>
-							<rect width="900" height="400" fill="#0b4ea2"/>
-							<rect width="900" height="200" fill="#ffffff"/>
-							<g transform="translate(240, 300) scale(1.15)">
-								<path d="M-80,-140 h160 v140 a80,80 0 0 1 -160,0 z" fill="#ee1c25" stroke="#ffffff" stroke-width="12"/>
-								<path d="M-72,25 a40,40 0 0 1 48,-20 a40,40 0 0 1 48,0 a40,40 0 0 1 48,20 z" fill="#0b4ea2"/>
-								<path d="M-24,5 a40,40 0 0 1 48,0 v20 h-48 z" fill="#0b4ea2"/>
-								<path d="M-6,-90 h12 v110 h-12 z M-36,-65 h72 v12 h-72 z M-26,-35 h52 v12 h-52 z" fill="#ffffff"/>
-							</g>
-						</svg>
-						<span>SK</span>
+						{#if darkMode}
+							<svg class="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+							</svg>
+						{:else}
+							<svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+							</svg>
+						{/if}
 					</button>
-					<button
-						type="button"
-						class="px-2.5 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer {currentLang === 'en' ? 'bg-emerald-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-700/60'}"
-						onclick={() => setLang('en')}
-						title="English"
-					>
-						<svg class="w-4 h-3 rounded-xs shadow-2xs shrink-0 overflow-hidden" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
-							<rect width="60" height="30" fill="#012169"/>
-							<path d="M0 0 L60 30 M60 0 L0 30" stroke="#ffffff" stroke-width="6"/>
-							<path d="M0 0 L30 15 M60 30 L30 15 M60 0 L30 15 M0 30 L30 15" stroke="#c8102e" stroke-width="2"/>
-							<path d="M30 0 v30 M0 15 h60" stroke="#ffffff" stroke-width="10"/>
-							<path d="M30 0 v30 M0 15 h60" stroke="#c8102e" stroke-width="6"/>
-						</svg>
-						<span>GB</span>
-					</button>
+
+					<!-- Language toggle SK / GB -->
+					<div class="flex items-center gap-1 p-1 rounded-2xl bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-xs">
+						<button
+							type="button"
+							class="px-2.5 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer {currentLang === 'sk' ? 'bg-emerald-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-700/60'}"
+							onclick={() => setLang('sk')}
+							title="Slovenčina"
+						>
+							<svg class="w-4 h-3 rounded-xs shadow-2xs shrink-0" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+								<rect width="900" height="600" fill="#ee1c25"/>
+								<rect width="900" height="400" fill="#0b4ea2"/>
+								<rect width="900" height="200" fill="#ffffff"/>
+								<g transform="translate(240, 300) scale(1.15)">
+									<path d="M-80,-140 h160 v140 a80,80 0 0 1 -160,0 z" fill="#ee1c25" stroke="#ffffff" stroke-width="12"/>
+									<path d="M-72,25 a40,40 0 0 1 48,-20 a40,40 0 0 1 48,0 a40,40 0 0 1 48,20 z" fill="#0b4ea2"/>
+									<path d="M-24,5 a40,40 0 0 1 48,0 v20 h-48 z" fill="#0b4ea2"/>
+									<path d="M-6,-90 h12 v110 h-12 z M-36,-65 h72 v12 h-72 z M-26,-35 h52 v12 h-52 z" fill="#ffffff"/>
+								</g>
+							</svg>
+							<span>SK</span>
+						</button>
+						<button
+							type="button"
+							class="px-2.5 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer {currentLang === 'en' ? 'bg-emerald-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-700/60'}"
+							onclick={() => setLang('en')}
+							title="English"
+						>
+							<svg class="w-4 h-3 rounded-xs shadow-2xs shrink-0 overflow-hidden" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
+								<rect width="60" height="30" fill="#012169"/>
+								<path d="M0 0 L60 30 M60 0 L0 30" stroke="#ffffff" stroke-width="6"/>
+								<path d="M0 0 L30 15 M60 30 L30 15 M60 0 L30 15 M0 30 L30 15" stroke="#c8102e" stroke-width="2"/>
+								<path d="M30 0 v30 M0 15 h60" stroke="#ffffff" stroke-width="10"/>
+								<path d="M30 0 v30 M0 15 h60" stroke="#c8102e" stroke-width="6"/>
+							</svg>
+							<span>GB</span>
+						</button>
+					</div>
 				</div>
 			</div>
-		</header>
 
-		<!-- Main PIN card -->
-		<main class="my-auto w-full max-w-md">
 			<form
 				onsubmit={(e) => { e.preventDefault(); if (game_pin.length === 6) set_game_pin(); }}
 				class="relative overflow-hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl p-8 sm:p-10 rounded-3xl shadow-2xl border-2 border-slate-200/90 dark:border-slate-800 transition-all text-center flex flex-col items-center"
@@ -372,31 +377,52 @@ SPDX-License-Identifier: MPL-2.0
 {:else}
 	<div class="min-h-screen w-screen flex flex-col justify-between items-center bg-gradient-to-br from-slate-100 via-emerald-50/30 to-slate-200 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 px-4 py-6 transition-colors selection:bg-emerald-500 selection:text-white">
 		
-		<!-- Header with PIN badge and change button -->
-		<header class="w-full max-w-md flex items-center justify-between px-2 mb-2">
-			<a href="/" class="flex items-center gap-2 group cursor-pointer">
-				<span class="text-xl font-black tracking-tight text-slate-800 dark:text-slate-100 group-hover:text-emerald-500 transition-colors">ClassQuiz2</span>
-				<span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-500/10 dark:bg-emerald-400/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">{APP_VERSION}</span>
-			</a>
-
-			<div class="flex items-center gap-2">
-				<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-xs">
-					<span class="text-xs font-semibold text-slate-500 dark:text-slate-400">PIN:</span>
-					<span class="font-mono font-black text-emerald-600 dark:text-emerald-400">{game_pin}</span>
-					<button
-						type="button"
-						onclick={() => { game_pin = ''; }}
-						class="text-xs text-slate-400 hover:text-red-500 underline ml-1 cursor-pointer"
-						title={$t('words.change', { default: 'Zmeniť PIN' })}
-					>
-						{$t('words.change', { default: 'Zmeniť' })}
-					</button>
-				</div>
-			</div>
-		</header>
+		<!-- Empty spacer for vertical balance -->
+		<div></div>
 
 		<!-- Card with Avatar Selection & Nickname -->
-		<main class="my-auto w-full max-w-md">
+		<main class="w-full max-w-md my-auto">
+			<!-- Header priamo nad rámčekom: vľavo originálne logo a názov z hlavnej stránky, vpravo PIN a prepínač -->
+			<div class="w-full flex items-center justify-between gap-2 mb-3.5 px-1">
+				<a href="/" class="group flex items-center hover:opacity-90 transition-opacity cursor-pointer">
+					<BrandLogo size="md" showBadge={true} />
+				</a>
+
+				<div class="flex items-center gap-2">
+					<!-- Dark mode switch -->
+					<button
+						type="button"
+						onclick={switchDarkMode}
+						class="p-2 rounded-xl bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-xs hover:shadow-md hover:scale-105 active:scale-95 transition-all text-amber-500 cursor-pointer"
+						title={darkMode ? 'Prepnúť na svetlý režim' : 'Prepnúť na tmavý režim'}
+						aria-label="Prepnúť režim"
+					>
+						{#if darkMode}
+							<svg class="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+							</svg>
+						{:else}
+							<svg class="w-4 h-4 sm:w-5 sm:h-5 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+							</svg>
+						{/if}
+					</button>
+
+					<div class="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-xs">
+						<span class="text-xs font-semibold text-slate-500 dark:text-slate-400">PIN:</span>
+						<span class="font-mono font-black text-emerald-600 dark:text-emerald-400">{game_pin}</span>
+						<button
+							type="button"
+							onclick={() => { game_pin = ''; }}
+							class="text-xs text-slate-400 hover:text-red-500 underline ml-1 cursor-pointer"
+							title={$t('words.change', { default: 'Zmeniť PIN' })}
+						>
+							{$t('words.change', { default: 'Zmeniť' })}
+						</button>
+					</div>
+				</div>
+			</div>
+
 			<div class="relative overflow-hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-3xl shadow-2xl p-6 sm:p-8 border-2 border-slate-200/90 dark:border-slate-800 transition-all">
 				<div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-400 to-indigo-500"></div>
 
