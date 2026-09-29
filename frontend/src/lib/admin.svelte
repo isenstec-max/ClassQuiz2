@@ -17,6 +17,7 @@ SPDX-License-Identifier: MPL-2.0
 	import AnimalAvatar from '$lib/components/AnimalAvatar.svelte';
 	import AnswerShape from '$lib/components/AnswerShape.svelte';
 	import { parsePlayer } from '$lib/avatars';
+	import { resetLightning } from '$lib/play/admin/lightning_store';
 
 	import { DEFAULT_ANSWER_COLORS } from '$lib/answer_theme';
 
@@ -257,6 +258,7 @@ SPDX-License-Identifier: MPL-2.0
 					<button
 						type="button"
 						onclick={() => {
+							resetLightning(game_pin);
 							socket_game_controls.set_question_number(0);
 						}}
 						class="group flex items-center gap-3.5 px-7 sm:px-9 py-2.5 sm:py-3 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-white font-black shadow-xl shadow-emerald-500/30 border-2 border-emerald-400/70 ring-4 ring-emerald-500/20 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"

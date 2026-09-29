@@ -13,6 +13,7 @@ SPDX-License-Identifier: MPL-2.0
 	import JoinInfoCard from '$lib/play/admin/JoinInfoCard.svelte';
 	import { parsePlayer } from '$lib/avatars';
 	import { DEFAULT_ANSWER_COLORS } from '$lib/answer_theme';
+	import { recordRoundWinner, loadLightningState } from '$lib/play/admin/lightning_store';
 
 	const { t } = getLocalization();
 
@@ -78,6 +79,13 @@ SPDX-License-Identifier: MPL-2.0
 			}
 		}
 		return ret_data;
+	});
+
+	let lightningCounts = $derived.by(() => {
+		if (parsedNewData && parsedNewData.length > 0 && question_index !== undefined) {
+			return recordRoundWinner(game_pin, question_index, parsedNewData);
+		}
+		return loadLightningState(game_pin).counts;
 	});
 
 	// Zjednotenie a zoradenie všetkých účastníkov
@@ -311,29 +319,57 @@ SPDX-License-Identifier: MPL-2.0
 				{:else}
 					{#each allPlayerUsernames as player, i (player)}
 						{@const parsed = parsePlayer(player)}
+						{@const boltCount = lightningCounts[player] || 0}
 						<div
-							class="flex items-center justify-between p-2.5 rounded-xl bg-slate-800/70 hover:bg-slate-800 transition-all border border-slate-700/40"
+							class="flex items-center justify-between p-3 rounded-2xl bg-slate-800/80 hover:bg-slate-800 transition-all border border-slate-700/50 shadow-sm"
 						>
-							<div class="flex items-center gap-2.5 min-w-0">
-								<span class="text-xs font-mono font-bold text-slate-400 w-4 text-center">{i + 1}.</span>
-								<AnimalAvatar avatarId={parsed.avatarId} size={30} class="shrink-0 shadow-sm" />
-								<span class="font-bold text-sm md:text-base text-gray-100 truncate">{parsed.name}</span>
+							<!-- Vľavo: Poradie, Avatar a Meno (s bleskami nad menom zľava doprava) -->
+							<div class="flex items-center gap-2.5 min-w-0 flex-1 mr-2">
+								<span class="text-xs font-mono font-bold text-slate-400 w-5 text-center shrink-0">{i + 1}.</span>
+								<div class="shrink-0 relative">
+									<AnimalAvatar avatarId={parsed.avatarId} size={36} class="shadow-sm" />
+								</div>
+
+								<div class="flex flex-col justify-center min-w-0 flex-1">
+									<!-- Žlté blesky: hore za ikonku nad menom postupne zľava doprava -->
+									{#if boltCount > 0}
+										<div class="flex items-center gap-0.5 mb-0.5" title="Najrýchlejšia správna odpoveď: {boltCount}x">
+											{#each Array(boltCount) as _}
+												<svg class="w-3.5 h-3.5 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)] shrink-0" viewBox="0 0 24 24">
+													<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
+												</svg>
+											{/each}
+										</div>
+									{/if}
+									<span class="font-bold text-sm md:text-base text-gray-100 truncate leading-tight">
+										{parsed.name}
+									</span>
+								</div>
 							</div>
 
-							<div class="flex items-center gap-2 shrink-0">
+							<!-- Vpravo: Body a Čas v sekundách pod bodmi s vysokým kontrastom -->
+							<div class="flex flex-col items-end justify-center shrink-0">
+								<!-- Horný riadok: Body (+získané body a celkové skóre) -->
+								<div class="flex items-center gap-1.5">
+									{#if show_new_score_clicked && (score_by_username[player] ?? 0) > 0}
+										<span class="text-xs font-black text-emerald-400 bg-emerald-500/25 px-1.5 py-0.5 rounded-md border border-emerald-500/30">
+											+{score_by_username[player]}
+										</span>
+									{/if}
+									<span class="font-black font-mono text-sm md:text-base text-white tracking-tight">
+										{formatPoints(data?.[player] || 0)}
+									</span>
+								</div>
+
+								<!-- Spodný riadok: Čas v sekundách pod bodmi s vysokým kontrastom -->
 								{#if time_by_username[player] !== undefined}
-									<span class="text-[11px] font-mono text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700/60" title="Čas odpovede">
-										{(time_by_username[player] / 1000).toFixed(2)}s
-									</span>
+									<div class="mt-1" title="Čas odpovede: {(time_by_username[player] / 1000).toFixed(2)}s">
+										<span class="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-amber-300 bg-slate-950/90 border border-amber-400/50 px-2 py-0.5 rounded-md shadow-sm">
+											<span class="text-amber-400 text-[10px]">⏱</span>
+											<span>{(time_by_username[player] / 1000).toFixed(2)}s</span>
+										</span>
+									</div>
 								{/if}
-								{#if show_new_score_clicked && (score_by_username[player] ?? 0) > 0}
-									<span class="text-xs font-extrabold text-emerald-400 bg-emerald-500/20 px-1.5 py-0.5 rounded transition-all">
-										+{score_by_username[player]}
-									</span>
-								{/if}
-								<span class="font-extrabold font-mono text-sm md:text-base text-white">
-									{formatPoints(data?.[player] || 0)}
-								</span>
 							</div>
 						</div>
 					{/each}

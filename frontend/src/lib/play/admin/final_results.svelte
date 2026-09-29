@@ -98,6 +98,25 @@ SPDX-License-Identifier: MPL-2.0
 		return map;
 	});
 
+	let playerLightning = $derived.by(() => {
+		const map: Record<string, number> = {};
+		if (final_results && typeof final_results === 'object') {
+			for (const qAnswers of Object.values(final_results)) {
+				if (Array.isArray(qAnswers)) {
+					const correct = qAnswers.filter((a) => a && a.username && a.right && Number(a.time_taken) > 0);
+					if (correct.length > 0) {
+						const minTime = Math.min(...correct.map((a) => Number(a.time_taken)));
+						const fastest = correct.filter((a) => Number(a.time_taken) === minTime);
+						for (const f of fastest) {
+							map[f.username] = (map[f.username] || 0) + 1;
+						}
+					}
+				}
+			}
+		}
+		return map;
+	});
+
 	let player_names = $derived.by(() => {
 		return Object.keys(resolvedScores).sort((a, b) => {
 			const scoreA = resolvedScores[a] || 0;
@@ -241,9 +260,20 @@ SPDX-License-Identifier: MPL-2.0
 											#{rank}
 										</span>
 										<AnimalAvatar avatarId={parsed.avatarId} size={36} class="shrink-0 drop-shadow" />
-										<span class="font-extrabold text-sm sm:text-base text-white truncate max-w-[110px] sm:max-w-[130px]">
-											{parsed.name}
-										</span>
+										<div class="flex flex-col justify-center min-w-0 flex-1">
+											{#if (playerLightning[player] ?? 0) > 0}
+												<div class="flex items-center gap-0.5 mb-0.5" title="Najrýchlejšia správna odpoveď: {playerLightning[player]}x">
+													{#each Array(playerLightning[player]) as _}
+														<svg class="w-3 h-3 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)] shrink-0" viewBox="0 0 24 24">
+															<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
+														</svg>
+													{/each}
+												</div>
+											{/if}
+											<span class="font-extrabold text-sm sm:text-base text-white truncate max-w-[110px] sm:max-w-[130px]">
+												{parsed.name}
+											</span>
+										</div>
 									</div>
 									<div class="flex items-center gap-3 shrink-0">
 										{#if acc}
@@ -299,6 +329,17 @@ SPDX-License-Identifier: MPL-2.0
 									2
 								</div>
 
+								<!-- Blesky hráča -->
+								{#if (playerLightning[player] ?? 0) > 0}
+									<div class="flex items-center justify-center gap-0.5 mb-1" title="Najrýchlejšia správna odpoveď: {playerLightning[player]}x">
+										{#each Array(playerLightning[player]) as _}
+											<svg class="w-4 h-4 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)]" viewBox="0 0 24 24">
+												<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
+											</svg>
+										{/each}
+									</div>
+								{/if}
+
 								<!-- Meno hráča -->
 								<h3 class="font-black text-xl md:text-2xl text-white tracking-wide truncate w-full px-2 drop-shadow">
 									{parsed.name}
@@ -352,6 +393,17 @@ SPDX-License-Identifier: MPL-2.0
 									1
 								</div>
 
+								<!-- Blesky víťaza -->
+								{#if (playerLightning[player] ?? 0) > 0}
+									<div class="flex items-center justify-center gap-0.5 mb-1" title="Najrýchlejšia správna odpoveď: {playerLightning[player]}x">
+										{#each Array(playerLightning[player]) as _}
+											<svg class="w-4 h-4 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)]" viewBox="0 0 24 24">
+												<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
+											</svg>
+										{/each}
+									</div>
+								{/if}
+
 								<!-- Meno víťaza -->
 								<h3 class="font-black text-2xl md:text-3xl text-white tracking-wide truncate w-full px-2 drop-shadow-md">
 									{parsed.name}
@@ -403,6 +455,17 @@ SPDX-License-Identifier: MPL-2.0
 								<div class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-tr from-amber-700 via-amber-500 to-orange-400 shadow-xl shadow-amber-800/40 border-4 border-amber-300/80 flex items-center justify-center text-amber-950 font-black text-xl md:text-2xl my-2">
 									3
 								</div>
+
+								<!-- Blesky hráča -->
+								{#if (playerLightning[player] ?? 0) > 0}
+									<div class="flex items-center justify-center gap-0.5 mb-1" title="Najrýchlejšia správna odpoveď: {playerLightning[player]}x">
+										{#each Array(playerLightning[player]) as _}
+											<svg class="w-4 h-4 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)]" viewBox="0 0 24 24">
+												<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
+											</svg>
+										{/each}
+									</div>
+								{/if}
 
 								<!-- Meno hráča -->
 								<h3 class="font-black text-lg md:text-xl text-white tracking-wide truncate w-full px-2 drop-shadow">
@@ -462,9 +525,20 @@ SPDX-License-Identifier: MPL-2.0
 											#{rank}
 										</span>
 										<AnimalAvatar avatarId={parsed.avatarId} size={36} class="shrink-0 drop-shadow" />
-										<span class="font-extrabold text-sm sm:text-base text-white truncate max-w-[110px] sm:max-w-[130px]">
-											{parsed.name}
-										</span>
+										<div class="flex flex-col justify-center min-w-0 flex-1">
+											{#if (playerLightning[player] ?? 0) > 0}
+												<div class="flex items-center gap-0.5 mb-0.5" title="Najrýchlejšia správna odpoveď: {playerLightning[player]}x">
+													{#each Array(playerLightning[player]) as _}
+														<svg class="w-3 h-3 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)] shrink-0" viewBox="0 0 24 24">
+															<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
+														</svg>
+													{/each}
+												</div>
+											{/if}
+											<span class="font-extrabold text-sm sm:text-base text-white truncate max-w-[110px] sm:max-w-[130px]">
+												{parsed.name}
+											</span>
+										</div>
 									</div>
 									<div class="flex items-center gap-3 shrink-0">
 										{#if acc}
