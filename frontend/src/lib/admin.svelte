@@ -125,8 +125,9 @@ SPDX-License-Identifier: MPL-2.0
 
 <div
 	class="w-full h-full min-h-screen"
-	class:pt-14={game_state.control_visible && game_state.selected_question >= 0}
-	class:md:pt-16={game_state.control_visible && game_state.selected_question >= 0}
+	class:pt-20={game_state.control_visible && game_state.selected_question >= 0}
+	class:sm:pt-24={game_state.control_visible && game_state.selected_question >= 0}
+	class:md:pt-28={game_state.control_visible && game_state.selected_question >= 0}
 	class:pt-6={!game_state.control_visible || game_state.selected_question < 0}
 >
 	{#if game_state.timer_res !== undefined && !final_results_clicked && !game_state.question_results}

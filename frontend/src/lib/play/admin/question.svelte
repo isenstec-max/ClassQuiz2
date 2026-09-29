@@ -14,6 +14,8 @@ SPDX-License-Identifier: MPL-2.0
 	import AnswerShape from '$lib/components/AnswerShape.svelte';
 	import { getLocalization } from '$lib/i18n';
 	import JoinInfoCard from '$lib/play/admin/JoinInfoCard.svelte';
+	import { fade, scale } from 'svelte/transition';
+	import { browser } from '$app/environment';
 
 	interface Props {
 		quiz_data: QuizData;
@@ -63,6 +65,28 @@ SPDX-License-Identifier: MPL-2.0
 		if (time_ratio > 0.5) return '#10b981'; // Zelená (green > 50%)
 		if (time_ratio > 0.25) return '#f59e0b'; // Oranžová v polke (orange 25-50%)
 		return '#ef4444'; // Červená v štvrtine (red <= 25%)
+	});
+
+	let is_qr_modal_open = $state(false);
+
+	let formattedPin = $derived.by(() => {
+		if (!game_pin) return '';
+		const clean = game_pin.replace(/\s+/g, '');
+		if (clean.length === 6) {
+			return `${clean.slice(0, 3)} ${clean.slice(3)}`;
+		}
+		if (clean.length === 8) {
+			return `${clean.slice(0, 4)} ${clean.slice(4)}`;
+		}
+		return clean;
+	});
+
+	let joinUrl = $derived.by(() => {
+		if (!browser) return 'cquiz.de';
+		if (window.location.host === 'ClassQuiz2.de' || window.location.host === 'classquiz.de') {
+			return 'cquiz.de';
+		}
+		return `${window.location.host}/play`;
 	});
 </script>
 
@@ -165,7 +189,94 @@ SPDX-License-Identifier: MPL-2.0
 {/if}
 
 {#if game_pin}
-	<div class="fixed left-4 sm:left-6 top-4 sm:top-6 z-30 hidden lg:block">
+	<!-- Pre ultra-široké obrazovky (min. 1680px): plná karta vľavo zarovnaná s obsahom -->
+	<div class="fixed left-4 xl:left-6 top-24 xl:top-28 z-30 hidden min-[1680px]:block">
 		<JoinInfoCard {game_pin} compact={false} class="w-56 xl:w-64 shadow-2xl" />
 	</div>
+
+	<!-- Pre štandardné a menšie okná / obrazovky (< 1680px): kompaktný responzívny odznak PIN & QR vľavo hore -->
+	<div class="fixed left-3 sm:left-4 top-3 sm:top-4 z-40 min-[1680px]:hidden flex items-center">
+		<button
+			type="button"
+			onclick={() => (is_qr_modal_open = true)}
+			class="flex items-center gap-1.5 sm:gap-2.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-2xl bg-slate-900/95 dark:bg-black/95 text-white border border-slate-700/80 shadow-xl backdrop-blur-xl hover:border-amber-400 hover:scale-105 active:scale-95 transition-all cursor-pointer group ring-2 ring-white/10"
+			title="Kliknite pre zobrazenie QR kódu"
+		>
+			<span class="relative flex h-2.5 w-2.5 shrink-0">
+				<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+				<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+			</span>
+			<div class="flex items-center gap-1 font-mono font-black text-amber-400 text-xs sm:text-sm tracking-wider">
+				<span class="text-[10px] uppercase font-bold text-amber-300/80 font-sans tracking-tight">PIN</span>
+				<span>{formattedPin}</span>
+			</div>
+			<span class="inline-flex items-center gap-1 text-[10px] sm:text-xs font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/20 px-1.5 sm:px-2 py-0.5 rounded-lg border border-emerald-400/30 group-hover:bg-emerald-500/30 shrink-0">
+				<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+				</svg>
+				QR
+			</span>
+		</button>
+	</div>
+
+	<!-- Modal pre zobrazenie veľkého QR kódu po kliknutí -->
+	{#if is_qr_modal_open}
+		<div
+			class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col items-center justify-center p-4 sm:p-6 cursor-pointer select-none"
+			transition:fade={{ duration: 150 }}
+			onclick={() => (is_qr_modal_open = false)}
+			role="button"
+			tabindex="0"
+			onkeydown={(e) => e.key === 'Escape' && (is_qr_modal_open = false)}
+		>
+			<div
+				class="bg-slate-900 border-2 border-emerald-500/50 rounded-3xl p-6 sm:p-8 max-w-sm sm:max-w-md w-full flex flex-col items-center text-center shadow-2xl relative ring-4 ring-emerald-500/20"
+				transition:scale={{ duration: 200, start: 0.9 }}
+				onclick={(e) => e.stopPropagation()}
+				role="presentation"
+			>
+				<button
+					type="button"
+					class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-full hover:bg-slate-800 transition-colors cursor-pointer"
+					onclick={() => (is_qr_modal_open = false)}
+					aria-label="Zatvoriť"
+				>
+					<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+					</svg>
+				</button>
+
+				<div class="flex items-center gap-1.5 mb-2">
+					<span class="relative flex h-2.5 w-2.5">
+						<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+						<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+					</span>
+					<span class="text-xs uppercase font-extrabold tracking-widest text-emerald-400">
+						Pripojiť sa do kvízu
+					</span>
+				</div>
+
+				<div class="bg-white p-3.5 rounded-2xl shadow-2xl my-2">
+					<img
+						src="/api/v1/utils/qr/{game_pin}"
+						alt="QR kód pre pripojenie"
+						class="w-56 h-56 sm:w-64 sm:h-64 object-contain block rounded-xl"
+					/>
+				</div>
+
+				<div class="mt-2 flex flex-col items-center">
+					<span class="text-xs uppercase font-extrabold text-amber-300 tracking-wider">
+						PIN KÓD HRY
+					</span>
+					<div class="text-4xl sm:text-5xl font-black font-mono tracking-widest text-amber-400 mt-1">
+						{formattedPin}
+					</div>
+				</div>
+
+				<div class="mt-3 text-xs sm:text-sm text-slate-300">
+					<span>Otvorte <span class="font-bold text-white underline decoration-emerald-400">{joinUrl}</span> alebo načítajte QR kód</span>
+				</div>
+			</div>
+		</div>
+	{/if}
 {/if}
