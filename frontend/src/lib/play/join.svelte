@@ -248,11 +248,7 @@ SPDX-License-Identifier: MPL-2.0
 					{#each ANIMAL_AVATARS as avatar}
 						<button
 							type="button"
-							class="p-1 rounded-full transition-all flex items-center justify-center relative hover:scale-115 active:scale-95 cursor-pointer"
-							class:ring-3={selectedAvatar === avatar.id}
-							class:ring-emerald-500={selectedAvatar === avatar.id}
-							class:scale-105={selectedAvatar === avatar.id}
-							class:bg-emerald-500/20={selectedAvatar === avatar.id}
+							class="p-1 rounded-full transition-all flex items-center justify-center relative hover:scale-115 active:scale-95 cursor-pointer {selectedAvatar === avatar.id ? 'ring-4 ring-emerald-500 scale-105 bg-emerald-100 dark:bg-emerald-900/40' : 'hover:bg-gray-200 dark:hover:bg-gray-700/50'}"
 							onclick={() => {
 								selectedAvatar = avatar.id;
 							}}
