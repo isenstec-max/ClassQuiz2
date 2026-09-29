@@ -101,15 +101,13 @@ SPDX-License-Identifier: MPL-2.0
 		<!-- Right Card: Coral/Orange tilted right (+24deg) -->
 		<rect x="52" y="24" width="34" height="44" rx="8" transform="rotate(24 69 46)" fill="url(#cq2-card-coral)" />
 
-		<!-- Outer White Halo / Border around Q -->
-		<circle cx="58" cy="56" r="23" stroke="white" stroke-width="18" fill="none" />
-		<path d="M 62 60 L 80 78" stroke="white" stroke-width="18" stroke-linecap="round" />
+		<!-- Outer White Halo / Border around CQ -->
+		<path d="M 76.5 43.5 A 23 23 0 1 0 78.5 65" stroke="white" stroke-width="18" stroke-linecap="round" fill="none" />
+		<path d="M 64 62 L 81 79" stroke="white" stroke-width="18" stroke-linecap="round" />
 
-		<!-- Gradient Q Ring -->
-		<circle cx="58" cy="56" r="23" stroke="url(#cq2-q-fill)" stroke-width="12" fill="none" />
-
-		<!-- Gradient Q Tail -->
-		<path d="M 62 60 L 80 78" stroke="url(#cq2-q-fill)" stroke-width="12" stroke-linecap="round" />
+		<!-- Gradient CQ Monogram (C arc + Q tail) -->
+		<path d="M 76.5 43.5 A 23 23 0 1 0 78.5 65" stroke="url(#cq2-q-fill)" stroke-width="12" stroke-linecap="round" fill="none" />
+		<path d="M 64 62 L 81 79" stroke="url(#cq2-q-fill)" stroke-width="12" stroke-linecap="round" />
 	</svg>
 
 	<!-- Brand Typography: ClassQuiz + superscript 2 -->
