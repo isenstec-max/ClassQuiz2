@@ -53,7 +53,8 @@ SPDX-License-Identifier: MPL-2.0
 	const setLang = (code: string) => {
 		if (browser) {
 			localStorage.setItem('language', code);
-			window.location.reload();
+			const target = $signedIn ? '/dashboard' : '/search?q=';
+			window.location.href = target;
 		}
 	};
 </script>

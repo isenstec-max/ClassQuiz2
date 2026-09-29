@@ -257,7 +257,18 @@
         "podium_title": "Stupne víťazov",
         "other_places": "Ďalšie umiestnenia",
         "your_result": "Tvoj výsledok",
-        "placement": "Umiestnenie"
+        "placement": "Umiestnenie",
+        "accuracy": "Úspešnosť",
+        "correct_answers": "Správne odpovede",
+        "incorrect_answers": "Nesprávne odpovede",
+        "average_score": "Priemerné skóre",
+        "question_count": "Počet otázok",
+        "hardest_question": "Najťažšia otázka",
+        "easiest_question": "Najľahšia otázka",
+        "top_podium": "Stupne víťazov",
+        "question_breakdown": "Úspešnosť jednotlivých otázok",
+        "back_to_results": "Naspäť na zoznam",
+        "search_players": "Hľadať hráča..."
     },
     "admin_page": {
         "start_game": "Spustiť kvíz",
