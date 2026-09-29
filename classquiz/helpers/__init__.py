@@ -8,11 +8,12 @@ import uuid
 from datetime import datetime
 from typing import BinaryIO, Any
 
+import os
 from fastapi import HTTPException
 from openpyxl import load_workbook
 
 
-from classquiz.db.models import Quiz, User, QuizQuestion, ABCDQuizAnswer
+from classquiz.db.models import Quiz, User, QuizQuestion, ABCDQuizAnswer, StorageItem
 import xlsxwriter
 from aiohttp import ClientSession
 from io import BytesIO
@@ -21,6 +22,76 @@ from classquiz.config import meilisearch, settings, LOGGER
 from classquiz.helpers.hashcash import check as hc_check
 
 settings = settings()
+
+
+def check_image_string(image: str) -> (bool, uuid.UUID | None):
+    # Valid formats: {uuid} and {uuid}--{uuid}
+    try:
+        parsed_uuid = uuid.UUID(image)
+        return True, parsed_uuid
+    except ValueError:
+        pass
+
+    split_image = image.split("--")
+    if len(split_image) != 2:
+        return False, None
+
+    try:
+        uuid.UUID(split_image[0])
+        uuid.UUID(split_image[1])
+        return True, None
+    except ValueError:
+        return False, None
+
+
+async def get_storage_file_bytes(file_identifier: str | None) -> bytes | None:
+    if not file_identifier:
+        return None
+    try:
+        # If it's a direct URL
+        if str(file_identifier).startswith(("http://", "https://")):
+            async with ClientSession() as session:
+                async with session.get(str(file_identifier), timeout=5) as resp:
+                    if resp.status == 200:
+                        return await resp.read()
+            return None
+
+        # Resolve StorageItem if UUID or image_string
+        target_name = str(file_identifier)
+        checked = check_image_string(str(file_identifier))
+        if checked[0] and checked[1] is not None:
+            item = await StorageItem.objects.get_or_none(id=checked[1])
+            if item is not None:
+                target_name = item.storage_path or item.id.hex
+
+        # Check local disk directly if local backend
+        storage_path = getattr(settings, "storage_path", None) or "/app/data"
+        if getattr(settings, "storage_backend", "local") == "local":
+            full_path = os.path.join(storage_path, str(target_name))
+            if os.path.isfile(full_path):
+                with open(full_path, "rb") as f:
+                    return f.read()
+
+        # Fallback candidate URLs (internal container ports first)
+        candidate_urls = [
+            f"http://127.0.0.1:80/api/v1/storage/download/{file_identifier}",
+            f"http://localhost:80/api/v1/storage/download/{file_identifier}",
+            f"http://api:80/api/v1/storage/download/{file_identifier}",
+        ]
+        if getattr(settings, "root_address", None):
+            candidate_urls.append(f"{settings.root_address}/api/v1/storage/download/{file_identifier}")
+
+        for url in candidate_urls:
+            try:
+                async with ClientSession() as session:
+                    async with session.get(url, timeout=2) as resp:
+                        if resp.status == 200:
+                            return await resp.read()
+            except Exception:
+                continue
+    except Exception as e:
+        LOGGER.warning(f"Error reading storage file {file_identifier}: {e}")
+    return None
 
 
 async def get_meili_data(quiz: Quiz) -> dict[str, Any]:
@@ -72,20 +143,17 @@ async def generate_spreadsheet(
         _ = worksheet.write(i + 1, 0, question["question"])
         _ = worksheet.write(i + 1, 1, question["time"])
 
-        try:
-            async with (
-                ClientSession() as session,
-                session.get(f"{settings.root_address}/api/v1/storage/download/{question['image']}") as response,
-            ):
-                content_type = response.headers.get("Content-Type")
-                if content_type is not None and "image" in content_type:
-                    img_data = BytesIO(await response.read())
-                    _ = worksheet.insert_image(i + 1, 2, question["image"], {"image_data": img_data})
+        if question.get("image"):
+            try:
+                raw_img = await get_storage_file_bytes(question["image"])
+                if raw_img:
+                    img_data = BytesIO(raw_img)
                     image = Image.open(img_data)
-                    _ = worksheet.set_row(i + 1, image.height)
-                    _ = worksheet.set_column(2, 2, image.width)
-        except TypeError:
-            pass
+                    _ = worksheet.insert_image(i + 1, 2, str(question["image"]), {"image_data": img_data})
+                    _ = worksheet.set_row(i + 1, min(image.height, 250))
+                    _ = worksheet.set_column(2, 2, min(image.width, 250))
+            except Exception as e:
+                LOGGER.warning(f"Could not embed image for question {i}: {e}")
         answer_amount = len(answer_data)
         correct_answers = 0
         wrong_answers = 0
@@ -254,25 +322,6 @@ def check_hashcash(data: str, input_data: str, claim_in: str | None = "19") -> b
     some_error = [version == "1", claim == claim_in, res == input_data, ext == ""]
     return all(el is True for el in some_error)
 
-
-def check_image_string(image: str) -> (bool, uuid.UUID | None):
-    # Valid formats: {uuid} and {uuid}--{uuid}
-    try:
-        parsed_uuid = uuid.UUID(image)
-        return True, parsed_uuid
-    except ValueError:
-        pass
-
-    split_image = image.split("--")
-    if len(split_image) != 2:
-        return False, None
-
-    try:
-        uuid.UUID(split_image[0])
-        uuid.UUID(split_image[1])
-        return True, None
-    except ValueError:
-        return False, None
 
 
 def extract_image_ids_from_quiz(quiz: Quiz) -> list[str | uuid.UUID]:

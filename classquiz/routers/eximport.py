@@ -17,6 +17,7 @@ from fastapi.responses import StreamingResponse
 from classquiz.auth import get_current_user
 from classquiz.config import storage, settings, arq
 from classquiz.db.models import Quiz, User, StorageItem, QuizQuestionType, QuizQuestion
+from classquiz.helpers import get_storage_file_bytes
 import gzip
 import urllib.parse
 import magic
@@ -61,13 +62,9 @@ async def export_quiz(quiz_id: uuid.UUID, _: User = Depends(get_current_user)):
     bin_data = bin_data + quiz_delimiter
     for image_key in image_urls:
         bin_data = bin_data + image_delimiter + str(image_key).encode("utf-8") + image_index_delimiter
-        image_data = None
-        async with (
-            ClientSession() as session,
-            session.get(f"{settings.root_address}/api/v1/storage/download/{image_urls[image_key]}") as resp,
-        ):
-            image_data = await resp.read()
-        bin_data = bin_data + image_data
+        image_data = await get_storage_file_bytes(image_urls[image_key])
+        if image_data:
+            bin_data = bin_data + image_data
 
     def stream_response():
         yield bin_data
