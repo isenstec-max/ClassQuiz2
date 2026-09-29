@@ -68,8 +68,8 @@ SPDX-License-Identifier: MPL-2.0
 
 	<!-- Hlavná lobby karta -->
 	<div class="relative z-10 w-full max-w-4xl bg-slate-900/90 dark:bg-black/90 backdrop-blur-2xl rounded-3xl p-6 sm:p-8 md:p-10 border border-white/20 shadow-2xl flex flex-col items-center text-center">
-		<!-- 1. Text Join NAD QR kódom a PIN kódom -->
-		<div class="flex flex-col items-center gap-2 mb-6 w-full">
+		<!-- 1. Text Join NAD QR kódom a PIN kódom (zarovnaný od začiatku QR kódu po koniec PIN kódu) -->
+		<div class="flex flex-col items-center gap-2 mb-5 w-full">
 			<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs md:text-sm font-black tracking-widest uppercase shadow-inner">
 				<span class="relative flex h-2 w-2">
 					<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -78,17 +78,18 @@ SPDX-License-Identifier: MPL-2.0
 				<span>Pripojenie k hre</span>
 			</div>
 
-			<div class="w-full flex items-center justify-center flex-wrap sm:flex-nowrap gap-2.5 sm:gap-3.5 md:gap-5 text-base sm:text-xl md:text-2xl lg:text-[1.75rem] font-extrabold text-white tracking-tight leading-normal py-2 px-1">
-				<span class="text-white shrink-0">Prejdite na</span>
-				<span class="bg-emerald-950/70 text-emerald-300 px-4 sm:px-5 md:px-6 py-1.5 sm:py-2 rounded-2xl font-mono font-black border-2 border-emerald-400/60 shadow-xl shadow-emerald-500/20 select-all tracking-wide shrink-0 text-lg sm:text-2xl md:text-3xl text-center">
+			<!-- Riadok inštrukcie: zarovnaný do úrovne začiatku QR kódu a konca rámčeka PIN kódu -->
+			<div class="w-full max-w-[700px] flex items-center justify-between flex-wrap sm:flex-nowrap gap-2 sm:gap-4 text-base sm:text-lg md:text-xl lg:text-2xl font-extrabold text-white tracking-tight leading-normal py-1.5 px-0.5">
+				<span class="text-white shrink-0 text-left">Prejdite na</span>
+				<span class="bg-emerald-950/70 text-emerald-300 px-3.5 sm:px-4 md:px-5 py-1 sm:py-1.5 rounded-2xl font-mono font-black border-2 border-emerald-400/60 shadow-xl shadow-emerald-500/20 select-all tracking-wide shrink-0 text-lg sm:text-xl md:text-2xl text-center">
 					{joinUrl}
 				</span>
-				<span class="text-white shrink-0">alebo naskenujte QR kód</span>
+				<span class="text-white shrink-0 text-right">alebo naskenujte QR kód</span>
 			</div>
 		</div>
 
-		<!-- 2. QR kód a PIN kód VEDĽA SEBA: QR menšie naľavo, väčší text PIN kód a pod ním veľké čitateľné číslo PIN napravo -->
-		<div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 lg:gap-12 w-full my-3">
+		<!-- 2. QR kód a PIN kód VEDĽA SEBA v rovnakom max-w-[700px] kontajneri -->
+		<div class="flex flex-col md:flex-row items-center justify-between w-full max-w-[700px] gap-6 md:gap-8 my-3">
 			<!-- Naskenujte QR kód (Naľavo, menšie) -->
 			<div
 				class="relative group cursor-pointer shrink-0"
@@ -112,7 +113,7 @@ SPDX-License-Identifier: MPL-2.0
 			</div>
 
 			<!-- PIN kód (Napravo: väčší text PIN kód a pod ním číslo PIN kódu čitateľne veľké) -->
-			<div class="flex flex-col items-center justify-center">
+			<div class="flex flex-col items-center justify-center shrink-0">
 				<!-- Väčší text PIN kód -->
 				<div class="inline-flex items-center gap-2 px-5 py-2 rounded-2xl bg-slate-800/95 border-2 border-amber-400/80 text-amber-300 text-lg sm:text-xl md:text-2xl font-black tracking-widest uppercase mb-3 shadow-xl ring-2 ring-amber-400/25">
 					<span class="text-xl sm:text-2xl">🔑</span>
