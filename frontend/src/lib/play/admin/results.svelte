@@ -5,12 +5,9 @@ SPDX-License-Identifier: MPL-2.0
 -->
 
 <script lang="ts">
-	import { flip } from 'svelte/animate';
-	import { fly } from 'svelte/transition';
 	import { onMount } from 'svelte';
 	import { getLocalization } from '$lib/i18n';
 	import type { Question } from '$lib/quiz_types';
-	import { QuizQuestionType } from '$lib/quiz_types';
 	import AnimalAvatar from '$lib/components/AnimalAvatar.svelte';
 	import AnswerShape from '$lib/components/AnswerShape.svelte';
 	import JoinInfoCard from '$lib/play/admin/JoinInfoCard.svelte';
@@ -36,7 +33,7 @@ SPDX-License-Identifier: MPL-2.0
 	}
 
 	let {
-		data = $bindable(),
+		data = $bindable({}),
 		question,
 		new_data = [],
 		game_pin = '',
@@ -82,42 +79,33 @@ SPDX-License-Identifier: MPL-2.0
 			}
 		}
 		for (const k of Object.keys(data || {})) {
-			set.add(k);
+			if (k) set.add(k);
 		}
 		for (const item of parsedNewData) {
 			if (item?.username) set.add(item.username);
 		}
 		return Array.from(set).sort((a, b) => {
-			const scoreA = parseFloat(data[a]) || 0;
-			const scoreB = parseFloat(data[b]) || 0;
+			const scoreA = parseFloat(data?.[a]) || 0;
+			const scoreB = parseFloat(data?.[b]) || 0;
 			return scoreB - scoreA;
 		});
 	});
 
-	if (JSON.stringify(data) === '{}') {
-		for (const i of parsedNewData) {
-			data[i.username] = 0;
-		}
-	}
-
 	let show_new_score_clicked = $state(false);
 
 	const show_new_score = () => {
+		if (!data) data = {};
 		for (const i of allPlayerUsernames) {
-			if (isNaN(data[i])) {
-				data[i] = 0;
-			}
-			data[i] = (score_by_username[i] ?? 0) + (data[i] ?? 0);
+			const current = Number(data[i]);
+			const add = Number(score_by_username[i] ?? 0);
+			data[i] = (isNaN(current) ? 0 : current) + add;
 		}
 		for (const i of parsedNewData) {
-			if (data[i.username] === undefined) {
+			if (i?.username && data[i.username] === undefined) {
 				data[i.username] = score_by_username[i.username] ?? 0;
 			}
 		}
 		show_new_score_clicked = true;
-		setTimeout(() => {
-			data = data;
-		}, 800);
 	};
 
 	onMount(() => {
@@ -132,13 +120,14 @@ SPDX-License-Identifier: MPL-2.0
 	// Štatistiky odpovedí pre stĺpcový graf
 	let answerStats = $derived.by(() => {
 		const answers = question?.answers || [];
-		const list = parsedNewData;
+		const list = parsedNewData || [];
 		const total = list.length;
 		const counts = answers.map((ans, idx) => {
 			let c = 0;
 			for (const item of list) {
+				if (!item) continue;
 				const itemAns = normalize(item.answer);
-				const optionAns = normalize(ans.answer);
+				const optionAns = normalize(ans?.answer);
 				if (
 					itemAns === optionAns ||
 					String(item.answer) === String(idx) ||
@@ -153,15 +142,15 @@ SPDX-License-Identifier: MPL-2.0
 		const maxCount = Math.max(1, ...counts);
 		const maxBarHeightPx = 160;
 		return answers.map((ans, idx) => {
-			const count = counts[idx];
+			const count = counts[idx] || 0;
 			const percent = total > 0 ? Math.round((count / total) * 100) : 0;
 			const barHeightPx = count > 0
 				? Math.round((count / maxCount) * (maxBarHeightPx - 30)) + 30
 				: 6;
 			return {
-				answer: ans.answer,
-				right: ans.right,
-				color: ans.color ?? DEFAULT_ANSWER_COLORS[idx % DEFAULT_ANSWER_COLORS.length],
+				answer: ans?.answer || '',
+				right: !!ans?.right,
+				color: ans?.color ?? DEFAULT_ANSWER_COLORS[idx % DEFAULT_ANSWER_COLORS.length],
 				count,
 				percent,
 				barHeightPx
@@ -187,7 +176,7 @@ SPDX-License-Identifier: MPL-2.0
 			<!-- Horná lišta s textom otázky - DOKONALE VYCENTROVANÁ PRIAMO NAD STREDNÝM GRAFOM -->
 			<div class="bg-white/95 dark:bg-slate-800/95 text-gray-900 dark:text-white px-6 md:px-10 py-3.5 md:py-4 rounded-2xl shadow-xl border border-black/5 text-center w-full">
 				<h2 class="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">
-					{@html question.question}
+					{@html question?.question || ''}
 				</h2>
 			</div>
 
@@ -274,71 +263,70 @@ SPDX-License-Identifier: MPL-2.0
 		</div>
 	</div>
 
-		<!-- Vpravo: Číslo otázky a Zoznam všetkých účastníkov s bodmi -->
-		<div class="col-span-12 md:col-span-3 lg:col-span-3 xl:col-span-2 flex flex-col gap-3.5">
-			<!-- Číslo otázky vycentrované nad zoznamom účastníkov s okrasným fontom -->
-			<div class="w-full flex justify-center">
-				<div class="w-full bg-slate-900/95 dark:bg-black/90 backdrop-blur-md rounded-2xl py-3 px-3 sm:px-4 border border-slate-700/70 shadow-2xl flex items-center justify-center gap-2.5 text-center">
-					<span class="text-xs uppercase font-black tracking-widest bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-lg shrink-0">
-						Otázka
-					</span>
-					<div class="font-decorative text-2xl md:text-3xl font-black tracking-wider text-white drop-shadow flex items-center gap-1 shrink-0">
-						<span class="text-amber-300 drop-shadow">{question_index}</span>
-						<span class="text-slate-500 text-xl font-light">/</span>
-						<span class="text-slate-200">{total_questions}</span>
-					</div>
-				</div>
-			</div>
-
-			<!-- Zoznam všetkých účastníkov s bodmi -->
-			<div class="flex-1 flex flex-col bg-slate-900/95 text-white rounded-3xl p-5 shadow-2xl border border-slate-700/60 backdrop-blur-md min-h-[440px] max-h-[580px] xl:max-h-[640px]">
-				<!-- Hlavička zoznamu -->
-				<div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
-					<div class="flex items-center gap-2">
-						<span class="text-lg">👥</span>
-						<h3 class="font-extrabold text-base md:text-lg tracking-wide text-white">
-							Účastníci ({allPlayerUsernames.length})
-						</h3>
-					</div>
-					<span class="text-xs bg-emerald-500/20 text-emerald-400 font-bold px-2.5 py-1 rounded-full">
-						Body
-					</span>
-				</div>
-
-				<!-- Rolovací zoznam účastníkov -->
-				<div class="flex-1 overflow-y-auto space-y-2 pr-1.5 custom-scroll">
-					{#if allPlayerUsernames.length === 0}
-						<div class="text-center py-8 text-slate-400 text-sm">Žiadni účastníci</div>
-					{:else}
-						{#each allPlayerUsernames as player, i (player)}
-							{@const parsed = parsePlayer(player)}
-							<div
-								animate:flip={{ duration: 400 }}
-								class="flex items-center justify-between p-2.5 rounded-xl bg-slate-800/70 hover:bg-slate-800 transition-all border border-slate-700/40"
-							>
-								<div class="flex items-center gap-2.5 min-w-0">
-									<span class="text-xs font-mono font-bold text-slate-400 w-4 text-center">{i + 1}.</span>
-									<AnimalAvatar avatarId={parsed.avatarId} size={30} class="shrink-0 shadow-sm" />
-									<span class="font-bold text-sm md:text-base text-gray-100 truncate">{parsed.name}</span>
-								</div>
-
-								<div class="flex items-center gap-2 shrink-0">
-									{#if show_new_score_clicked && score_by_username[player] > 0}
-										<span in:fly|global={{ x: 20 }} class="text-xs font-extrabold text-emerald-400 bg-emerald-500/20 px-1.5 py-0.5 rounded">
-											+{score_by_username[player]}
-										</span>
-									{/if}
-									<span class="font-extrabold font-mono text-sm md:text-base text-white">
-										{formatPoints(data[player] || 0)}
-									</span>
-								</div>
-							</div>
-						{/each}
-					{/if}
+	<!-- Vpravo: Číslo otázky a Zoznam všetkých účastníkov s bodmi -->
+	<div class="col-span-12 md:col-span-3 lg:col-span-3 xl:col-span-2 flex flex-col gap-3.5">
+		<!-- Číslo otázky vycentrované nad zoznamom účastníkov s okrasným fontom -->
+		<div class="w-full flex justify-center">
+			<div class="w-full bg-slate-900/95 dark:bg-black/90 backdrop-blur-md rounded-2xl py-3 px-3 sm:px-4 border border-slate-700/70 shadow-2xl flex items-center justify-center gap-2.5 text-center">
+				<span class="text-xs uppercase font-black tracking-widest bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-lg shrink-0">
+					Otázka
+				</span>
+				<div class="font-decorative text-2xl md:text-3xl font-black tracking-wider text-white drop-shadow flex items-center gap-1 shrink-0">
+					<span class="text-amber-300 drop-shadow">{question_index}</span>
+					<span class="text-slate-500 text-xl font-light">/</span>
+					<span class="text-slate-200">{total_questions}</span>
 				</div>
 			</div>
 		</div>
+
+		<!-- Zoznam všetkých účastníkov s bodmi -->
+		<div class="flex-1 flex flex-col bg-slate-900/95 text-white rounded-3xl p-5 shadow-2xl border border-slate-700/60 backdrop-blur-md min-h-[440px] max-h-[580px] xl:max-h-[640px]">
+			<!-- Hlavička zoznamu -->
+			<div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
+				<div class="flex items-center gap-2">
+					<span class="text-lg">👥</span>
+					<h3 class="font-extrabold text-base md:text-lg tracking-wide text-white">
+						Účastníci ({allPlayerUsernames.length})
+					</h3>
+				</div>
+				<span class="text-xs bg-emerald-500/20 text-emerald-400 font-bold px-2.5 py-1 rounded-full">
+					Body
+				</span>
+			</div>
+
+			<!-- Rolovací zoznam účastníkov -->
+			<div class="flex-1 overflow-y-auto space-y-2 pr-1.5 custom-scroll">
+				{#if allPlayerUsernames.length === 0}
+					<div class="text-center py-8 text-slate-400 text-sm">Žiadni účastníci</div>
+				{:else}
+					{#each allPlayerUsernames as player, i (player)}
+						{@const parsed = parsePlayer(player)}
+						<div
+							class="flex items-center justify-between p-2.5 rounded-xl bg-slate-800/70 hover:bg-slate-800 transition-all border border-slate-700/40"
+						>
+							<div class="flex items-center gap-2.5 min-w-0">
+								<span class="text-xs font-mono font-bold text-slate-400 w-4 text-center">{i + 1}.</span>
+								<AnimalAvatar avatarId={parsed.avatarId} size={30} class="shrink-0 shadow-sm" />
+								<span class="font-bold text-sm md:text-base text-gray-100 truncate">{parsed.name}</span>
+							</div>
+
+							<div class="flex items-center gap-2 shrink-0">
+								{#if show_new_score_clicked && (score_by_username[player] ?? 0) > 0}
+									<span class="text-xs font-extrabold text-emerald-400 bg-emerald-500/20 px-1.5 py-0.5 rounded transition-all">
+										+{score_by_username[player]}
+									</span>
+								{/if}
+								<span class="font-extrabold font-mono text-sm md:text-base text-white">
+									{formatPoints(data?.[player] || 0)}
+								</span>
+							</div>
+						</div>
+					{/each}
+				{/if}
+			</div>
+		</div>
 	</div>
+</div>
 </div>
 
 <style>

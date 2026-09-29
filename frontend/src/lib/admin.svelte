@@ -11,6 +11,7 @@ SPDX-License-Identifier: MPL-2.0
 	import Spinner from '$lib/Spinner.svelte';
 	import Controls from '$lib/play/admin/controls.svelte';
 	import Question from '$lib/play/admin/question.svelte';
+	import Results from '$lib/play/admin/results.svelte';
 	import { SocketGameControls } from '$lib/play/admin/socket_game_controls.ts';
 	import type { IGameState } from '$lib/play/admin/game_state.ts';
 	import AnimalAvatar from '$lib/components/AnimalAvatar.svelte';
@@ -149,41 +150,23 @@ SPDX-License-Identifier: MPL-2.0
 			/>
 		{/if}
 	{/if}
-	{#if game_state.timer_res === '0' && JSON.stringify(game_state.final_results) === JSON.stringify( [null] ) && game_state.quiz_data.questions[game_state.selected_question].type !== QuizQuestionType.SLIDE && game_state.question_results !== null && game_state.quiz_data.questions[game_state.selected_question]?.hide_results !== true}
+	{#if game_state.question_results !== null && JSON.stringify(game_state.final_results) === JSON.stringify([null]) && game_state.selected_question >= 0 && game_state.quiz_data?.questions?.[game_state.selected_question]?.type !== QuizQuestionType.SLIDE}
 		{#if game_state.question_results === undefined}
 			{#if !final_results_clicked}
-				<div class="w-full flex justify-center">
-					<h1 class="text-3xl">{$t('admin_page.no_answers')}</h1>
+				<div class="w-full flex justify-center py-12">
+					<h1 class="text-3xl font-bold text-slate-800 dark:text-slate-100">{$t('admin_page.no_answers', { default: 'Žiadne odpovede' })}</h1>
 				</div>
 			{/if}
-		{:else if game_state.quiz_data.questions[game_state.selected_question].type === QuizQuestionType.VOTING}
-			{#await import('$lib/play/admin/results.svelte')}
-				<Spinner />
-			{:then c}
-				<c.default
-					bind:data={game_state.player_scores}
-					question={game_state.quiz_data.questions[game_state.selected_question]}
-					new_data={game_state.question_results}
-					{game_pin}
-					players={game_state.players}
-					question_index={game_state.selected_question + 1}
-					total_questions={game_state.quiz_data?.questions?.length || 1}
-				/>
-			{/await}
 		{:else}
-			{#await import('$lib/play/admin/results.svelte')}
-				<Spinner />
-			{:then c}
-				<c.default
-					bind:data={game_state.player_scores}
-					question={game_state.quiz_data.questions[game_state.selected_question]}
-					new_data={game_state.question_results}
-					{game_pin}
-					players={game_state.players}
-					question_index={game_state.selected_question + 1}
-					total_questions={game_state.quiz_data?.questions?.length || 1}
-				/>
-			{/await}
+			<Results
+				bind:data={game_state.player_scores}
+				question={game_state.quiz_data.questions[game_state.selected_question]}
+				new_data={game_state.question_results}
+				{game_pin}
+				players={game_state.players}
+				question_index={game_state.selected_question + 1}
+				total_questions={game_state.quiz_data?.questions?.length || 1}
+			/>
 		{/if}
 	{/if}
 	{#if game_state.selected_question === -1}
