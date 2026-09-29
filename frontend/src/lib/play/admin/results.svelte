@@ -175,24 +175,26 @@ SPDX-License-Identifier: MPL-2.0
 </script>
 
 <div class="w-full max-w-[98vw] 2xl:max-w-[1850px] mx-auto px-2 sm:px-4 md:px-6 py-1 flex flex-col justify-start">
-	<!-- Horná lišta s textom otázky -->
-	<div class="bg-white/95 dark:bg-slate-800/95 text-gray-900 dark:text-white px-6 md:px-10 py-3.5 md:py-4 rounded-2xl shadow-xl border border-black/5 text-center max-w-5xl xl:max-w-6xl mx-auto mb-4 md:mb-5 w-full">
-		<h2 class="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">
-			{@html question.question}
-		</h2>
-	</div>
-
-	<!-- 3 stĺpce: Vľavo (Join), V strede (Stĺpcový graf & Odpovede), Vpravo (Číslo otázky & Účastníci) -->
+	<!-- 3 stĺpce: Vľavo (Join), V strede (Názov otázky + Graf & Odpovede), Vpravo (Číslo otázky & Účastníci) -->
 	<div class="grid grid-cols-1 md:grid-cols-12 gap-4 lg:gap-5 items-stretch">
 		<!-- Vľavo: Permanentný Join Info Card (QR kód + PIN) -->
 		<div class="col-span-12 md:col-span-3 lg:col-span-3 xl:col-span-2 flex justify-center">
 			<JoinInfoCard {game_pin} class="w-full max-w-[280px] md:max-w-none md:h-full" />
 		</div>
 
-		<!-- V strede: Stĺpcový graf vyhodnotenia a bloky odpovedí -->
-		<div class="col-span-12 md:col-span-6 lg:col-span-6 xl:col-span-7 flex flex-col justify-between bg-slate-900/50 dark:bg-black/50 backdrop-blur-md rounded-3xl p-5 md:p-6 border border-white/10 shadow-2xl">
-			<!-- Stĺpcový graf (Bar Chart) -->
-			<div class="h-[320px] md:h-[350px] flex items-end justify-center gap-4 sm:gap-6 md:gap-8 pb-5 px-3 border-b border-white/10">
+		<!-- V strede: Názov otázky + Stĺpcový graf vyhodnotenia a bloky odpovedí -->
+		<div class="col-span-12 md:col-span-6 lg:col-span-6 xl:col-span-8 flex flex-col gap-4">
+			<!-- Horná lišta s textom otázky - DOKONALE VYCENTROVANÁ PRIAMO NAD STREDNÝM GRAFOM -->
+			<div class="bg-white/95 dark:bg-slate-800/95 text-gray-900 dark:text-white px-6 md:px-10 py-3.5 md:py-4 rounded-2xl shadow-xl border border-black/5 text-center w-full">
+				<h2 class="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">
+					{@html question.question}
+				</h2>
+			</div>
+
+			<!-- Stĺpcový graf vyhodnotenia a bloky odpovedí -->
+			<div class="flex-1 flex flex-col justify-between bg-slate-900/50 dark:bg-black/50 backdrop-blur-md rounded-3xl p-5 md:p-6 border border-white/10 shadow-2xl">
+				<!-- Stĺpcový graf (Bar Chart) -->
+				<div class="h-[320px] md:h-[350px] flex items-end justify-center gap-4 sm:gap-6 md:gap-8 pb-5 px-3 border-b border-white/10">
 				{#each answerStats as stat, i}
 					<div class="flex flex-col items-center justify-end h-full flex-1 max-w-[130px] group">
 						<!-- Počet a percentá nad stĺpcom -->
@@ -267,18 +269,19 @@ SPDX-License-Identifier: MPL-2.0
 				{/each}
 			</div>
 		</div>
+	</div>
 
 		<!-- Vpravo: Číslo otázky a Zoznam všetkých účastníkov s bodmi -->
-		<div class="col-span-12 md:col-span-3 lg:col-span-3 xl:col-span-3 flex flex-col gap-3.5">
+		<div class="col-span-12 md:col-span-3 lg:col-span-3 xl:col-span-2 flex flex-col gap-3.5">
 			<!-- Číslo otázky vycentrované nad zoznamom účastníkov s okrasným fontom -->
 			<div class="w-full flex justify-center">
-				<div class="w-full bg-slate-900/95 dark:bg-black/90 backdrop-blur-md rounded-2xl py-3 px-5 border border-slate-700/70 shadow-2xl flex items-center justify-center gap-3.5 text-center">
-					<span class="text-xs uppercase font-black tracking-widest bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2.5 py-1 rounded-lg">
+				<div class="w-full bg-slate-900/95 dark:bg-black/90 backdrop-blur-md rounded-2xl py-3 px-3 sm:px-4 border border-slate-700/70 shadow-2xl flex items-center justify-center gap-2.5 text-center">
+					<span class="text-xs uppercase font-black tracking-widest bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-lg shrink-0">
 						Otázka
 					</span>
-					<div class="font-decorative text-3xl md:text-4xl font-black tracking-wider text-white drop-shadow flex items-center gap-1.5">
+					<div class="font-decorative text-2xl md:text-3xl font-black tracking-wider text-white drop-shadow flex items-center gap-1 shrink-0">
 						<span class="text-amber-300 drop-shadow">{question_index}</span>
-						<span class="text-slate-500 text-2xl font-light">/</span>
+						<span class="text-slate-500 text-xl font-light">/</span>
 						<span class="text-slate-200">{total_questions}</span>
 					</div>
 				</div>
