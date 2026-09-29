@@ -5,12 +5,6 @@
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ parent }) => {
-	const { email } = await parent();
-	if (email) {
-		redirect(302, '/dashboard');
-	}
-	return {
-		email
-	};
+export const load: PageServerLoad = async () => {
+	redirect(302, '/search?q=');
 };

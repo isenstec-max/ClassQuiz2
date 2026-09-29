@@ -63,13 +63,13 @@ SPDX-License-Identifier: MPL-2.0
 	<div class="hidden lg:flex lg:items-center lg:flex-row lg:justify-between">
 		<div class="lg:flex lg:items-center lg:flex-row gap-1">
 			<a
-				href="/"
+				href="/search?q="
 				class="font-black tracking-tight text-xl lg:text-2xl marck-script link-hover px-3 lg:px-5 flex items-center gap-2 cq2-brand-logo"
 				>ClassQuiz2 <span class="cq2-version-badge">{APP_VERSION}</span></a
 			>
 			<a class="btn-nav border-2 rounded-sm" href="/play">{$t('words.play')}</a>
 			<a class="btn-nav" href="/explore">{$t('words.explore')}</a>
-			<a class="btn-nav" href="/search">{$t('words.search')}</a>
+			<a class="btn-nav" href="/search?q=">{$t('words.search')}</a>
 			{#if $signedIn}
 				<a class="btn-nav" href="/dashboard">{$t('words.dashboard')}</a>
 			{:else}
@@ -385,7 +385,7 @@ SPDX-License-Identifier: MPL-2.0
 		{#if !menuIsClosed}
 			<div class="flex flex-col" transition:slide|global={{ duration: 400 }}>
 				<a class="btn-nav" href="/explore">{$t('words.explore')}</a>
-				<a class="btn-nav" href="/search">{$t('words.search')}</a>
+				<a class="btn-nav" href="/search?q=">{$t('words.search')}</a>
 				{#if $signedIn}
 					<a class="btn-nav" href="/dashboard">{$t('words.dashboard')}</a>
 				{:else}
