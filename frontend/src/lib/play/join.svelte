@@ -32,6 +32,9 @@ SPDX-License-Identifier: MPL-2.0
 
 	let rawUsername = $state('');
 	let selectedAvatar = $state('fox');
+	let currentAvatarDef = $derived(
+		ANIMAL_AVATARS.find((a) => a.id === selectedAvatar) || ANIMAL_AVATARS[0]
+	);
 
 	let custom_field = $state();
 	let custom_field_value = $state();
@@ -228,7 +231,6 @@ SPDX-License-Identifier: MPL-2.0
 	<div class="flex flex-col justify-center items-center w-screen min-h-screen py-8 px-4">
 		<div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 border border-gray-200 dark:border-gray-700">
 			<!-- Vybraný avatar preview -->
-			{@const currentAvatarDef = ANIMAL_AVATARS.find((a) => a.id === selectedAvatar) || ANIMAL_AVATARS[0]}
 			<div class="flex flex-col items-center mb-5">
 				<div class="p-1 rounded-full ring-4 ring-emerald-500 shadow-xl bg-white dark:bg-gray-700 transition-all transform hover:scale-105">
 					<AnimalAvatar avatarId={selectedAvatar} size={88} class="shadow-md" />

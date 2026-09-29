@@ -103,9 +103,9 @@ SPDX-License-Identifier: MPL-2.0
 				</thead>
 				<tbody>
 					{#each player_names as player, i (player)}
+						{@const parsed = parsePlayer(player)}
 						<tr animate:flip>
 							<td class:hidden={i > 3} class="p-2 border-r border-r-black">
-								{@const parsed = parsePlayer(player)}
 								<div class="flex items-center gap-2">
 									<AnimalAvatar avatarId={parsed.avatarId} size={28} class="shadow-sm inline-block" />
 									<span class="font-bold">{parsed.name}</span>
