@@ -11,6 +11,7 @@ SPDX-License-Identifier: MPL-2.0
 	import { kahoot_icons } from '$lib/play/kahoot_mode_assets/kahoot_icons.js';
 	import CircularTimer from '$lib/play/circular_progress.svelte';
 	import MediaComponent from '$lib/editor/MediaComponent.svelte';
+	import AnswerShape from '$lib/components/AnswerShape.svelte';
 	import { getLocalization } from '$lib/i18n';
 
 	interface Props {
@@ -70,27 +71,29 @@ SPDX-License-Identifier: MPL-2.0
 	</div>
 {/if}
 {#if quiz_data.questions[selected_question].type === QuizQuestionType.ABCD || quiz_data.questions[selected_question].type === QuizQuestionType.VOTING || quiz_data.questions[selected_question].type === QuizQuestionType.CHECK}
-	<div class="grid grid-rows-2 grid-flow-col auto-cols-auto gap-2 w-full p-4">
+	<div class="grid grid-cols-2 gap-4 w-full p-6">
 		{#each quiz_data.questions[selected_question].answers as answer, i}
 			<div
-				class="rounded-lg h-fit flex border-2 border-black"
-				style="background-color: {answer.color ?? default_colors[i]};"
-				class:opacity-50={!answer.right &&
+				class="rounded-xl h-fit min-h-[80px] flex items-center px-4 py-3 shadow-lg border border-black/10 transition-all"
+				style="background-color: {answer.color ?? default_colors[i % default_colors.length]};"
+				class:opacity-40={!answer.right &&
 					timer_res === '0' &&
 					quiz_data.questions[selected_question].type === QuizQuestionType.ABCD}
 			>
-				<img
-					class="w-14 inline-block pl-4"
-					alt="icon"
-					style="color: {get_foreground_color(answer.color ?? default_colors[i])}"
-					src={kahoot_icons[i]}
-				/>
+				<div class="shrink-0 flex items-center justify-center pl-2">
+					<AnswerShape shapeIndex={i} class="w-10 h-10 text-white drop-shadow-md" />
+				</div>
 				<span
-					class="text-center text-2xl px-2 py-4 w-full"
-					style="color: {get_foreground_color(answer.color ?? default_colors[i])}"
+					class="text-center font-bold text-2xl md:text-3xl px-4 py-2 w-full text-white break-words"
 					>{answer.answer}</span
 				>
-				<span class="pl-4 w-10"></span>
+				{#if answer.right && timer_res === '0'}
+					<div class="w-10 h-10 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-white shrink-0 shadow-md">
+						<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+					</div>
+				{:else}
+					<span class="w-10 shrink-0"></span>
+				{/if}
 			</div>
 		{/each}
 	</div>

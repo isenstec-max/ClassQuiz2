@@ -20,8 +20,10 @@ SPDX-License-Identifier: MPL-2.0
 	import { page } from '$app/state';
 	import ModComponent from './ModComponent.svelte';
 	import { get_foreground_color } from '$lib/helpers.ts';
+	import AnswerShape from '$lib/components/AnswerShape.svelte';
+	import { DEFAULT_ANSWER_COLORS } from '$lib/answer_theme';
 
-	const default_colors = ['#D6EDC9', '#B07156', '#7F7057', '#4E6E58'];
+	const default_colors = DEFAULT_ANSWER_COLORS;
 
 	const tippy = createTippy({
 		arrow: true,
@@ -277,20 +279,26 @@ SPDX-License-Identifier: MPL-2.0
 						<div class="grid grid-cols-2 gap-4 m-4 p-6">
 							{#each question.answers as answer, index_answer}
 								<div
-									class="p-1 rounded-lg py-4 shadow-xl"
+									class="p-3 rounded-lg shadow-lg flex items-center transition"
 									style="background-color: {answer.color ??
-										default_colors[index_answer]}; color: {get_foreground_color(
-										answer.color ?? default_colors[index_answer]
-									)}"
-									class:shadow-blue-500={answer.right &&
+										default_colors[index_answer % default_colors.length]};"
+									class:ring-2={answer.right &&
 										question.type !== QuizQuestionType.VOTING}
-									class:shadow-yellow-500={!answer.right &&
+									class:ring-white={answer.right &&
 										question.type !== QuizQuestionType.VOTING}
 								>
-									<h4 class="text-center">
+									<div class="shrink-0 flex items-center justify-center mr-3">
+										<AnswerShape shapeIndex={index_answer} class="w-6 h-6 text-white drop-shadow-sm" />
+									</div>
+									<h4 class="text-left font-semibold text-white flex-1 break-words">
 										{quiz.questions[index_question].answers[index_answer]
 											.answer}
 									</h4>
+									{#if answer.right && question.type !== QuizQuestionType.VOTING}
+										<div class="w-7 h-7 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-white shrink-0 shadow-sm ml-2">
+											<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+										</div>
+									{/if}
 								</div>
 							{/each}
 						</div>

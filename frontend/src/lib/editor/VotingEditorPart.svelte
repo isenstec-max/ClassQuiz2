@@ -16,7 +16,9 @@ SPDX-License-Identifier: MPL-2.0
 
 	const { t } = getLocalization();
 
-	const default_colors = ['#D6EDC9', '#B07156', '#7F7057', '#4E6E58'];
+	import { DEFAULT_ANSWER_COLORS } from '$lib/answer_theme';
+
+	const default_colors = DEFAULT_ANSWER_COLORS;
 	interface Props {
 		selected_question: number;
 		data: EditorData;
@@ -37,7 +39,7 @@ SPDX-License-Identifier: MPL-2.0
 	const set_colors_if_unset = () => {
 		for (let i = 0; i < data.questions[selected_question].answers.length; i++) {
 			if (!data.questions[selected_question].answers[i].color) {
-				data.questions[selected_question].answers[i].color = default_colors[i];
+				data.questions[selected_question].answers[i].color = default_colors[i % default_colors.length];
 			}
 		}
 	};

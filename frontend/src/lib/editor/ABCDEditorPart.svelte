@@ -13,11 +13,12 @@ SPDX-License-Identifier: MPL-2.0
 	import { reach } from 'yup';
 	import { ABCDQuestionSchema } from '$lib/yupSchemas';
 	import { getLocalization } from '$lib/i18n';
-	import { get_foreground_color } from '$lib/helpers';
+	import AnswerShape from '$lib/components/AnswerShape.svelte';
+	import { DEFAULT_ANSWER_COLORS } from '$lib/answer_theme';
 
 	const { t } = getLocalization();
 
-	const default_colors = ['#D6EDC9', '#B07156', '#7F7057', '#4E6E58'];
+	const default_colors = DEFAULT_ANSWER_COLORS;
 
 	interface Props {
 		selected_question: number;
@@ -43,7 +44,7 @@ SPDX-License-Identifier: MPL-2.0
 	const get_empty_answer = (i: number): Answer => {
 		return {
 			answer: '',
-			color: default_colors[i],
+			color: default_colors[i % default_colors.length],
 			right: false
 		};
 	};
@@ -55,7 +56,7 @@ SPDX-License-Identifier: MPL-2.0
 	const set_colors_if_unset = () => {
 		for (let i = 0; i < data.questions[selected_question].answers.length; i++) {
 			if (!data.questions[selected_question].answers[i].color) {
-				data.questions[selected_question].answers[i].color = default_colors[i];
+				data.questions[selected_question].answers[i].color = default_colors[i % default_colors.length];
 			}
 		}
 	};
@@ -66,95 +67,71 @@ SPDX-License-Identifier: MPL-2.0
 	});
 </script>
 
-<div class="grid grid-rows-2 grid-flow-col auto-cols-auto gap-4 w-full px-10">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full px-4 md:px-10">
 	{#if Array.isArray(data.questions[selected_question].answers)}
 		{#each data.questions[selected_question].answers as answer, index}
 			<div
 				out:fade={{ duration: 150 }}
-				class="p-4 rounded-lg flex justify-center w-full transition relative"
-				class:bg-red-500={!answer.right}
-				class:bg-green-500={answer.right}
-				class:bg-yellow-500={!reach(ABCDQuestionSchema, 'answer').isValidSync(
-					answer.answer
-				)}
+				class="group rounded-lg shadow-lg flex items-center px-4 py-3 min-h-[72px] w-full transition-all relative border border-black/10 hover:shadow-xl"
+				style="background-color: {answer.color ?? default_colors[index % default_colors.length]};"
+				class:ring-2={!reach(ABCDQuestionSchema, 'answer').isValidSync(answer.answer)}
+				class:ring-yellow-400={!reach(ABCDQuestionSchema, 'answer').isValidSync(answer.answer)}
 			>
+				<!-- Geometrický útvar na boku (trojuholník, kosoštvorec, krúžok, štvorec) -->
+				<div class="shrink-0 flex items-center justify-center mr-3">
+					<AnswerShape shapeIndex={index} class="w-8 h-8 text-white drop-shadow-md" />
+				</div>
+
+				<!-- Text odpovede (biely, čitateľný, výrazný) -->
+				<input
+					bind:value={answer.answer}
+					type="text"
+					class="flex-1 bg-transparent text-white placeholder-white/60 font-semibold text-lg md:text-xl outline-hidden border-b-2 border-transparent focus:border-white/40 transition-all text-left px-2"
+					placeholder={$t('editor.enter_answer')}
+				/>
+
+				<!-- Tlačidlo správnej odpovede na pravej strane (krúžok / zelená fajka) -->
 				<button
-					class="rounded-full absolute -top-2 -right-2 opacity-70 hover:opacity-100 transition"
 					type="button"
+					class="shrink-0 ml-2 focus:outline-none transition-transform active:scale-90"
+					aria-label="Toggle correct answer"
+					onclick={() => {
+						answer.right = !answer.right;
+					}}
+				>
+					{#if answer.right}
+						<div class="w-9 h-9 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-white shadow-md">
+							<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+							</svg>
+						</div>
+					{:else}
+						<div class="w-9 h-9 rounded-full border-2 border-white/80 hover:border-white hover:bg-white/10 transition shadow-sm"></div>
+					{/if}
+				</button>
+
+				<!-- Tlačidlo zmazania odpovede -->
+				<button
+					class="rounded-full absolute -top-2 -right-2 w-6 h-6 bg-red-600 text-white flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition shadow hover:scale-110"
+					type="button"
+					aria-label="Delete answer"
 					onclick={() => {
 						data.questions[selected_question].answers.splice(index, 1);
 						data.questions[selected_question].answers =
 							data.questions[selected_question].answers;
 					}}
 				>
-					<svg
-						class="w-6 h-6 bg-red-500 rounded-full"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-						/>
-					</svg>
+					✕
 				</button>
+
+				<!-- Diskrétny výber farby -->
 				<input
-					bind:value={answer.answer}
-					type="text"
-					class="border-b-2 border-dotted w-5/6 text-center rounded-lg bg-transparent outline-hidden focus:shadow-2xl transition-all"
-					style="background-color: {answer.color}; color: {get_foreground_color(
-						answer.color
-					)}"
-					placeholder={$t('editor.enter_answer')}
-				/>
-				<button
-					type="button"
-					onclick={() => {
-						answer.right = !answer.right;
-					}}
-				>
-					{#if answer.right}
-						<svg
-							class="w-6 h-6 inline-block"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-							xmlns="http://www.w3.org/2000/svg"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-							/>
-						</svg>
-					{:else}
-						<svg
-							class="w-6 h-6 inline-block"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-							xmlns="http://www.w3.org/2000/svg"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-							/>
-						</svg>
-					{/if}
-				</button>
-				<input
-					class="rounded-lg p-1 border-black border"
+					class="absolute bottom-1 right-2 w-3.5 h-3.5 rounded cursor-pointer opacity-0 group-hover:opacity-40 hover:!opacity-100 transition border-0 bg-transparent"
 					type="color"
+					title="Farba odpovede"
 					bind:value={answer.color}
 					oncontextmenu={preventDefault(() => {
-						answer.color = default_colors[index];
+						answer.color = default_colors[index % default_colors.length];
 					})}
 				/>
 			</div>
@@ -162,7 +139,7 @@ SPDX-License-Identifier: MPL-2.0
 	{/if}
 	{#if data.questions[selected_question].answers.length < 4}
 		<button
-			class="p-4 rounded-lg bg-transparent border-gray-500 border-2 hover:bg-gray-300 transition dark:hover:bg-gray-600"
+			class="min-h-[72px] p-4 rounded-lg bg-transparent border-2 border-dashed border-gray-400 dark:border-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition flex items-center justify-center gap-2 text-gray-700 dark:text-gray-200"
 			type="button"
 			in:fade={{ duration: 150 }}
 			onclick={() => {
@@ -172,7 +149,8 @@ SPDX-License-Identifier: MPL-2.0
 				];
 			}}
 		>
-			<span class="italic text-center">{$t('editor_page.add_an_answer')}</span>
+			<span class="text-2xl font-bold">+</span>
+			<span class="font-medium text-lg">{$t('editor_page.add_an_answer')}</span>
 		</button>
 	{/if}
 </div>

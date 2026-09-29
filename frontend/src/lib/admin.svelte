@@ -14,8 +14,10 @@ SPDX-License-Identifier: MPL-2.0
 	import { SocketGameControls } from '$lib/play/admin/socket_game_controls.ts';
 	import type { IGameState } from '$lib/play/admin/game_state.ts';
 
+	import { DEFAULT_ANSWER_COLORS } from '$lib/answer_theme';
+
 	const { t } = getLocalization();
-	const default_colors = ['#D6EDC9', '#B07156', '#7F7057', '#4E6E58'];
+	const default_colors = DEFAULT_ANSWER_COLORS;
 
 	let final_results_clicked = $state(false);
 	let timer_interval: NodeJS.Timeout;

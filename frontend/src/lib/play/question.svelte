@@ -16,6 +16,8 @@ SPDX-License-Identifier: MPL-2.0
 	import BrownButton from '$lib/components/buttons/brown.svelte';
 	import { get_foreground_color } from '../helpers';
 	import MediaComponent from '$lib/editor/MediaComponent.svelte';
+	import AnswerShape from '$lib/components/AnswerShape.svelte';
+	import { DEFAULT_ANSWER_COLORS } from '$lib/answer_theme';
 
 	const { t } = getLocalization();
 
@@ -140,7 +142,7 @@ SPDX-License-Identifier: MPL-2.0
 			return '100';
 		}
 	};
-	const default_colors = ['#D6EDC9', '#B07156', '#7F7057', '#4E6E58'];
+	const default_colors = DEFAULT_ANSWER_COLORS;
 </script>
 
 <div class="h-screen w-screen">
@@ -174,25 +176,24 @@ SPDX-License-Identifier: MPL-2.0
 					<CircularTimer text={timer_res} progress={circular_progress} color="#ef4444" />
 				</div>
 
-				<div class="grid grid-rows-2 grid-flow-col auto-cols-auto gap-2 w-full p-4 h-full">
+				<div class="grid grid-cols-2 gap-3 w-full p-4 h-full">
 					{#each question.answers as answer, i}
 						<button
-							class="rounded-lg h-full flex align-middle justify-center disabled:opacity-60 p-3 border-2 border-black"
+							class="rounded-xl h-full flex items-center justify-center disabled:opacity-60 p-4 border border-black/20 shadow-md hover:brightness-105 active:scale-[0.98] transition-all cursor-pointer"
 							style="background-color: {answer.color ??
-								default_colors[i]}; color: {get_foreground_color(
-								answer.color ?? default_colors[i]
+								default_colors[i % default_colors.length]}; color: {get_foreground_color(
+								answer.color ?? default_colors[i % default_colors.length]
 							)}"
 							disabled={selected_answer !== undefined}
 							onclick={() => selectAnswer(answer.answer)}
 						>
 							{#if game_mode === 'kahoot'}
-								<img
-									class="h-2/3 inline-block m-auto"
-									alt="Icon"
-									src={kahoot_icons[i]}
-								/>
+								<AnswerShape shapeIndex={i} class="w-16 h-16 md:w-24 md:h-24 text-white drop-shadow-lg" />
 							{:else}
-								<p class="m-auto">{answer.answer}</p>
+								<div class="flex items-center gap-3 w-full px-2">
+									<AnswerShape shapeIndex={i} class="w-8 h-8 md:w-10 md:h-10 text-white shrink-0 drop-shadow-md" />
+									<p class="m-auto font-semibold text-lg md:text-2xl text-white break-words">{answer.answer}</p>
+								</div>
 							{/if}
 						</button>
 					{/each}
