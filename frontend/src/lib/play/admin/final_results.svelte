@@ -82,20 +82,31 @@ SPDX-License-Identifier: MPL-2.0
 	function formatScore(score: number): string {
 		return new Intl.NumberFormat('sk-SK').format(score || 0);
 	}
+
+	function formatScoreWithUnit(score: number): string {
+		const formatted = formatScore(score);
+		const s = Math.round(Number(score) || 0);
+		let unit = 'bodov';
+		if (s === 1) unit = 'bod';
+		else if (s >= 2 && s <= 4) unit = 'body';
+		return `${formatted} ${unit}`;
+	}
 </script>
 
 {#if show_final_results}
 	<canvas bind:this={canvas} class="fixed inset-0 pointer-events-none z-40 w-full h-full"></canvas>
 
-	<div class="min-h-screen w-full flex flex-col justify-between items-center px-4 py-8 relative overflow-hidden select-none">
+	<div class="min-h-screen w-full flex flex-col justify-between items-center px-4 pt-24 sm:pt-28 pb-8 relative overflow-hidden select-none">
 		<!-- Nadpis pódia -->
-		<div class="text-center z-10 mb-4" in:fade={{ duration: 600 }}>
-			<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 text-sm font-bold tracking-wide uppercase mb-2">
-				<span>🏆</span> Finálne výsledky kvízu
+		<div class="text-center z-10 mb-6 flex flex-col items-center" in:fade={{ duration: 600 }}>
+			<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/90 text-amber-300 border-2 border-amber-400/50 text-xs sm:text-sm font-black tracking-widest uppercase mb-3 shadow-xl backdrop-blur-md ring-2 ring-amber-400/20">
+				<span>🏆</span> {$t('results_page.final_overview', { default: 'Finálne výsledky kvízu' })}
 			</div>
-			<h1 class="text-4xl md:text-6xl font-black text-white tracking-tight drop-shadow-xl">
-				Stupne víťazov
-			</h1>
+			<div class="px-8 sm:px-12 py-2.5 sm:py-3.5 rounded-3xl bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-2xl">
+				<h1 class="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight drop-shadow-md">
+					{$t('play_page.final_result_rank', { default: 'Stupne víťazov' })}
+				</h1>
+			</div>
 		</div>
 
 		<!-- PÓDIUM (3 stupne víťazov presne ako na predlohe) -->
@@ -135,7 +146,7 @@ SPDX-License-Identifier: MPL-2.0
 
 						<!-- Počet bodov -->
 						<p class="font-mono font-bold text-base md:text-lg text-slate-300 mt-1">
-							{formatScore(data[player])} b
+							{formatScoreWithUnit(data[player])}
 						</p>
 					</div>
 				{:else}
@@ -180,7 +191,7 @@ SPDX-License-Identifier: MPL-2.0
 
 						<!-- Počet bodov -->
 						<p class="font-mono font-extrabold text-lg md:text-xl text-yellow-300 mt-1">
-							{formatScore(data[player])} bodov
+							{formatScoreWithUnit(data[player])}
 						</p>
 					</div>
 				{:else}
@@ -223,7 +234,7 @@ SPDX-License-Identifier: MPL-2.0
 
 						<!-- Počet bodov -->
 						<p class="font-mono font-bold text-sm md:text-base text-amber-200 mt-1">
-							{formatScore(data[player])} b
+							{formatScoreWithUnit(data[player])}
 						</p>
 					</div>
 				{:else}
@@ -239,7 +250,7 @@ SPDX-License-Identifier: MPL-2.0
 				class="w-full max-w-3xl mx-auto mt-4 mb-8 bg-slate-900/85 backdrop-blur-md border border-slate-700/60 rounded-3xl p-5 shadow-2xl"
 			>
 				<h4 class="text-xs uppercase font-extrabold tracking-wider text-slate-400 text-center mb-3">
-					Ďalšie umiestnenia
+					{$t('results_page.other_places', { default: 'Ďalšie umiestnenia' })}
 				</h4>
 				<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
 					{#each player_names.slice(3) as player, idx}
@@ -252,7 +263,7 @@ SPDX-License-Identifier: MPL-2.0
 								<span class="font-bold text-sm text-gray-200 truncate">{parsed.name}</span>
 							</div>
 							<span class="font-mono font-semibold text-xs text-emerald-400 shrink-0">
-								{formatScore(data[player])} b
+								{formatScoreWithUnit(data[player])}
 							</span>
 						</div>
 					{/each}
@@ -270,7 +281,7 @@ SPDX-License-Identifier: MPL-2.0
 					<div>
 						<div class="text-xs uppercase font-bold text-emerald-400">Tvoj výsledok</div>
 						<div class="font-extrabold text-lg text-white">
-							{parsed.name} – {formatScore(data[username])} bodov
+							{parsed.name} – {formatScoreWithUnit(data[username])}
 						</div>
 						<div class="text-xs text-slate-300">
 							Umiestnenie: <span class="font-black text-yellow-300">#{myRank}</span> z {player_names.length}

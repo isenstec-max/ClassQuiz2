@@ -6,12 +6,14 @@ SPDX-License-Identifier: MPL-2.0
 
 <script lang="ts">
 	import { createTippy } from 'svelte-tippy';
+	import { getLocalization } from '$lib/i18n';
 
 	interface Props {
 		imported: boolean | undefined;
 	}
 
 	let { imported }: Props = $props();
+	const { t } = getLocalization();
 	const tippy = createTippy({
 		arrow: true,
 		animation: 'perspective-subtle',
@@ -25,7 +27,7 @@ SPDX-License-Identifier: MPL-2.0
 		fill="none"
 		stroke="currentColor"
 		viewBox="0 0 24 24"
-		use:tippy={{ content: 'This quiz is imported from KAHOOT!' }}
+		use:tippy={{ content: $t('explore_page.imported_from_kahoot_tooltip') }}
 		xmlns="http://www.w3.org/2000/svg"
 	>
 		<path
@@ -41,7 +43,7 @@ SPDX-License-Identifier: MPL-2.0
 		fill="none"
 		stroke="currentColor"
 		viewBox="0 0 24 24"
-		use:tippy={{ content: 'This quiz was made by the creator themself!' }}
+		use:tippy={{ content: $t('explore_page.made_by_creator_tooltip') }}
 		xmlns="http://www.w3.org/2000/svg"
 	>
 		<path
@@ -57,7 +59,7 @@ SPDX-License-Identifier: MPL-2.0
 		fill="none"
 		stroke="currentColor"
 		viewBox="0 0 24 24"
-		use:tippy={{ content: 'This quiz could be imported, it could be OC.' }}
+		use:tippy={{ content: $t('explore_page.unknown_origin_tooltip') }}
 		xmlns="http://www.w3.org/2000/svg"
 	>
 		<path

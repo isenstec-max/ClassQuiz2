@@ -1,15 +1,12 @@
 <!--
-SPDX-FileCopyrightText: 2023 Marlon W (Mawoka)
+SPDX-FileCopyrightText: 2026 Marlon W (Mawoka)
 
 SPDX-License-Identifier: MPL-2.0
 -->
 
 <script lang="ts">
-	// import { alertModal } from '$lib/stores';
 	import { captcha_enabled } from '$lib/config';
-	import StartGameBackground from './start_game_background.svg';
-	import { fade } from 'svelte/transition';
-	import Spinner from '$lib/Spinner.svelte';
+	import { fade, scale } from 'svelte/transition';
 	import { onMount } from 'svelte';
 	import { createTippy } from 'svelte-tippy';
 	import { getLocalization } from '$lib/i18n';
@@ -26,7 +23,7 @@ SPDX-License-Identifier: MPL-2.0
 	const tippy = createTippy({
 		arrow: true,
 		animation: 'perspective-subtle',
-		placement: 'top-start',
+		placement: 'top',
 		allowHTML: true
 	});
 
@@ -57,20 +54,13 @@ SPDX-License-Identifier: MPL-2.0
 			);
 		}
 		if (res.status !== 200) {
-			/*			alertModal.set({
-				open: true,
-				title: 'Start failed',
-				body: `Failed to start game, ${await res.text()}`
-			});*/
-			/*alertModal.subscribe((_) => {
-				window.location.assign('/account/login?returnTo=/dashboard');
-			});*/
 			alert('Starting game failed');
 			window.location.assign('/account/login?returnTo=/dashboard');
 		} else {
 			const data = await res.json();
-			// eslint-disable-next-line no-undef
-			plausible('Started Game', { props: { quiz_id: id, game_id: data.game_id } });
+			if (typeof (window as any).plausible !== 'undefined') {
+				(window as any).plausible('Started Game', { props: { quiz_id: id, game_id: data.game_id } });
+			}
 			window.location.assign(
 				`/admin?token=${data.game_id}&pin=${data.game_pin}&connect=1&cqc_code=${data.cqc_code}`
 			);
@@ -94,164 +84,193 @@ SPDX-License-Identifier: MPL-2.0
 </script>
 
 <div
-	class="fixed top-0 left-0 flex justify-center w-screen h-screen bg-black/60 z-50 text-black"
-	transition:fade|global={{ duration: 100 }}
+	class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-md overflow-y-auto select-none"
+	transition:fade={{ duration: 150 }}
 	onclick={on_parent_click}
+	role="button"
+	tabindex="0"
+	onkeydown={(e) => e.key === 'Escape' && (quiz_id = null)}
 >
 	<div
-		class="w-5/6 h-5/6 bg-black m-auto rounded-lg shadow-lg p-4 flex flex-col"
-		style="background-image: url({StartGameBackground}); background-color: #DFDBE5;"
+		class="relative w-full max-w-2xl bg-slate-900/95 text-white border-2 border-slate-700/80 rounded-3xl p-5 sm:p-7 shadow-2xl backdrop-blur-xl flex flex-col gap-5 my-auto"
+		transition:scale={{ duration: 200, start: 0.95 }}
+		onclick={(e) => e.stopPropagation()}
+		role="presentation"
 	>
-		<div class="flex justify-center w-full">
-			<label
-				for="large-toggle"
-				class="inline-flex relative items-center cursor-pointer"
-				class:pointer-events-none={!captcha_enabled}
-				class:opacity-50={!captcha_enabled}
-			>
-				<input
-					type="checkbox"
-					bind:checked={captcha_selected}
-					id="large-toggle"
-					class="sr-only peer"
-				/>
-				<span
-					class="w-14 h-7 bg-gray-200 rounded-full
-					peer-focus:outline-hidden peer-focus:ring-4 peer-focus:ring-blue-300
-					dark:peer-focus:ring-blue-800 dark:bg-gray-700
-					peer-checked:bg-blue-600
-					relative
-					after:content-['']
-					after:absolute after:top-0.5 after:start-[4px]
-					after:bg-white after:border-gray-300 after:border
-					after:rounded-full after:h-6 after:w-6
-					after:transition-all
-					peer-checked:after:translate-x-full
-					rtl:peer-checked:after:-translate-x-full"
-				></span>
-				<span class="ms-3 text-sm font-medium text-gray-900"
-					>Captcha {captcha_selected ? 'enabled' : 'disabled'}</span
-				>
-			</label>
-		</div>
-		{#if captcha_selected}
-			<div class="flex justify-center mt-2" in:fade|global>
-				<p class="w-1/3">
-					{$t('start_game.captcha_message')}
-				</p>
-				<!-- Todo: Add translation  -->
-			</div>
-		{/if}
+		<!-- Tlačidlo Zavrieť (X) -->
+		<button
+			type="button"
+			class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-full hover:bg-slate-800 transition-colors cursor-pointer"
+			onclick={() => (quiz_id = null)}
+			aria-label="Zatvoriť"
+		>
+			<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+			</svg>
+		</button>
 
-		<div class="grid grid-cols-2 gap-8 my-auto">
+		<!-- Hlavička modálu -->
+		<div class="text-center pr-6">
+			<div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-black tracking-widest uppercase mb-1.5">
+				<span>🎮</span> SPUSTENIE KVÍZU
+			</div>
+			<h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+				Nastavenie herného režimu
+			</h2>
+		</div>
+
+		<!-- Režimy hry (2 karty) -->
+		<div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+			<!-- Karta 1: Normálne (Kahoot) -->
 			<div
-				class="rounded-lg bg-white shadow-lg cursor-pointer transition-all p-2"
-				class:opacity-50={selected_game_mode !== 'kahoot'}
+				class="rounded-2xl p-4 cursor-pointer transition-all duration-200 border-2 flex flex-col justify-between {selected_game_mode === 'kahoot'
+					? 'bg-slate-800/90 border-emerald-400 shadow-xl shadow-emerald-500/10 ring-4 ring-emerald-500/20'
+					: 'bg-slate-800/40 border-slate-700/70 opacity-60 hover:opacity-100 hover:border-slate-600'}"
 				onclick={() => {
 					selected_game_mode = 'kahoot';
 				}}
+				role="button"
+				tabindex="0"
+				onkeydown={(e) => e.key === 'Enter' && (selected_game_mode = 'kahoot')}
 			>
-				<h2 class="text-center text-2xl">{$t('words.normal')}</h2>
-				<p>
-					{$t('start_game.normal_mode_description')}
-				</p>
+				<div>
+					<div class="flex items-center justify-between mb-2">
+						<span class="text-2xl">📱</span>
+						{#if selected_game_mode === 'kahoot'}
+							<span class="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xs font-bold">✓</span>
+						{/if}
+					</div>
+					<h3 class="font-black text-lg text-white mb-1.5">{$t('words.normal', { default: 'Normálne' })}</h3>
+					<p class="text-xs text-slate-300 leading-relaxed">
+						{$t('start_game.normal_mode_description')}
+					</p>
+				</div>
+				<div class="mt-3 pt-2 border-t border-slate-700/40 text-[11px] font-bold text-emerald-400">
+					Odporúčaný režim
+				</div>
 			</div>
+
+			<!-- Karta 2: Klasický režim (Old-School) -->
 			<div
-				class="rounded-lg bg-white shadow-lg cursor-pointer transition-all p-2"
-				class:opacity-50={selected_game_mode !== 'normal'}
+				class="rounded-2xl p-4 cursor-pointer transition-all duration-200 border-2 flex flex-col justify-between {selected_game_mode === 'normal'
+					? 'bg-slate-800/90 border-emerald-400 shadow-xl shadow-emerald-500/10 ring-4 ring-emerald-500/20'
+					: 'bg-slate-800/40 border-slate-700/70 opacity-60 hover:opacity-100 hover:border-slate-600'}"
 				onclick={() => {
 					selected_game_mode = 'normal';
 				}}
+				role="button"
+				tabindex="0"
+				onkeydown={(e) => e.key === 'Enter' && (selected_game_mode = 'normal')}
 			>
-				<h2 class="text-center text-2xl">{$t('start_game.old_school_mode')}</h2>
-				<p>
-					{$t('start_game.old_school_mode_description')}
-				</p>
+				<div>
+					<div class="flex items-center justify-between mb-2">
+						<span class="text-2xl">🖥️</span>
+						{#if selected_game_mode === 'normal'}
+							<span class="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center text-white text-xs font-bold">✓</span>
+						{/if}
+					</div>
+					<h3 class="font-black text-lg text-white mb-1.5">{$t('start_game.old_school_mode', { default: 'Klasický režim' })}</h3>
+					<p class="text-xs text-slate-300 leading-relaxed">
+						{$t('start_game.old_school_mode_description')}
+					</p>
+				</div>
+				<div class="mt-3 pt-2 border-t border-slate-700/40 text-[11px] font-bold text-slate-400">
+					Všetko aj na mobiloch
+				</div>
 			</div>
 		</div>
-		<div class="flex justify-center items-center my-auto">
-			<label class="mr-4">{$t('result_page.custom_field')}</label>
-			<input
-				bind:value={custom_field}
-				class="rounded-lg p-2 outline-hidden placeholder:italic"
-				placeholder="Phone Number or Email"
-			/>
-		</div>
-		<div class="flex justify-center w-full my-auto">
-			<label for="cqc-toggle" class="inline-flex relative items-center cursor-pointer">
-				<input
-					type="checkbox"
-					bind:checked={cqcs_enabled}
-					id="cqc-toggle"
-					class="sr-only peer"
-				/>
-				<span
-					class="w-14 h-7 bg-gray-200 rounded-full
-					peer-focus:outline-hidden peer-focus:ring-4 peer-focus:ring-blue-300
-					dark:peer-focus:ring-blue-800 dark:bg-gray-700
-					peer-checked:bg-blue-600
-					relative
-					after:content-['']
-					after:absolute after:top-0.5 after:start-[4px]
-					after:bg-white after:border-gray-300 after:border
-					after:rounded-full after:h-6 after:w-6
-					after:transition-all
-					peer-checked:after:translate-x-full
-					rtl:peer-checked:after:-translate-x-full"
-				></span>
-				<span class="ms-3 text-sm font-medium text-gray-900"
-					><a
-						href="/controller"
-						target="_blank"
-						use:tippy={{
-							content:
-								'ClassQuiz2Controllers are small physical devices to play ClassQuiz2. Click to learn more.'
-						}}
-						class="decoration-dashed underline cursor-help">ClassQuiz2Controllers</a
-					>
-					are {cqcs_enabled ? 'enabled' : 'disabled'}</span
-				>
+
+		<!-- Nastavenia a prepínače -->
+		<div class="flex flex-col gap-3 bg-slate-800/50 rounded-2xl p-4 border border-slate-700/60">
+			<!-- Prepínač: Náhodné poradie odpovedí -->
+			<label class="flex items-center justify-between cursor-pointer group">
+				<div class="flex flex-col">
+					<span class="font-bold text-sm text-white group-hover:text-emerald-300 transition-colors">
+						Náhodné poradie odpovedí
+					</span>
+					<span class="text-xs text-slate-400">Premieša možnosti odpovedí pri každej otázke</span>
+				</div>
+				<div class="relative inline-flex items-center">
+					<input type="checkbox" bind:checked={randomized_answers} class="sr-only peer" />
+					<div class="w-11 h-6 bg-slate-700 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+				</div>
 			</label>
-		</div>
-		<div class="flex justify-center w-full my-auto">
-			<label
-				for="randomized-answers-toggle"
-				class="inline-flex relative items-center cursor-pointer"
-			>
-				<input
-					type="checkbox"
-					bind:checked={randomized_answers}
-					id="randomized-answers-toggle"
-					class="sr-only peer"
-				/>
-				<span
-					class="w-14 h-7 bg-gray-200 rounded-full
-					peer-focus:outline-hidden peer-focus:ring-4 peer-focus:ring-blue-300
-					dark:peer-focus:ring-blue-800 dark:bg-gray-700
-					peer-checked:bg-blue-600
-					relative
-					after:content-['']
-					after:absolute after:top-0.5 after:start-[4px]
-					after:bg-white after:border-gray-300 after:border
-					after:rounded-full after:h-6 after:w-6
-					after:transition-all
-					peer-checked:after:translate-x-full
-					rtl:peer-checked:after:-translate-x-full"
-				></span>
-				<span class="ms-3 text-sm font-medium text-gray-900"> Randomize answers</span>
+
+			<hr class="border-slate-700/50 my-0.5" />
+
+			<!-- Prepínač: ClassQuiz ovládače -->
+			<label class="flex items-center justify-between cursor-pointer group">
+				<div class="flex flex-col">
+					<div class="flex items-center gap-1.5">
+						<span class="font-bold text-sm text-white group-hover:text-emerald-300 transition-colors">
+							Podpora ClassQuiz2Controllers
+						</span>
+						<a
+							href="/controller"
+							target="_blank"
+							onclick={(e) => e.stopPropagation()}
+							use:tippy={{ content: 'Hardvérové ovládače pre hranie bez mobilov. Kliknutím zistíte viac.' }}
+							class="text-xs text-emerald-400 underline decoration-dotted"
+						>(info)</a>
+					</div>
+					<span class="text-xs text-slate-400">Povolí pripájanie fyzických USB/WiFi ovládačov</span>
+				</div>
+				<div class="relative inline-flex items-center">
+					<input type="checkbox" bind:checked={cqcs_enabled} class="sr-only peer" />
+					<div class="w-11 h-6 bg-slate-700 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+				</div>
 			</label>
+
+			{#if captcha_enabled}
+				<hr class="border-slate-700/50 my-0.5" />
+				<!-- Prepínač: reCAPTCHA -->
+				<label class="flex items-center justify-between cursor-pointer group">
+					<div class="flex flex-col">
+						<span class="font-bold text-sm text-white group-hover:text-emerald-300 transition-colors">
+							Google reCAPTCHA ochrana
+						</span>
+						<span class="text-xs text-slate-400">Ochrana pred spamom a botmi pri pripájaní</span>
+					</div>
+					<div class="relative inline-flex items-center">
+						<input type="checkbox" bind:checked={captcha_selected} class="sr-only peer" />
+						<div class="w-11 h-6 bg-slate-700 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+					</div>
+				</label>
+			{/if}
+
+			<hr class="border-slate-700/50 my-0.5" />
+
+			<!-- Vlastné vstupné pole -->
+			<div class="flex flex-col gap-1.5">
+				<label for="custom_field_input" class="font-bold text-xs uppercase tracking-wider text-slate-300">
+					{$t('result_page.custom_field', { default: 'Vlastné pole pre hráčov' })} (nepovinné)
+				</label>
+				<input
+					id="custom_field_input"
+					bind:value={custom_field}
+					class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-hidden focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all"
+					placeholder="Napr. Telefónne číslo, E-mail alebo Trieda"
+				/>
+			</div>
 		</div>
 
+		<!-- Tlačidlo Spustiť kvíz (Moderné, žiadny písaný font!) -->
 		<button
-			class="mt-auto mx-auto bg-green-500 p-4 rounded-lg shadow-lg hover:bg-green-400 transition-all marck-script text-2xl"
+			type="button"
+			class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 text-white font-black text-lg sm:text-xl tracking-wide shadow-2xl shadow-emerald-500/30 border-2 border-emerald-300 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 cursor-pointer ring-4 ring-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+			disabled={loading}
 			onclick={() => {
 				start_game(quiz_id);
 			}}
 		>
 			{#if loading}
-				<Spinner my_20={false} />
+				<div class="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+				<span>Pripravujem hru...</span>
 			{:else}
-				{$t('start_game.start_game')}
+				<svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
+					<path d="M8 5v14l11-7z" />
+				</svg>
+				<span class="drop-shadow-sm">{$t('start_game.start_game', { default: 'Spustiť kvíz' })}</span>
 			{/if}
 		</button>
 	</div>

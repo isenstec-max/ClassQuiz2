@@ -166,8 +166,6 @@
         "overview": "Prehľad",
         "image": "Obrázok",
         "result_plural": "Výsledky",
-        "results": "Výsledky",
-        "next": "Ďalej",
         "submit": "Potvrdiť",
         "never": "Nikdy",
         "connect": "Pripojiť",
@@ -218,7 +216,11 @@
         "totp_unavailable": "TOTP nie je k dispozícii",
         "2fa_activated": "2FA bola aktivovaná",
         "webauthn": "WebAuthn / Passkey",
-        "add_security_key": "Pridať bezpečnostný kľúč"
+        "add_security_key": "Pridať bezpečnostný kľúč",
+        "activate_2fa": "Aktivovať dvojfaktorové overenie",
+        "webauthn_available": "WebAuthn je k dispozícii",
+        "webauthn_unavailable": "WebAuthn nie je k dispozícii",
+        "totp_available": "TOTP je k dispozícii"
     },
     "play_page": {
         "join_by_entering_code": "Zadajte herný PIN kód",
@@ -232,7 +234,8 @@
         "2nd_place": "2. miesto",
         "3rd place": "3. miesto",
         "with_out_of": "z",
-        "end_sentence": "Skvelá hra!"
+        "end_sentence": "Skvelá hra!",
+        "your_place": "Ste na {{place}}. mieste!"
     },
     "results_page": {
         "quiz_title": "Názov kvízu",
@@ -241,17 +244,265 @@
         "no_results_so_far": "Zatiaľ žiadne výsledky",
         "general_overview": {
             "sentence": "Celkový prehľad kvízu"
-        }
+        },
+        "final_overview": "Finálne výsledky kvízu",
+        "other_places": "Ďalšie umiestnenia"
     },
     "admin_page": {
         "start_game": "Start Quiz",
         "already_registered_as_admin": "Pre túto hru už existuje prihlásený administrátor.",
         "no_answers": "Žiadne odpovede!",
         "save_results": "Uložiť výsledky",
+        "results_saved": "Výsledky uložené",
         "show_results": "Zobraziť výsledky",
         "next_question": "Ďalšia otázka ({{question}})",
         "next_question_title": "Ďalšia otázka",
         "stop_time_and_solutions": "Zastaviť a ukázať riešenie",
-        "get_final_results": "Zobraziť stupne víťazov"
+        "get_final_results": "Zobraziť stupne víťazov",
+        "time_left": "Zostávajúci čas",
+        "get_results": "Zobraziť výsledky",
+        "get_results_and_stop_time": "Zobraziť výsledky a zastaviť čas",
+        "show_next_question": "Zobraziť ďalšiu otázku",
+        "start_by_showing_first_question": "Začnite zobrazením prvej otázky.",
+        "stop_time": "Zastaviť čas",
+        "enter_answer_into_field": "Zadajte svoju odpoveď do poľa!",
+        "answers_submitted": "{{answer_count}} odoslaných odpovedí",
+        "request_export_results": "Stiahnuť výsledky",
+        "download_export_results": "Stiahnuť výsledky",
+        "export_results": "Exportovať výsledky"
+    },
+    "search_page": {
+        "at_least_3_characters": "Zadajte aspoň 3 znaky...",
+        "nothing_here": "Nič sa nenašlo...",
+        "not_finding": "Nenašli ste, čo hľadáte? Vyhľadajte na",
+        "and_import_it": "a importujte ho!"
+    },
+    "explore_page": {
+        "made_by": "Vytvoril/a",
+        "imported_by": "Importoval/a",
+        "imported_from_kahoot_tooltip": "Tento kvíz je importovaný z Kahoot!",
+        "made_by_creator_tooltip": "Tento kvíz vytvoril sám autor!",
+        "unknown_origin_tooltip": "Pôvod tohto kvízu nie je známy."
+    },
+    "login_page": {
+        "welcome_back": "Vitajte späť.",
+        "login_or_create_account": "Prihláste sa alebo si vytvorte účet",
+        "already_have_account": "Nemáte ešte účet?",
+        "email_or_username": "E-mail alebo používateľské meno",
+        "modal": {
+            "success": {
+                "success_check_mail": "Prihlásený. Skontrolujte si e-mailovú schránku.",
+                "success": "Úspešne prihlásený.",
+                "description": {
+                    "success_check_mail": "Skontrolujte si e-mailovú schránku, kde nájdete odkaz na prihlásenie.",
+                    "success": "Úspešne prihlásený."
+                }
+            },
+            "error": {
+                "wrong_creds": "Nesprávna e-mailová adresa alebo heslo.",
+                "unexpected": "Neočakávaná chyba!",
+                "description": {
+                    "wrong_creds": "Skontrolujte, či sú vaše heslo a e-mailová adresa správne.",
+                    "unexpected": "Vyskytla sa neočakávaná chyba!"
+                }
+            }
+        },
+        "use_backup_code": "Použiť záložný kód"
+    },
+    "editor": {
+        "check_choice_description": "Pre získanie bodov musia byť vybrané všetky správne odpovede",
+        "order_description": "Odpovede je možné zoradiť do správneho poradia",
+        "text_description": "Hráči môžu zadať textovú odpoveď",
+        "range_description": "Rozsah čísel je možné vybrať pomocou posuvníka",
+        "need_more_help": "Potrebujete pomoc?",
+        "visit_docs": "Navštívte dokumentáciu.",
+        "enter_answer": "Zadajte odpoveď",
+        "enable_reorder": "Povoliť zmenu poradia",
+        "disable_reorder": "Zakázať zmenu poradia",
+        "advanced_settings": "Pokročilé nastavenia",
+        "hide_question_results": "Skryť výsledky otázky?",
+        "time_in_seconds": "Čas v sekundách",
+        "right_or_true?": "Správne?",
+        "add_new_answer": "Pridať novú odpoveď",
+        "add_new_question": "Pridať novú otázku",
+        "delete_question": "Vymazať otázku",
+        "delete_answer": "Vymazať odpoveď",
+        "not_all_links_imgur_links": "Nie všetky odkazy sú odkazy na Imgur!",
+        "no_title": "Bez názvu...",
+        "empty": "Prázdne...",
+        "bg_image": "Obrázok na pozadí",
+        "slide": {
+            "headline": "Nadpis",
+            "headline_description": "Výrazný text pre nadpisy",
+            "text": "Text",
+            "text_description": "Menší dlhší text",
+            "rectangle": "Obdĺžnik",
+            "rectangle_description": "Jednoduchý obdĺžnik"
+        },
+        "abcd_description": "Môže byť vybraná iba jedna odpoveď",
+        "voting_description": "Odpovede nepridávajú žiadne body"
+    },
+    "editor_page": {
+        "add_an_answer": "Pridať odpoveď",
+        "right_click_to_delete": "Kliknutím pravým tlačidlom odpoveď vymažete!"
+    },
+    "import_page": {
+        "need_help": "Potrebujete pomoc?",
+        "visit_docs": "Navštívte dokumentáciu",
+        "a_kahoot_quiz": "Kvíz z Kahoot!",
+        "url_should_look_like_this": "URL by mala vyzerať takto: https://create.kahoot.it/details/...",
+        "side_import_kahoot": "Na tejto stránke môžete importovať kvízy vytvorené v Kahoot!.",
+        "ClassQuiz2_quiz": "ClassQuiz2 kvíz",
+        "upload_file_ending": "Nahrajte súbor s príponou .cqa alebo .xlsx",
+        "this_side_ClassQuiz2": "Na tejto stránke môžete importovať kvízy exportované z ClassQuiz2.",
+        "this_side_ClassQuiz2_excel": "Môžete tiež nahrať súbory Excelu po vyplnení šablóny. Ak kvíz s rovnakým názvom už existuje, otázky sa k nemu pridajú.",
+        "download_template_here": "Stiahnuť šablónu"
+    },
+    "password_reset_page": {
+        "reset_password": "Obnoviť heslo"
+    },
+    "dashboard": {
+        "search_for_own_quizzes": "Hľadať vo vlastných kvízoch...",
+        "views_n_plays": "Zobrazenia a spustenia",
+        "info_analytics": "Spustenia ukazujú počet spustení kvízu, zatiaľ čo Zobrazenia počítajú návštevy stránky kvízu.",
+        "commandpalette_notice": "Stlačte <kbd>Ctrl</kbd>+<kbd>K</kbd> pre otvorenie palety príkazov",
+        "create_quiz": "Vytvoriť nový kvíz",
+        "confirm_delete": "Naozaj chcete vymazať tento kvíz?",
+        "delete_quiz": "Vymazať kvíz",
+        "edit_quiz": "Upraviť kvíz",
+        "play_quiz": "Spustiť kvíz",
+        "view_quiz": "Náhľad kvízu",
+        "analytics_quiz": "Štatistiky a výsledky",
+        "export_quiz": "Stiahnuť / Exportovať kvíz"
+    },
+    "error_page": {
+        "404_text": "Stránka, ktorú hľadáte, neexistuje alebo bola presunutá.",
+        "unknown_error_text": "Vyskytla sa neočakávaná chyba. Skúste to prosím znova."
+    },
+    "uploader": {
+        "add_image": "Pridať médiá",
+        "select_upload_type": "Vyberte typ nahrávania",
+        "upload_a_video": "Nahrať video",
+        "upload_video_popup_notice": "Okno je otvorené, pozrite si podrobnosti",
+        "upload_video": "Nahrať video",
+        "visit_pixabay": "Navštíviť Pixabay",
+        "images_by_pixabay": "Obrázky poskytuje Pixabay",
+        "search_english_only": "Vyhľadávanie funguje v angličtine",
+        "next_page": "Ďalšia strana",
+        "previous_page": "Predchádzajúca strana"
+    },
+    "avatar_settings": {
+        "skin_color": "Farba pleti",
+        "top_type": "Vlasy / Pokrývka hlavy",
+        "hair_color": "Farba vlasov",
+        "facial_hair_type": "Fúzy / Brada",
+        "facial_hair_color": "Farba fúzov",
+        "mouth_type": "Ústa",
+        "eyebrow_type": "Obočie",
+        "accessories_type": "Okuliare",
+        "hat_color": "Farba čiapky",
+        "clothe_type": "Oblečenie",
+        "clothe_color": "Farba oblečenia",
+        "clothe_graphic_type": "Grafika na tričku",
+        "thats_you": "To ste vy!",
+        "start_over": "Začať odznova",
+        "go_back": "Späť"
+    },
+    "result_page": {
+        "player_name": "Meno hráča",
+        "custom_field": "Vlastné pole",
+        "average_score": "Priemerné skóre: {{average_score}}",
+        "correct_answer": "{{count}} správna odpoveď",
+        "correct_answer_plural": "{{count}} správnych odpovedí",
+        "time_taken": "Potrebný čas",
+        "player_score": "Skóre hráča",
+        "player_correct_questions": "Správne odpovede"
+    },
+    "controllers": {
+        "add_new_controller": "Pridať nový ovládač",
+        "player_name": "Meno hráča",
+        "first_seen": "Prvýkrát videné",
+        "last_seen": "Naposledy videné",
+        "controller_name": "Názov ovládača",
+        "version_overview": "Najnovšia dostupná verzia je {{newest_version}} a nainštalovaná je {{current_version}}.",
+        "already_latest_version": "Máte nainštalovanú najnovšiu verziu",
+        "cancel_update": "Zrušiť aktualizáciu",
+        "update_from_to": "Aktualizovať z {{current_version}} na {{newest_version}}"
+    },
+    "view_quiz_page": {
+        "made_by": "Vytvoril/a",
+        "view_on_kahoot": "Zobraziť originál na Kahoot!"
+    },
+    "start_game": {
+        "captcha_message": "Ak je povolené, v prehliadači hráčov sa načíta Google reCAPTCHA.",
+        "normal_mode_description": "Otázka a odpovede sa zobrazujú na obrazovke administrátora. Hráči majú farebné tlačidlá so symbolmi.",
+        "old_school_mode": "Klasický režim",
+        "old_school_mode_description": "Otázky aj obrázky sa zobrazujú administrátorovi aj hráčom",
+        "start_game": "Spustiť hru"
+    },
+    "quiztivity": {
+        "editor": {
+            "select_page_type": "Vyberte typ strany",
+            "move_left": "Posunúť doľava",
+            "move_right": "Posunúť doprava",
+            "title_placeholder": "Sem zadajte názov",
+            "add_new": "Pridať nové",
+            "delete": "Vymazať",
+            "open_shares_menu": "Otvoriť menu zdieľania",
+            "shares": {
+                "add_new_share": "Pridať nové zdieľanie",
+                "expires_on": "Expiruje dňa {{date}}",
+                "never_expires": "Nikdy neexpiruje"
+            }
+        },
+        "memory": {
+            "editor": {
+                "add_card": "Pridať kartu",
+                "upload_image": "Nahrať obrázok",
+                "add_pair": "Pridať dvojicu"
+            }
+        },
+        "play": {
+            "memory": {
+                "try_count": "Pokusy: {{try_count}}"
+            }
+        },
+        "share_expired": "Zdieľanie expirovalo"
+    },
+    "components": {
+        "popover": {
+            "copied_to_clipboard": "Skopírované do schránky!"
+        }
+    },
+    "public_user_page": {
+        "joined_on": "Pripojil/a sa dňa {{date}}",
+        "no_original_quizzes": "Tento používateľ nemá žiadne vlastné kvízy",
+        "user_not_found": "Používateľ sa nenašiel"
+    },
+    "file_dashboard": {
+        "not_available": "Nedostupné",
+        "missing": "CHÝBA!",
+        "unset": "Nenastavené",
+        "size": "Veľkosť: {{size}} MiB",
+        "caption": "Popis: {{caption}}",
+        "filename": "Názov súboru: {{filename}}",
+        "uploaded": "Nahraté: {{date}}",
+        "imported": "Importované: {{yes_or_no}}",
+        "edit_details": "Upraviť podrobnosti",
+        "delete_image": "Vymazať obrázok",
+        "edit_the_image": "Upraviť obrázok",
+        "filename_word": "Názov súboru",
+        "alt_text": "Alternatívny text / Popis",
+        "storage_usage": "Využili ste {{used}} MiB z {{total}} MiB úložiska ({{percent}}%)."
+    },
+    "video_uploader": {
+        "time_elapsed": "Uplynutý čas",
+        "time_remaining": "Zostávajúci čas"
+    },
+    "downloader": {
+        "select_download_type": "Vyberte formát stiahnutia",
+        "own_format": "Vlastný formát",
+        "excel_format": "Formát Excel",
+        "help": "Vlastný formát (.cqa) obsahuje aj obrázky a podporuje všetky typy otázok. Formát Excel podporuje hlasovanie a výber z možností."
     }
 }

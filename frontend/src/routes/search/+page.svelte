@@ -98,17 +98,23 @@ SPDX-License-Identifier: MPL-2.0
 			{/each}
 		</div>
 	{:else}
-		<div class="flex justify-center">
-			<h1 class="text-4xl">{$t('search_page.nothing_here')}</h1>
-		</div>
-		<div class="flex justify-center">
-			<p>
-				Not finding what you are looking for? Search on <a
-					class="underline"
+		<div class="flex flex-col items-center justify-center py-16 px-4 text-center">
+			<div class="text-6xl mb-4">🔍</div>
+			<h1 class="text-3xl sm:text-4xl font-extrabold text-slate-800 dark:text-slate-100 mb-3">
+				{$t('search_page.nothing_here')}
+			</h1>
+			<p class="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-md">
+				{$t('search_page.not_finding')}
+				<a
+					class="underline font-bold text-blue-600 hover:text-blue-800 transition-colors"
 					href="https://create.kahoot.it/search?query={search_term}&tags=test&filter=filter%3D1"
-					target="_blank">Kahoot!</a
+					target="_blank"
+					rel="noreferrer">Kahoot!</a
 				>
-				and <a href="/import" class="underline">import</a> it!
+				{$t('search_page.and_import_it')}
+				<a href="/import" class="underline font-bold text-emerald-600 hover:text-emerald-700 ml-1">
+					{$t('words.import', { default: 'Importovať' })}
+				</a>
 			</p>
 		</div>
 	{/if}

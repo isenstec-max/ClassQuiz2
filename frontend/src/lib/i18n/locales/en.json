@@ -179,7 +179,6 @@
         "select": "Select",
         "quiz": "Quiz",
         "quiztivity": "Quiztivity",
-        "next": "Next",
         "check_choice": "Check Choice",
         "video": "Video",
         "library": "Library",
@@ -265,6 +264,7 @@
         "answers_submitted": "{{answer_count}} Answers submitted",
         "request_export_results": "Request result download",
         "download_export_results": "Download results",
+        "results_saved": "Results saved",
         "export_results": "Export results"
     },
     "password_reset_page": {
@@ -285,11 +285,16 @@
     },
     "explore_page": {
         "made_by": "Made by",
-        "imported_by": "Imported by"
+        "imported_by": "Imported by",
+        "imported_from_kahoot_tooltip": "This quiz is imported from Kahoot!",
+        "made_by_creator_tooltip": "This quiz was made by the creator themself!",
+        "unknown_origin_tooltip": "The origin of this quiz is unknown."
     },
     "search_page": {
         "at_least_3_characters": "Enter at least 3 characters...",
-        "nothing_here": "There is nothing here..."
+        "nothing_here": "There is nothing here...",
+        "not_finding": "Not finding what you are looking for? Search on",
+        "and_import_it": "and import it!"
     },
     "play_page": {
         "end_sentence": "That's it! This was the quiz.",
@@ -311,11 +316,18 @@
         "right_click_to_delete": "Right-click on an answer to delete it!"
     },
     "dashboard": {
-        "search_for_own_quizzes": "Search for your own quizzes",
+        "search_for_own_quizzes": "Search for your own quizzes...",
         "views_n_plays": "Views & Plays",
         "info_analytics": "The \"Plays\" only show how often the quiz was started (you included), whereas the \"Views\" count how often the \"View\"-page was visited, so it also counts bots (sorry for that).",
         "commandpalette_notice": "Press <kbd>Ctr</kbd>+<kbd>k</kbd> or <kbd>Meta</kbd>+<kbd>k</kbd> to open the command palette",
-        "create_quiz": "Create a new quiz"
+        "create_quiz": "Create a new quiz",
+        "confirm_delete": "Do you really want to delete this quiz?",
+        "delete_quiz": "Delete quiz",
+        "edit_quiz": "Edit quiz",
+        "play_quiz": "Play quiz",
+        "view_quiz": "View quiz",
+        "analytics_quiz": "Statistics and results",
+        "export_quiz": "Download / Export quiz"
     },
     "footer": {
         "self_ads": "Made with ❤️ by {{mawoka_link}} and with the help of {{others_link}}.",
@@ -362,7 +374,9 @@
         "player_count": "Player count",
         "general_overview": {
             "sentence": "The quiz \"<b>{{title}}</b>\", which was played on <b>{{date}}</b> had <b>{{player_count}}</b> players with an average score of <b>{{average_score}}</b>."
-        }
+        },
+        "final_overview": "Final quiz results",
+        "other_places": "Other rankings"
     },
     "result_page": {
         "player_name": "Player name",

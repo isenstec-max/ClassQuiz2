@@ -13,7 +13,6 @@ SPDX-License-Identifier: MPL-2.0
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 	import FinalResults from '$lib/play/admin/final_results.svelte';
-	import GrayButton from '$lib/components/buttons/gray.svelte';
 	import { page } from '$app/state';
 	import { SocketGameControls } from '$lib/play/admin/socket_game_controls.ts';
 	import type { IGameState } from '$lib/play/admin/game_state.ts';
@@ -251,43 +250,57 @@ SPDX-License-Identifier: MPL-2.0
 >
 	{#if JSON.stringify(game_state.final_results) !== JSON.stringify([null])}
 		{#if game_state.control_visible}
-			<div class="w-screen flex justify-center mt-16">
-				<div class="w-fit">
-					{#if export_token === undefined}
-						<GrayButton onclick={request_answer_export}
-							>{$t('admin_page.request_export_results')}</GrayButton
-						>
-					{:else}
-						<GrayButton
-							target="_blank"
-							href="/api/v1/quiz/export_data/{export_token}?ts={new Date().getTime()}&game_pin={game_pin}"
-							>{$t('admin_page.download_export_results')}</GrayButton
-						>
-					{/if}
-				</div>
-			</div>
-			<div class="w-screen flex justify-center mt-2">
-				<div class="w-fit">
-					<GrayButton onclick={save_quiz} flex={true} disabled={results_saved}>
-						{#if results_saved}
-							<svg
-								class="w-4 h-4"
-								aria-hidden="true"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								viewBox="0 0 24 24"
-								xmlns="http://www.w3.org/2000/svg"
-							>
-								<path
-									d="M5 13l4 4L19 7"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								/>
+			<div class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-wrap items-center justify-center gap-3 w-full max-w-2xl px-4 pointer-events-auto">
+				<!-- Tlačidlo na export / stiahnutie výsledkov -->
+				{#if export_token === undefined}
+					<button
+						onclick={request_answer_export}
+						class="group flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-slate-900/95 dark:bg-black/95 backdrop-blur-xl border-2 border-indigo-400/60 shadow-2xl shadow-indigo-500/25 text-white font-extrabold text-sm sm:text-base hover:scale-105 active:scale-95 transition-all cursor-pointer ring-4 ring-indigo-500/20"
+					>
+						<div class="p-1 rounded-lg bg-indigo-500/20 text-indigo-300 group-hover:scale-110 transition-transform">
+							<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
 							</svg>
-						{:else}{$t('admin_page.save_results')}{/if}
-					</GrayButton>
-				</div>
+						</div>
+						<span>{$t('admin_page.request_export_results', { default: 'Stiahnuť výsledky' })}</span>
+					</button>
+				{:else}
+					<a
+						target="_blank"
+						href="/api/v1/quiz/export_data/{export_token}?ts={new Date().getTime()}&game_pin={game_pin}"
+						class="group flex items-center gap-2.5 px-7 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 text-white font-black text-sm sm:text-base hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-emerald-600/30 border-2 border-emerald-300 ring-4 ring-emerald-500/25 animate-pulse cursor-pointer"
+					>
+						<div class="p-1 rounded-lg bg-black/20 text-white group-hover:scale-110 transition-transform">
+							<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+							</svg>
+						</div>
+						<span>{$t('admin_page.download_export_results', { default: 'Stiahnuť výsledky' })}</span>
+					</a>
+				{/if}
+
+				<!-- Tlačidlo na uloženie výsledkov -->
+				<button
+					onclick={save_quiz}
+					disabled={results_saved}
+					class="group flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-slate-900/95 dark:bg-black/95 backdrop-blur-xl border-2 border-emerald-400/60 shadow-2xl shadow-emerald-500/25 text-white font-extrabold text-sm sm:text-base hover:scale-105 active:scale-95 transition-all cursor-pointer ring-4 ring-emerald-500/20 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+				>
+					{#if results_saved}
+						<div class="p-1 rounded-lg bg-emerald-500/20 text-emerald-400">
+							<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+							</svg>
+						</div>
+						<span class="text-emerald-300 font-black">{$t('admin_page.results_saved', { default: 'Výsledky uložené' })}</span>
+					{:else}
+						<div class="p-1 rounded-lg bg-emerald-500/20 text-emerald-300 group-hover:scale-110 transition-transform">
+							<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+							</svg>
+						</div>
+						<span>{$t('admin_page.save_results', { default: 'Uložiť výsledky' })}</span>
+					{/if}
+				</button>
 			</div>
 		{/if}
 		<FinalResults bind:data={game_state.player_scores} {show_final_results} />

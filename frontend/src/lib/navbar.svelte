@@ -9,7 +9,6 @@ SPDX-License-Identifier: MPL-2.0
 	import { getLocalization } from '$lib/i18n';
 	import { signedIn, pathname } from '$lib/stores';
 	import { createTippy } from 'svelte-tippy';
-	import BrownButton from '$lib/components/buttons/brown.svelte';
 	import { browser } from '$app/environment';
 	import { beforeNavigate } from '$app/navigation';
 	import { draw, slide } from 'svelte/transition';
@@ -46,9 +45,9 @@ SPDX-License-Identifier: MPL-2.0
 		window.location.reload();
 	};
 
-	let currentLang = $state('en');
+	let currentLang = $state('sk');
 	if (browser) {
-		currentLang = localStorage.getItem('language') ?? 'en';
+		currentLang = localStorage.getItem('language') ?? 'sk';
 	}
 	const setLang = (code: string) => {
 		if (browser) {
@@ -115,9 +114,16 @@ SPDX-License-Identifier: MPL-2.0
 			{/if}
 
 			<div class="fit-content flex items-center justify-center">
-				<BrownButton href="https://mawoka.eu/donate" target="_blank" aria-label="Donate" title="Donate"
-					><span class="text-base leading-none">❤️</span></BrownButton
+				<a
+					href="https://mawoka.eu/donate"
+					target="_blank"
+					rel="noreferrer"
+					aria-label={$t('navbar.donate', { default: 'Podporiť' })}
+					title={$t('navbar.donate', { default: 'Podporiť' })}
+					class="p-2 rounded-xl bg-white border border-gray-200/90 shadow-xs hover:shadow-md hover:scale-110 active:scale-95 transition-all flex items-center justify-center text-base leading-none cursor-pointer"
 				>
+					<span class="leading-none">❤️</span>
+				</a>
 
 				<div class="lg:flex items-center justify-center mx-4">
 					{#if darkMode}
@@ -432,9 +438,16 @@ SPDX-License-Identifier: MPL-2.0
 				{/if}
 
 				<div class="fit-content flex items-center justify-center my-2">
-					<BrownButton href="https://mawoka.eu/donate" target="_blank" aria-label="Donate" title="Donate"
-						><span class="text-base leading-none">❤️</span></BrownButton
+					<a
+						href="https://mawoka.eu/donate"
+						target="_blank"
+						rel="noreferrer"
+						aria-label={$t('navbar.donate', { default: 'Podporiť' })}
+						title={$t('navbar.donate', { default: 'Podporiť' })}
+						class="p-2.5 rounded-xl bg-white border border-gray-200/90 shadow-xs hover:shadow-md hover:scale-110 active:scale-95 transition-all flex items-center justify-center text-base leading-none cursor-pointer"
 					>
+						<span class="leading-none">❤️</span>
+					</a>
 				</div>
 			</div>
 		{/if}
