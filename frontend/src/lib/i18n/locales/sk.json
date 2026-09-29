@@ -220,7 +220,9 @@
     },
     "play_page": {
         "join_by_entering_code": "Zadajte herný PIN kód",
-        "join_description": "Pripojte sa k hre zadaním PIN kódu z obrazovky",
+        "join_description": "Pripojte sa na {{url}} a zadajte PIN {{pin}}",
+        "players_waiting": "{{count}} hráč čaká",
+        "players_waiting_plural": "{{count}} hráčov čaká",
         "your_score": "Vaše skóre",
         "points_added": "Získané body",
         "final_result_rank": "Konečné poradie",
@@ -238,5 +240,11 @@
         "general_overview": {
             "sentence": "Celkový prehľad kvízu"
         }
+    },
+    "admin_page": {
+        "start_game": "Start Quiz",
+        "already_registered_as_admin": "Pre túto hru už existuje prihlásený administrátor.",
+        "no_answers": "Žiadne odpovede!",
+        "save_results": "Uložiť výsledky"
     }
 }

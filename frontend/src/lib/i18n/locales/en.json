@@ -246,7 +246,7 @@
     },
     "admin_page": {
         "already_registered_as_admin": "There is already an admin registered for this game.",
-        "start_game": "Start game",
+        "start_game": "Start Quiz",
         "time_left": "Time left",
         "get_results": "Get results",
         "get_results_and_stop_time": "Get results and stop time",
@@ -301,7 +301,7 @@
         "join_by_entering_code": "Join by entering the following code",
         "points_added": "Points added",
         "your_place": "You're on place {{place}}!",
-        "players_waiting": "{{count}} player are waiting",
+        "players_waiting": "{{count}} player is waiting",
         "players_waiting_plural": "{{count}} players are waiting"
     },
     "editor_page": {
