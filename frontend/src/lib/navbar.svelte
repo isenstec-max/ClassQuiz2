@@ -14,6 +14,7 @@ SPDX-License-Identifier: MPL-2.0
 	import { draw, slide } from 'svelte/transition';
 	import { registration_disabled } from './config';
 	import { APP_VERSION } from '$lib/version';
+	import BrandLogo from '$lib/components/BrandLogo.svelte';
 
 	const tippy = createTippy({
 		arrow: true,
@@ -63,9 +64,10 @@ SPDX-License-Identifier: MPL-2.0
 		<div class="lg:flex lg:items-center lg:flex-row gap-1">
 			<a
 				href="/search?q="
-				class="font-black tracking-tight text-xl lg:text-2xl marck-script link-hover px-3 lg:px-5 flex items-center gap-2 cq2-brand-logo"
-				>ClassQuiz2 <span class="cq2-version-badge">{APP_VERSION}</span></a
+				class="group px-3 lg:px-4 flex items-center hover:opacity-90 transition-opacity"
 			>
+				<BrandLogo size="md" showBadge={true} />
+			</a>
 			<a class="btn-nav border-2 rounded-sm" href="/play">{$t('words.play')}</a>
 			<a class="btn-nav" href="/explore">{$t('words.explore')}</a>
 			<a class="btn-nav" href="/search?q=">{$t('words.search')}</a>
@@ -232,9 +234,10 @@ SPDX-License-Identifier: MPL-2.0
 		<div class="flex items-center justify-between">
 			<a
 				href="/"
-				class="font-black tracking-tight text-xl lg:text-2xl marck-script link-hover px-3 lg:px-5 flex items-center gap-1.5 cq2-brand-logo"
-				>ClassQuiz2 <span class="cq2-version-badge">{APP_VERSION}</span></a
+				class="group px-2 flex items-center hover:opacity-90 transition-opacity"
 			>
+				<BrandLogo size="sm" showBadge={true} />
+			</a>
 			<a class="btn-nav flex" href="/play">{$t('words.play')}</a>
 
 			<!-- Dark/Light mode toggle + Open/Close menu -->

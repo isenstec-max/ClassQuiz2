@@ -20,6 +20,7 @@ SPDX-License-Identifier: MPL-2.0
 	import ResultScreenshot from '$lib/assets/landing_new/result.webp';
 	import WinnersScreenshot from '$lib/assets/landing_new/winners.webp';
 	import { onMount } from 'svelte';
+	import BrandLogo from '$lib/components/BrandLogo.svelte';
 
 	const { t } = getLocalization();
 
@@ -133,9 +134,9 @@ SPDX-License-Identifier: MPL-2.0
 </svelte:head>
 <div class="min-h-screen flex flex-col">
 	<section class="pb-40">
-		<div class="pt-12 text-center">
-			<h1 class="sm:text-8xl text-6xl mt-6 marck-script cq2-brand-logo">ClassQuiz2</h1>
-			<p class="text-xl mt-4 text-gray-800 dark:text-gray-200">{$t('index_page.slogan')}</p>
+		<div class="pt-12 text-center flex flex-col items-center justify-center">
+			<BrandLogo size="hero" showBadge={false} />
+			<p class="text-xl mt-6 text-gray-800 dark:text-gray-200">{$t('index_page.slogan')}</p>
 		</div>
 	</section>
 	<section>
