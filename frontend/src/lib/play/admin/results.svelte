@@ -12,6 +12,8 @@ SPDX-License-Identifier: MPL-2.0
 	import { getLocalization } from '$lib/i18n';
 	import type { Question } from '$lib/quiz_types';
 	import { QuizQuestionType } from '$lib/quiz_types';
+	import AnimalAvatar from '$lib/components/AnimalAvatar.svelte';
+	import { parsePlayer } from '$lib/avatars';
 
 	const { t } = getLocalization();
 
@@ -102,9 +104,13 @@ SPDX-License-Identifier: MPL-2.0
 				<tbody>
 					{#each player_names as player, i (player)}
 						<tr animate:flip>
-							<td class:hidden={i > 3} class="p-2 border-r border-r-black"
-								>{player}</td
-							>
+							<td class:hidden={i > 3} class="p-2 border-r border-r-black">
+								{@const parsed = parsePlayer(player)}
+								<div class="flex items-center gap-2">
+									<AnimalAvatar avatarId={parsed.avatarId} size={28} class="shadow-sm inline-block" />
+									<span class="font-bold">{parsed.name}</span>
+								</div>
+							</td>
 							<td class:hidden={i > 3} class="p-2">{data[player]}</td>
 							{#if show_new_score_clicked}
 								<td

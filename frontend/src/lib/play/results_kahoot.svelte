@@ -5,6 +5,9 @@ SPDX-License-Identifier: MPL-2.0
 -->
 
 <script lang="ts">
+	import AnimalAvatar from '$lib/components/AnimalAvatar.svelte';
+	import { parsePlayer } from '$lib/avatars';
+
 	function sortObjectbyValue(obj) {
 		const ret = {};
 		Object.keys(obj)
@@ -41,15 +44,20 @@ SPDX-License-Identifier: MPL-2.0
 	}
 	scores = scores;
 	let sorted_scores = $derived(sortObjectbyValue(scores));
+	let parsed = $derived(parsePlayer(username || ''));
 </script>
 
 <div>
 	<div class="flex justify-center h-screen">
-		<div class="m-auto flex flex-col">
-			<p class="p-4 bg-black/40 rounded-lg text-2xl">
+		<div class="m-auto flex flex-col items-center gap-3">
+			<div class="flex items-center gap-2 bg-white/10 dark:bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20">
+				<AnimalAvatar avatarId={parsed.avatarId} size={36} class="shadow-sm" />
+				<span class="font-bold text-lg">{parsed.name}</span>
+			</div>
+			<p class="p-4 bg-black/40 rounded-lg text-2xl font-bold">
 				+{score_by_username[username] ?? '0'}
 			</p>
-			<p>Total score: {sorted_scores[username] ?? '0'}</p>
+			<p class="text-lg opacity-90">Total score: {sorted_scores[username] ?? '0'}</p>
 		</div>
 	</div>
 </div>

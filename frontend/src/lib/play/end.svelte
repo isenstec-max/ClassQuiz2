@@ -6,6 +6,8 @@ SPDX-License-Identifier: MPL-2.0
 
 <script lang="ts">
 	import { getLocalization } from '$lib/i18n';
+	import AnimalAvatar from '$lib/components/AnimalAvatar.svelte';
+	import { parsePlayer } from '$lib/avatars';
 
 	const { t } = getLocalization();
 
@@ -93,24 +95,30 @@ SPDX-License-Identifier: MPL-2.0
 				<h1 class="text-3xl">{$t('admin_page.no_answers')}</h1>
 			</div>
 		{:else}
-			<div class="flex mx-auto w-fit flex-col pt-8 gap-2">
-				<div>
-					<p class="text-3xl text-center">
-						{$t('play_page.1st_place')}:
-						<span class="underline">{winners_arr[0][0]}</span>
-						<span
-							>{$t('play_page.with_out_of', {
-								correct_questions: winners_arr[0][1] ?? 0,
-								total_question_count: question_count
-							})}</span
-						>
-					</p>
-				</div>
+			<div class="flex mx-auto w-fit flex-col pt-8 gap-4">
+				{#if winners_arr.length >= 1 && winners_arr[0][0] !== undefined}
+					{@const parsed = parsePlayer(winners_arr[0][0])}
+					<div class="flex items-center justify-center gap-3">
+						<AnimalAvatar avatarId={parsed.avatarId} size={40} class="shadow-md" />
+						<p class="text-3xl text-center">
+							{$t('play_page.1st_place')}:
+							<span class="underline font-bold">{parsed.name}</span>
+							<span
+								>{$t('play_page.with_out_of', {
+									correct_questions: winners_arr[0][1] ?? 0,
+									total_question_count: question_count
+								})}</span
+							>
+						</p>
+					</div>
+				{/if}
 				{#if winners_arr.length >= 2 && winners_arr[1][0] !== undefined}
-					<div>
+					{@const parsed = parsePlayer(winners_arr[1][0])}
+					<div class="flex items-center justify-center gap-3">
+						<AnimalAvatar avatarId={parsed.avatarId} size={32} class="shadow-md" />
 						<p class="text-2xl text-center">
 							{$t('play_page.2nd_place')}:
-							<span class="underline">{winners_arr[1][0]}</span>
+							<span class="underline font-bold">{parsed.name}</span>
 							<span
 								>{$t('play_page.with_out_of', {
 									correct_questions: winners_arr[1][1] ?? 0,
@@ -121,10 +129,12 @@ SPDX-License-Identifier: MPL-2.0
 					</div>
 				{/if}
 				{#if winners_arr.length >= 3 && winners_arr[2][0] !== undefined}
-					<div>
+					{@const parsed = parsePlayer(winners_arr[2][0])}
+					<div class="flex items-center justify-center gap-3">
+						<AnimalAvatar avatarId={parsed.avatarId} size={28} class="shadow-md" />
 						<p class="text-xl text-center">
 							{$t('play_page.3rd place')}:
-							<span class="underline">{winners_arr[2][0]}</span>
+							<span class="underline font-bold">{parsed.name}</span>
 							<span>
 								{$t('play_page.with_out_of', {
 									correct_questions: winners_arr[2][1] ?? 0,

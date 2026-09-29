@@ -12,6 +12,8 @@ SPDX-License-Identifier: MPL-2.0
 	import { fade } from 'svelte/transition';
 	import { SocketGameControls } from '$lib/play/admin/socket_game_controls.ts';
 	import type { GameState } from '$lib/play/admin/game_state';
+	import AnimalAvatar from '$lib/components/AnimalAvatar.svelte';
+	import { parsePlayer } from '$lib/avatars';
 
 	interface Props {
 		game_pin: string;
@@ -107,17 +109,21 @@ SPDX-License-Identifier: MPL-2.0
 			</GrayButton>
 		</div>
 	</div>
-	<div class="flex flex-row w-full mt-4 px-10 flex-wrap">
+	<div class="flex flex-row w-full mt-4 px-10 flex-wrap justify-center gap-2">
 		{#if game_state.players.length > 0}
 			{#each game_state.players as player}
-				<div class="p-2 m-2 border-2 border-[#B07156] rounded-sm hover:cursor-pointer">
+				{@const { avatarId, name } = parsePlayer(player.username)}
+				<div
+					class="flex items-center gap-2.5 px-4 py-2 bg-white dark:bg-gray-800 rounded-xl shadow-md border-2 border-emerald-500/40 hover:border-red-500 transition-all hover:scale-105 cursor-pointer group"
+					onclick={() => {
+						socket_game_controls.kick_player(player.username, game_state.players);
+					}}
+					title="Kliknutím vyhodíte hráča"
+				>
+					<AnimalAvatar {avatarId} size={36} class="shadow-sm" />
 					<span
-						class="hover:line-through text-lg"
-						onclick={() => {
-							socket_game_controls.kick_player(player.username, game_state.players);
-						}}>{player.username}</span
-					>
-					<!--					<button>{$t('words.kick')}</button>-->
+						class="hover:line-through text-lg font-bold text-gray-800 dark:text-gray-100 group-hover:text-red-500"
+					>{name}</span>
 				</div>
 			{/each}
 		{/if}
