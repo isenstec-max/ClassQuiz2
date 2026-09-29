@@ -66,7 +66,7 @@ SPDX-License-Identifier: MPL-2.0
 	});
 </script>
 
-<div class="w-full max-w-6xl mx-auto px-4 pt-2 md:pt-4 flex flex-col items-center">
+<div class="w-full max-w-4xl xl:max-w-5xl 2xl:max-w-6xl mx-auto px-4 pt-2 md:pt-4 flex flex-col items-center">
 	<!-- Karta s textom otázky s dostatočným priestorom, aby neprekrývala časovač -->
 	<div class="bg-white/95 dark:bg-slate-800/95 text-gray-900 dark:text-white px-6 md:px-12 py-4 md:py-6 rounded-3xl shadow-xl border border-black/5 text-center w-full mb-6">
 		<h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
@@ -165,7 +165,7 @@ SPDX-License-Identifier: MPL-2.0
 {/if}
 
 {#if game_pin}
-	<div class="fixed left-4 bottom-4 z-30 hidden lg:block">
-		<JoinInfoCard {game_pin} compact={true} class="w-48 shadow-2xl" />
+	<div class="fixed left-4 sm:left-6 top-4 sm:top-6 z-30 hidden lg:block">
+		<JoinInfoCard {game_pin} compact={false} class="w-56 xl:w-64 shadow-2xl" />
 	</div>
 {/if}

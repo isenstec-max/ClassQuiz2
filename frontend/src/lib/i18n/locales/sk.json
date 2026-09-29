@@ -166,6 +166,8 @@
         "overview": "Prehľad",
         "image": "Obrázok",
         "result_plural": "Výsledky",
+        "results": "Výsledky",
+        "next": "Ďalej",
         "submit": "Potvrdiť",
         "never": "Nikdy",
         "connect": "Pripojiť",
@@ -245,6 +247,11 @@
         "start_game": "Start Quiz",
         "already_registered_as_admin": "Pre túto hru už existuje prihlásený administrátor.",
         "no_answers": "Žiadne odpovede!",
-        "save_results": "Uložiť výsledky"
+        "save_results": "Uložiť výsledky",
+        "show_results": "Zobraziť výsledky",
+        "next_question": "Ďalšia otázka ({{question}})",
+        "next_question_title": "Ďalšia otázka",
+        "stop_time_and_solutions": "Zastaviť a ukázať riešenie",
+        "get_final_results": "Zobraziť stupne víťazov"
     }
 }
