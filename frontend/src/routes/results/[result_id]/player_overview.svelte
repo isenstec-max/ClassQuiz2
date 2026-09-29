@@ -6,6 +6,7 @@ SPDX-License-Identifier: MPL-2.0
 <script lang="ts">
 	import { getLocalization } from '$lib/i18n';
 	import AnimalAvatar from '$lib/components/AnimalAvatar.svelte';
+	import AccuracyDonut from '$lib/components/AccuracyDonut.svelte';
 	import { parsePlayer } from '$lib/avatars';
 
 	const { t } = getLocalization();
@@ -157,7 +158,7 @@ SPDX-License-Identifier: MPL-2.0
 					{#each filteredPlayers as p}
 						<tr class="bg-slate-50/80 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all rounded-2xl group">
 							<!-- Poradie -->
-							<td class="px-4 py-3 rounded-l-2xl">
+							<td class="px-4 py-3.5 sm:py-4 rounded-l-2xl">
 								{#if p.rank === 1}
 									<span class="w-8 h-8 rounded-xl bg-amber-400/20 text-amber-600 dark:text-amber-400 font-black text-sm flex items-center justify-center border border-amber-400/40 shadow-xs">
 										🥇 1
@@ -178,35 +179,38 @@ SPDX-License-Identifier: MPL-2.0
 							</td>
 
 							<!-- Hráč (Avatar + Meno) -->
-							<td class="px-4 py-3">
+							<td class="px-4 py-3.5 sm:py-4">
 								<div class="flex items-center gap-3">
-									<AnimalAvatar avatarId={p.avatarId} size={36} class="shrink-0 drop-shadow-xs" />
-									<span class="font-black text-sm text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+									<AnimalAvatar avatarId={p.avatarId} size={40} class="shrink-0 drop-shadow-xs" />
+									<span class="font-black text-sm sm:text-base text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
 										{p.name}
 									</span>
 								</div>
 							</td>
 
-							<!-- Úspešnosť / Správne odpovede -->
-							<td class="px-4 py-3">
-								<div class="flex flex-col gap-1">
-									<div class="flex items-center justify-between text-xs font-bold">
-										<span class="text-slate-700 dark:text-slate-300">{p.correct} z {p.total}</span>
-										<span class="{p.pct >= 70 ? 'text-emerald-600 dark:text-emerald-400' : p.pct >= 40 ? 'text-amber-600 dark:text-amber-400' : 'text-rose-600 dark:text-rose-400'}">
-											{p.pct}%
+							<!-- Úspešnosť / Správne odpovede (s kruhovým donut grafom: pomer červená ku zelenej) -->
+							<td class="px-4 py-3.5 sm:py-4">
+								<div class="flex items-center gap-3.5">
+									<AccuracyDonut
+										correct={p.correct}
+										incorrect={p.total - p.correct}
+										total={p.total}
+										size={42}
+										strokeWidth={4.5}
+									/>
+									<div class="flex flex-col">
+										<span class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100">
+											{p.correct} z {p.total}
 										</span>
-									</div>
-									<div class="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden flex">
-										<div
-											class="h-full transition-all duration-300 {p.pct >= 70 ? 'bg-emerald-500' : p.pct >= 40 ? 'bg-amber-500' : 'bg-rose-500'}"
-											style="width: {p.pct}%"
-										></div>
+										<span class="text-[11px] text-slate-400 font-medium">
+											správnych
+										</span>
 									</div>
 								</div>
 							</td>
 
 							<!-- Čas odpovede (Priemerný čas na otázku s dvoma desatinnými miestami) -->
-							<td class="px-4 py-3 text-right">
+							<td class="px-4 py-3.5 sm:py-4 text-right">
 								{#if p.avgTimeSec !== null}
 									<div class="flex flex-col items-end">
 										<span class="inline-flex items-center gap-1 font-mono font-bold text-xs sm:text-sm text-slate-700 dark:text-slate-200">
@@ -227,7 +231,7 @@ SPDX-License-Identifier: MPL-2.0
 							</td>
 
 							<!-- Skóre (Body) -->
-							<td class="px-4 py-3 text-right">
+							<td class="px-4 py-3.5 sm:py-4 text-right">
 								<span class="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 font-mono font-black text-sm border border-emerald-200/60 dark:border-emerald-800/60 shadow-2xs">
 									<span>⭐</span>
 									<span>{formatScore(p.score)}</span>
@@ -236,11 +240,11 @@ SPDX-License-Identifier: MPL-2.0
 
 							<!-- Vlastné pole -->
 							{#if hasCustomFields}
-								<td class="px-4 py-3 rounded-r-2xl text-xs font-medium text-slate-500 dark:text-slate-400">
+								<td class="px-4 py-3.5 sm:py-4 rounded-r-2xl text-xs font-medium text-slate-500 dark:text-slate-400">
 									{p.customField || '—'}
 								</td>
 							{:else}
-								<td class="rounded-r-2xl"></td>
+								<td class="px-4 py-3.5 sm:py-4 rounded-r-2xl"></td>
 							{/if}
 						</tr>
 					{/each}

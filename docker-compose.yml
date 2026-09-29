@@ -7,7 +7,7 @@ version: "3"
 services:
   frontend:
     restart: always
-    image: classquiz-frontend:v2.52
+    image: classquiz-frontend:v2.53
     pull_policy: never
     depends_on:
       - redis
