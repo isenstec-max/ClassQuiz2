@@ -302,7 +302,7 @@
         "2nd_place": "2nd Place",
         "3rd place": "3rd Place",
         "with_out_of": "with {{correct_questions}} out of {{total_question_count}}",
-        "final_result_rank": "{{place}}: {{username}} with {{points}} points",
+        "final_result_rank": "Stupne víťazov",
         "your_score": "Your score: {{score}}",
         "join_description": "Join at {{url}} and enter {{pin}}.",
         "join_by_entering_code": "Join by entering the following code",
@@ -375,8 +375,11 @@
         "general_overview": {
             "sentence": "The quiz \"<b>{{title}}</b>\", which was played on <b>{{date}}</b> had <b>{{player_count}}</b> players with an average score of <b>{{average_score}}</b>."
         },
-        "final_overview": "Final quiz results",
-        "other_places": "Other rankings"
+        "final_overview": "Finálne výsledky kvízu",
+        "podium_title": "Stupne víťazov",
+        "other_places": "Ďalšie umiestnenia",
+        "your_result": "Tvoj výsledok",
+        "placement": "Umiestnenie"
     },
     "result_page": {
         "player_name": "Player name",

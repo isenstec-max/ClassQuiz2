@@ -119,17 +119,38 @@ SPDX-License-Identifier: MPL-2.0
 </script>
 
 {#if show_final_results}
-	<div class="min-h-screen w-full flex flex-col justify-between items-center px-4 pt-24 sm:pt-28 pb-8 relative overflow-hidden select-none">
+	<div class="min-h-screen w-full flex flex-col justify-between items-center px-4 {username ? 'pt-4 sm:pt-6' : 'pt-24 sm:pt-28'} pb-8 relative overflow-hidden select-none">
 		<!-- Nadpis pódia -->
-		<div class="text-center z-10 mb-6 flex flex-col items-center animate-fade-down">
-			<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/90 text-amber-300 border-2 border-amber-400/50 text-xs sm:text-sm font-black tracking-widest uppercase mb-3 shadow-xl backdrop-blur-md ring-2 ring-amber-400/20">
+		<div class="text-center z-10 mb-4 sm:mb-6 flex flex-col items-center animate-fade-down">
+			<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/90 text-amber-300 border-2 border-amber-400/50 text-xs sm:text-sm font-black tracking-widest uppercase mb-2 shadow-xl backdrop-blur-md ring-2 ring-amber-400/20">
 				<span>🏆</span> {$t('results_page.final_overview', { default: 'Finálne výsledky kvízu' })}
 			</div>
-			<div class="px-8 sm:px-12 py-2.5 sm:py-3.5 rounded-3xl bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-2xl">
+			<div class="px-8 sm:px-12 py-2 sm:py-3 rounded-3xl bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-2xl">
 				<h1 class="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight drop-shadow-md">
-					{$t('play_page.final_result_rank', { default: 'Stupne víťazov' })}
+					{$t('results_page.podium_title', { default: 'Stupne víťazov' })}
 				</h1>
 			</div>
+
+			<!-- Pre pripojeného hráča na jeho vlastnom zariadení (username) -->
+			{#if username && resolvedScores[username] !== undefined}
+				{@const parsed = parsePlayer(username)}
+				{@const myRank = player_names.indexOf(username) + 1}
+				<div class="mt-3 flex items-center gap-3 px-5 py-2.5 rounded-2xl bg-slate-900/95 border-2 border-emerald-500 shadow-2xl backdrop-blur-md text-white">
+					<AnimalAvatar avatarId={parsed.avatarId} size={36} class="shadow-md shrink-0" />
+					<div class="text-left">
+						<div class="text-[10px] uppercase font-bold tracking-wider text-emerald-400">
+							{$t('results_page.your_result', { default: 'Tvoj výsledok' })}
+						</div>
+						<div class="font-extrabold text-sm sm:text-base text-white flex items-center gap-2">
+							<span>{parsed.name}</span>
+							<span class="text-emerald-300 font-mono">({formatScoreWithUnit(resolvedScores[username])})</span>
+							<span class="px-2 py-0.5 rounded-md bg-yellow-400/20 text-yellow-300 text-xs font-black border border-yellow-400/30">
+								#{myRank} z {player_names.length}
+							</span>
+						</div>
+					</div>
+				</div>
+			{/if}
 		</div>
 
 		{#if player_names.length === 0}
@@ -288,25 +309,7 @@ SPDX-License-Identifier: MPL-2.0
 			{/if}
 		{/if}
 
-		<!-- Pre pripojeného hráča na jeho vlastnom zariadení (username) -->
-		{#if username && resolvedScores[username] !== undefined}
-			{@const parsed = parsePlayer(username)}
-			{@const myRank = player_names.indexOf(username) + 1}
-			<div class="fixed bottom-4 left-0 right-0 flex justify-center z-50 px-4">
-				<div class="bg-slate-900/95 border-2 border-emerald-500 rounded-2xl shadow-2xl px-6 py-3.5 flex items-center gap-4 text-white backdrop-blur-md">
-					<AnimalAvatar avatarId={parsed.avatarId} size={44} class="shadow-md" />
-					<div>
-						<div class="text-xs uppercase font-bold text-emerald-400">Tvoj výsledok</div>
-						<div class="font-extrabold text-lg text-white">
-							{parsed.name} – {formatScoreWithUnit(resolvedScores[username])}
-						</div>
-						<div class="text-xs text-slate-300">
-							Umiestnenie: <span class="font-black text-yellow-300">#{myRank}</span> z {player_names.length}
-						</div>
-					</div>
-				</div>
-			</div>
-		{/if}
+
 	</div>
 {/if}
 

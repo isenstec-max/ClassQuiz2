@@ -246,10 +246,13 @@
             "sentence": "Celkový prehľad kvízu"
         },
         "final_overview": "Finálne výsledky kvízu",
-        "other_places": "Ďalšie umiestnenia"
+        "podium_title": "Stupne víťazov",
+        "other_places": "Ďalšie umiestnenia",
+        "your_result": "Tvoj výsledok",
+        "placement": "Umiestnenie"
     },
     "admin_page": {
-        "start_game": "Start Quiz",
+        "start_game": "Spustiť kvíz",
         "already_registered_as_admin": "Pre túto hru už existuje prihlásený administrátor.",
         "no_answers": "Žiadne odpovede!",
         "save_results": "Uložiť výsledky",
