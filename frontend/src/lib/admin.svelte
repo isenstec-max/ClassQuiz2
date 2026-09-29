@@ -110,7 +110,7 @@ SPDX-License-Identifier: MPL-2.0
 	});
 </script>
 
-{#if game_state.control_visible}
+{#if game_state.control_visible && game_state.selected_question >= 0}
 	<Controls {bg_color} {socket_game_controls} {game_token} bind:game_state />
 {/if}
 {#if game_state.timer_res !== '0' && game_state.selected_question >= 0}
@@ -124,9 +124,9 @@ SPDX-License-Identifier: MPL-2.0
 
 <div
 	class="w-full h-full min-h-screen"
-	class:pt-14={game_state.control_visible}
-	class:md:pt-16={game_state.control_visible}
-	class:pt-6={!game_state.control_visible}
+	class:pt-14={game_state.control_visible && game_state.selected_question >= 0}
+	class:md:pt-16={game_state.control_visible && game_state.selected_question >= 0}
+	class:pt-6={!game_state.control_visible || game_state.selected_question < 0}
 >
 	{#if game_state.timer_res !== undefined && !final_results_clicked && !game_state.question_results}
 		<!-- Question is shown -->
@@ -259,20 +259,36 @@ SPDX-License-Identifier: MPL-2.0
 					</div>
 				{/if}
 
-				<!-- Spodná infolišta: PIN, Počet otázok, Inštrukcia -->
+				<!-- Spodná infolišta: PIN, Počet otázok, Tlačidlo Spustiť kvíz -->
 				<div class="mt-8 pt-6 border-t border-white/10 w-full flex flex-wrap items-center justify-center gap-4 text-xs md:text-sm">
 					{#if game_pin}
-						<div class="flex items-center gap-2 bg-slate-800/95 px-4 py-2 rounded-xl border border-white/15 shadow">
+						<div class="flex items-center gap-2 bg-slate-800/95 px-4 py-2.5 rounded-2xl border border-white/15 shadow">
 							<span class="text-slate-400 font-bold uppercase tracking-wider">PIN hry:</span>
-							<span class="text-amber-400 font-black font-mono text-base tracking-widest">{game_pin}</span>
+							<span class="text-amber-400 font-black font-mono text-base md:text-lg tracking-widest">{game_pin}</span>
 						</div>
 					{/if}
-					<div class="flex items-center gap-2 bg-slate-800/95 px-4 py-2 rounded-xl border border-white/15 text-slate-200 font-bold shadow">
+					<div class="flex items-center gap-2 bg-slate-800/95 px-4 py-2.5 rounded-2xl border border-white/15 text-slate-200 font-bold shadow">
 						<span>📝 {game_state.quiz_data.questions.length} otázok</span>
 					</div>
-					<div class="flex items-center gap-2 bg-emerald-500/20 text-emerald-300 px-4 py-2 rounded-xl border border-emerald-500/30 font-extrabold shadow">
-						<span>👉 Pokračujte kliknutím na tlačidlo hore</span>
-					</div>
+					<button
+						type="button"
+						onclick={() => {
+							socket_game_controls.set_question_number(0);
+						}}
+						class="group flex items-center gap-3.5 px-7 sm:px-9 py-2.5 sm:py-3 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-white font-black shadow-xl shadow-emerald-500/30 border-2 border-emerald-400/70 ring-4 ring-emerald-500/20 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
+					>
+						<span class="text-base sm:text-xl font-extrabold tracking-wide">Spustiť kvíz</span>
+						<span class="font-decorative text-lg sm:text-2xl font-black text-amber-300 drop-shadow flex items-center gap-1 bg-black/25 px-2.5 py-0.5 rounded-xl border border-white/10">
+							<span>1</span>
+							<span class="text-slate-300 text-xs sm:text-sm font-light">/</span>
+							<span class="text-slate-200 text-xs sm:text-base font-bold">{game_state.quiz_data.questions.length}</span>
+						</span>
+						<div class="p-1 rounded-lg bg-white/20 text-white group-hover:translate-x-1 transition-transform">
+							<svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+							</svg>
+						</div>
+					</button>
 				</div>
 			</div>
 		</div>

@@ -43,8 +43,8 @@ SPDX-License-Identifier: MPL-2.0
 					</span>
 				</button>
 			{/if}
-		{:else if game_state.timer_res === '0' || game_state.selected_question === -1}
-			{#if (game_state.selected_question + 1 !== game_state.quiz_data.questions.length && game_state.question_results !== null) || game_state.selected_question === -1}
+		{:else if game_state.timer_res === '0' && game_state.selected_question >= 0}
+			{#if game_state.selected_question + 1 !== game_state.quiz_data.questions.length && game_state.question_results !== null}
 				<button
 					onclick={() => {
 						socket_game_controls.set_question_number(game_state.selected_question + 1);
