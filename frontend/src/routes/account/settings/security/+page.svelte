@@ -518,7 +518,7 @@ SPDX-License-Identifier: MPL-2.0
 						autofocus
 						placeholder="Vaše heslo k účtu"
 						bind:value={passwordModalInput}
-						class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/60 text-slate-900 dark:text-white placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+						class="w-full px-4 py-3 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-sm font-medium hover:border-emerald-400 dark:hover:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 shadow-xs transition-all"
 					/>
 				</div>
 				<div class="flex items-center justify-end gap-2.5 pt-1">

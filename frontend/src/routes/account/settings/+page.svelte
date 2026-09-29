@@ -36,6 +36,9 @@ SPDX-License-Identifier: MPL-2.0
 	let this_session = $state();
 	let isChangingPassword = $state(false);
 	let copiedKey = $state<string | null>(null);
+	let showOldPassword = $state(false);
+	let showNewPassword = $state(false);
+	let showConfirmPassword = $state(false);
 
 	let passwordChangeDataValid = $derived(
 		changePasswordData.newPassword === changePasswordData.newPasswordConfirm &&
@@ -320,49 +323,107 @@ SPDX-License-Identifier: MPL-2.0
 
 						<!-- Form -->
 						<form onsubmit={changePassword} class="space-y-4">
+							<!-- Staré heslo -->
 							<div>
-								<label for="old-pwd" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
-									{$t('settings_page.old_password')}
+								<label for="old-pwd" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
+									<span>{$t('settings_page.old_password')}</span>
 								</label>
-								<div class="relative">
+								<div class="relative flex items-center">
+									<div class="absolute left-3.5 pointer-events-none text-slate-400 dark:text-slate-500">
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+										</svg>
+									</div>
 									<input
 										id="old-pwd"
-										type="password"
+										type={showOldPassword ? 'text' : 'password'}
 										required
 										placeholder="Zadajte aktuálne heslo"
-										class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/70 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+										class="w-full pl-10 pr-10 py-3 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-sm font-medium hover:border-emerald-400 dark:hover:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 shadow-xs transition-all"
 										bind:value={changePasswordData.oldPassword}
 									/>
+									<button
+										type="button"
+										onclick={() => (showOldPassword = !showOldPassword)}
+										class="absolute right-3 p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+										title={showOldPassword ? 'Skryť heslo' : 'Zobraziť heslo'}
+									>
+										{#if showOldPassword}
+											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg>
+										{:else}
+											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+										{/if}
+									</button>
 								</div>
 							</div>
 
+							<!-- Nové heslo -->
 							<div>
-								<label for="new-pwd" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
-									{$t('settings_page.new_password')}
+								<label for="new-pwd" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
+									<span>{$t('settings_page.new_password')}</span>
 								</label>
-								<input
-									id="new-pwd"
-									type="password"
-									required
-									minlength="8"
-									placeholder="Minimálne 8 znakov"
-									class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/70 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-									bind:value={changePasswordData.newPassword}
-								/>
+								<div class="relative flex items-center">
+									<div class="absolute left-3.5 pointer-events-none text-slate-400 dark:text-slate-500">
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+										</svg>
+									</div>
+									<input
+										id="new-pwd"
+										type={showNewPassword ? 'text' : 'password'}
+										required
+										minlength="8"
+										placeholder="Minimálne 8 znakov"
+										class="w-full pl-10 pr-10 py-3 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-sm font-medium hover:border-emerald-400 dark:hover:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 shadow-xs transition-all"
+										bind:value={changePasswordData.newPassword}
+									/>
+									<button
+										type="button"
+										onclick={() => (showNewPassword = !showNewPassword)}
+										class="absolute right-3 p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+										title={showNewPassword ? 'Skryť heslo' : 'Zobraziť heslo'}
+									>
+										{#if showNewPassword}
+											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg>
+										{:else}
+											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+										{/if}
+									</button>
+								</div>
 							</div>
 
+							<!-- Zopakujte heslo -->
 							<div>
-								<label for="repeat-pwd" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5">
-									{$t('settings_page.repeat_password')}
+								<label for="repeat-pwd" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
+									<span>{$t('settings_page.repeat_password')}</span>
 								</label>
-								<input
-									id="repeat-pwd"
-									type="password"
-									required
-									placeholder="Znova zadajte nové heslo"
-									class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/70 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-									bind:value={changePasswordData.newPasswordConfirm}
-								/>
+								<div class="relative flex items-center">
+									<div class="absolute left-3.5 pointer-events-none text-slate-400 dark:text-slate-500">
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+										</svg>
+									</div>
+									<input
+										id="repeat-pwd"
+										type={showConfirmPassword ? 'text' : 'password'}
+										required
+										placeholder="Znova zadajte nové heslo"
+										class="w-full pl-10 pr-10 py-3 rounded-xl border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 text-sm font-medium hover:border-emerald-400 dark:hover:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 shadow-xs transition-all {changePasswordData.newPasswordConfirm && changePasswordData.newPassword === changePasswordData.newPasswordConfirm ? 'border-emerald-500 dark:border-emerald-500 ring-2 ring-emerald-500/10' : ''}"
+										bind:value={changePasswordData.newPasswordConfirm}
+									/>
+									<button
+										type="button"
+										onclick={() => (showConfirmPassword = !showConfirmPassword)}
+										class="absolute right-3 p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+										title={showConfirmPassword ? 'Skryť heslo' : 'Zobraziť heslo'}
+									>
+										{#if showConfirmPassword}
+											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg>
+										{:else}
+											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+										{/if}
+									</button>
+								</div>
 							</div>
 
 							<!-- Validation Hint -->
