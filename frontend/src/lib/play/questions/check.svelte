@@ -53,7 +53,7 @@ SPDX-License-Identifier: MPL-2.0
 	<div class="grid grid-cols-2 gap-3 w-full p-4 h-full">
 		{#each question.answers as answer, i}
 			<button
-				class="rounded-xl h-full flex items-center justify-center disabled:opacity-60 p-4 border border-black/20 shadow-md transition-all cursor-pointer relative"
+				class="rounded-2xl h-full flex items-center justify-center disabled:opacity-60 p-4 border-2 border-white/20 shadow-xl hover:brightness-105 active:scale-[0.98] transition-all cursor-pointer relative"
 				style="background-color: {answer.color ??
 					default_colors[i % default_colors.length]}; color: {get_foreground_color(
 					answer.color ?? default_colors[i % default_colors.length]

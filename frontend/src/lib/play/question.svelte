@@ -159,23 +159,36 @@ SPDX-License-Identifier: MPL-2.0
 	const default_colors = DEFAULT_ANSWER_COLORS;
 </script>
 
-<div class="h-screen w-screen">
+<div class="h-screen w-screen flex flex-col justify-between overflow-hidden relative select-none">
+	<!-- Horná lišta odpočtu času s plynulou zmenou farby -->
+	{#if timer_res !== '0'}
+		<span
+			class="fixed top-0 left-0 h-2 sm:h-2.5 transition-all duration-300 shadow-md z-50 rounded-r-full"
+			style="width: {((Number(timer_res) / Number(question.time)) * 100)}vw; background-color: {timer_color};"
+		></span>
+	{/if}
+
 	{#if game_mode === 'normal'}
+		<!-- Moderná karta s textom otázky -->
 		<div
-			class="flex flex-col justify-start"
-			class:mt-10={[QuizQuestionType.RANGE, QuizQuestionType.ORDER, QuizQuestionType.TEXT]}
-			style="height: {question.image ? '33.333333' : '16.666667'}%"
+			class="w-full max-w-4xl xl:max-w-5xl mx-auto px-3 sm:px-6 pt-3 sm:pt-4 flex flex-col items-center shrink-0 z-20"
+			class:mt-6={[QuizQuestionType.RANGE, QuizQuestionType.ORDER, QuizQuestionType.TEXT]}
 		>
-			<h1
-				class="lg:text-2xl text-lg text-center text-black dark:text-white mt-2 break-normal mb-2"
-			>
-				{@html question.question}
-			</h1>
+			<div class="w-full bg-slate-900/90 dark:bg-black/90 backdrop-blur-xl text-white px-5 sm:px-8 py-3.5 sm:py-5 rounded-2xl sm:rounded-3xl shadow-2xl border border-white/20 text-center flex flex-col items-center gap-1.5 sm:gap-2 transition-all">
+				{#if question_index !== undefined && question_index !== ''}
+					<span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-black tracking-widest uppercase shadow-inner">
+						<span>Otázka {Number(question_index) + 1}</span>
+					</span>
+				{/if}
+				<h1 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight leading-snug drop-shadow text-white break-words max-w-3xl">
+					{@html question.question}
+				</h1>
+			</div>
 			{#if question.image !== null && game_mode !== 'kahoot'}
-				<div class="max-h-full">
+				<div class="mt-2 rounded-2xl overflow-hidden shadow-xl border-2 border-white/20 max-h-[20vh]">
 					<MediaComponent
 						src={question.image}
-						css_classes="object-cover mx-auto mb-8 max-h-[90%]"
+						css_classes="object-contain max-h-[20vh] mx-auto rounded-xl"
 					/>
 				</div>
 			{/if}
@@ -183,17 +196,17 @@ SPDX-License-Identifier: MPL-2.0
 	{/if}
 	{#if timer_res !== '0'}
 		{#if question.type === QuizQuestionType.ABCD || question.type === QuizQuestionType.VOTING}
-			<div class="w-full relative h-full" style="height: {get_div_height()}%">
+			<div class="w-full relative flex-1 min-h-0 p-3 sm:p-5">
 				<div
-					class="absolute top-0 bottom-0 left-0 right-0 m-auto rounded-full h-fit w-fit border-2 border-black shadow-2xl z-40"
+					class="absolute top-0 bottom-0 left-0 right-0 m-auto rounded-full h-fit w-fit border-2 border-black/40 shadow-2xl z-40"
 				>
 					<CircularTimer text={timer_res} progress={circular_progress} color={timer_color} />
 				</div>
 
-				<div class="grid grid-cols-2 gap-3 w-full p-4 h-full">
+				<div class="grid grid-cols-2 gap-3 sm:gap-4 w-full h-full">
 					{#each question.answers as answer, i}
 						<button
-							class="rounded-xl h-full flex items-center justify-center disabled:opacity-60 p-4 border border-black/20 shadow-md hover:brightness-105 active:scale-[0.98] transition-all cursor-pointer"
+							class="rounded-2xl h-full flex items-center justify-center p-3 sm:p-5 border-2 border-white/20 shadow-xl hover:brightness-105 active:scale-[0.98] transition-all cursor-pointer relative overflow-hidden group {selected_answer === answer.answer ? 'ring-4 ring-white shadow-2xl scale-[1.01]' : selected_answer !== undefined ? 'opacity-40' : ''}"
 							style="background-color: {answer.color ??
 								default_colors[i % default_colors.length]}; color: {get_foreground_color(
 								answer.color ?? default_colors[i % default_colors.length]
@@ -204,9 +217,18 @@ SPDX-License-Identifier: MPL-2.0
 							{#if game_mode === 'kahoot'}
 								<AnswerShape shapeIndex={i} class="w-16 h-16 md:w-24 md:h-24 text-white drop-shadow-lg" />
 							{:else}
-								<div class="flex items-center gap-3 w-full px-2">
-									<AnswerShape shapeIndex={i} class="w-8 h-8 md:w-10 md:h-10 text-white shrink-0 drop-shadow-md" />
-									<p class="m-auto font-semibold text-lg md:text-2xl text-white break-words">{answer.answer}</p>
+								<div class="flex items-center gap-3.5 w-full px-2">
+									<div class="p-2 rounded-xl bg-black/20 shrink-0 flex items-center justify-center">
+										<AnswerShape shapeIndex={i} class="w-7 h-7 sm:w-9 sm:h-9 text-white drop-shadow-md" />
+									</div>
+									<p class="m-auto font-black text-lg sm:text-xl md:text-2xl text-white break-words drop-shadow">
+										{answer.answer}
+									</p>
+								</div>
+							{/if}
+							{#if selected_answer === answer.answer}
+								<div class="absolute top-3 right-3 w-7 h-7 rounded-full bg-white text-slate-900 flex items-center justify-center font-black shadow-lg">
+									✓
 								</div>
 							{/if}
 						</button>
@@ -214,52 +236,42 @@ SPDX-License-Identifier: MPL-2.0
 				</div>
 			</div>
 		{:else if question.type === QuizQuestionType.RANGE}
-			<span
-				class="fixed top-0 bg-red-500 h-8 transition-all"
-				style="width: {(100 / parseInt(question.time)) * parseInt(timer_res)}vw"
-			></span>
 			{#await import('svelte-range-slider-pips')}
 				<Spinner />
 			{:then c}
-				<div class:pointer-events-none={selected_answer !== undefined} class="mt-24">
-					<c.default
-						bind:values={slider_value}
-						bind:min={question.answers.min}
-						bind:max={question.answers.max}
-						id="pips-slider"
-						pips
-						float
-						all="label"
-					/>
-				</div>
-				<div class="flex justify-center">
-					<div class="w-1/2">
-						<BrownButton onclick={() => selectAnswer(slider_value[0])}
-							>{$t('words.submit')}
-						</BrownButton>
+				<div class="flex-1 flex flex-col items-center justify-center px-4 max-w-xl mx-auto w-full my-auto">
+					<div class="w-full bg-slate-900/85 backdrop-blur-xl p-6 sm:p-8 rounded-3xl border border-white/20 shadow-2xl flex flex-col items-center gap-6">
+						<div class="w-full py-4" class:pointer-events-none={selected_answer !== undefined}>
+							<c.default
+								bind:values={slider_value}
+								bind:min={question.answers.min}
+								bind:max={question.answers.max}
+								id="pips-slider"
+								pips
+								float
+								all="label"
+							/>
+						</div>
+						<div class="w-full max-w-xs">
+							<BrownButton onclick={() => selectAnswer(slider_value[0])}>
+								{$t('words.submit', { default: 'Odoslať' })}
+							</BrownButton>
+						</div>
 					</div>
 				</div>
 			{/await}
 		{:else if question.type === QuizQuestionType.TEXT}
-			<div>
-				<span
-					class="fixed top-0 bg-red-500 h-8 transition-all"
-					style="width: {(100 / parseInt(question.time)) * parseInt(timer_res)}vw"
-				></span>
-				<div class="flex justify-center mt-10">
-					<p class="text-black dark:text-white">Enter your answer</p>
-				</div>
-				<div class="flex justify-center m-2">
+			<div class="flex-1 flex flex-col items-center justify-center px-4 max-w-xl mx-auto w-full my-auto">
+				<div class="w-full bg-slate-900/85 backdrop-blur-xl p-6 sm:p-8 rounded-3xl border border-white/20 shadow-2xl flex flex-col items-center gap-5">
+					<p class="text-white text-base sm:text-lg font-bold">Zadajte vašu odpoveď</p>
 					<input
 						type="text"
 						bind:value={text_input}
 						disabled={selected_answer !== undefined}
-						class="bg-gray-50 focus:ring text-gray-900 rounded-lg focus:ring-blue-500 block w-full p-2 dark:bg-gray-700 dark:text-white dark:focus:ring-blue-500 outline-hidden transition text-center disabled:opacity-50 disabled:cursor-not-allowed"
+						placeholder="Napíšte odpoveď..."
+						class="bg-slate-800 text-white border-2 border-slate-600 focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/20 rounded-2xl block w-full p-3.5 text-center text-lg sm:text-xl font-bold transition disabled:opacity-50"
 					/>
-				</div>
-
-				<div class="flex justify-center mt-2">
-					<div class="w-1/3">
+					<div class="w-full max-w-xs">
 						<BrownButton
 							type="button"
 							disabled={!text_input || text_input.length === 0}
@@ -267,93 +279,63 @@ SPDX-License-Identifier: MPL-2.0
 								selectAnswer(text_input);
 							}}
 						>
-							{$t('words.submit')}
+							{$t('words.submit', { default: 'Odoslať' })}
 						</BrownButton>
 					</div>
 				</div>
 			</div>
 		{:else if question.type === QuizQuestionType.ORDER}
-			<!--			{#if solution === undefined}
-                            <Spinner />
-                        {:else}-->
-			<span
-				class="fixed top-0 bg-red-500 h-8 transition-all"
-				style="width: {(100 / parseInt(question.time)) * parseInt(timer_res)}vw"
-			></span>
-			<div class="flex flex-col w-full h-full gap-4 px-4 py-6 mt-10">
-				{#each question.answers as answer, i (answer.id)}
-					<div
-						class="w-full h-fit flex-row rounded-lg p-2 align-middle"
-						animate:flip={{ duration: 100 }}
-						style="background-color: {answer.color ?? '#b07156'}"
-					>
-						<button
-							onclick={() => {
-								question.answers = swapArrayElements(question.answers, i, i - 1);
-							}}
-							class="disabled:opacity-50 shadow-lg bg-black/30 w-full flex justify-center rounded-lg p-2 hover:bg-black/20 transition"
-							type="button"
-							aria-label="Move item up"
-							disabled={i === 0 || Boolean(selected_answer)}
+			<div class="flex-1 flex flex-col items-center justify-center px-4 max-w-xl mx-auto w-full overflow-y-auto py-4">
+				<div class="w-full bg-slate-900/85 backdrop-blur-xl p-5 sm:p-6 rounded-3xl border border-white/20 shadow-2xl flex flex-col gap-3">
+					<p class="text-white text-base sm:text-lg font-bold text-center mb-1">Zoraďte položky v správnom poradí</p>
+					{#each question.answers as answer, i (answer.id)}
+						<div
+							class="w-full flex items-center justify-between rounded-2xl p-3 shadow-lg border border-white/10"
+							animate:flip={{ duration: 100 }}
+							style="background-color: {answer.color ?? '#b07156'}"
 						>
-							<svg
-								class="w-8 h-8"
-								stroke-width="2"
-								viewBox="0 0 24 24"
-								fill="none"
-								xmlns="http://www.w3.org/2000/svg"
-								color="currentColor"
+							<p class="font-bold text-base sm:text-lg md:text-xl text-white px-2 truncate flex-1">{answer.answer}</p>
+							<div class="flex items-center gap-1.5 shrink-0">
+								<button
+									onclick={() => {
+										question.answers = swapArrayElements(question.answers, i, i - 1);
+									}}
+									class="disabled:opacity-30 bg-black/30 hover:bg-black/50 p-2 rounded-xl text-white transition active:scale-95"
+									type="button"
+									aria-label="Move item up"
+									disabled={i === 0 || Boolean(selected_answer)}
+								>
+									<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
+								</button>
+								<button
+									onclick={() => {
+										question.answers = swapArrayElements(question.answers, i, i + 1);
+									}}
+									class="disabled:opacity-30 bg-black/30 hover:bg-black/50 p-2 rounded-xl text-white transition active:scale-95"
+									type="button"
+									aria-label="Move item down"
+									disabled={i === question.answers.length - 1 || Boolean(selected_answer)}
+								>
+									<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+								</button>
+							</div>
+						</div>
+					{/each}
+					<div class="w-full mt-3 flex justify-center">
+						<div class="w-full max-w-xs">
+							<BrownButton
+								type="button"
+								disabled={Boolean(selected_answer)}
+								onclick={() => {
+									select_complex_answer(question.answers);
+								}}
 							>
-								<path
-									d="M12 22a2 2 0 110-4 2 2 0 010 4zM12 15V2m0 0l3 3m-3-3L9 5"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								/>
-							</svg>
-						</button>
-						<p class="w-full text-center p-2 text-2xl">{answer.answer}</p>
-
-						<button
-							onclick={() => {
-								question.answers = swapArrayElements(question.answers, i, i + 1);
-							}}
-							class="disabled:opacity-50 shadow-lg bg-black/30 w-full flex justify-center rounded-lg p-2 hover:bg-black/20 transition"
-							type="button"
-							aria-label="Move item down"
-							disabled={i === question.answers.length - 1 || Boolean(selected_answer)}
-						>
-							<svg
-								class="w-8 h-8"
-								stroke-width="2"
-								viewBox="0 0 24 24"
-								fill="none"
-								xmlns="http://www.w3.org/2000/svg"
-								color="currentColor"
-							>
-								<path
-									d="M12 6a2 2 0 110-4 2 2 0 010 4zM12 9v13m0 0l3-3m-3 3l-3-3"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								/>
-							</svg>
-						</button>
+								{$t('words.submit', { default: 'Odoslať' })}
+							</BrownButton>
+						</div>
 					</div>
-				{/each}
-				<div class="w-full mt-2">
-					<BrownButton
-						type="button"
-						disabled={Boolean(selected_answer)}
-						onclick={() => {
-							select_complex_answer(question.answers);
-						}}>{$t('words.submit')}</BrownButton
-					>
 				</div>
 			</div>
-			<!--{/if}-->
 		{:else if question.type === QuizQuestionType.CHECK}
 			{#await import('./questions/check.svelte')}
 				<Spinner />
