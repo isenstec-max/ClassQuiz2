@@ -237,7 +237,9 @@
         "3rd place": "3. miesto",
         "with_out_of": "z",
         "end_sentence": "Skvelá hra!",
-        "your_place": "Ste na {{place}}. mieste!"
+        "your_place": "Ste na {{place}}. mieste!",
+        "total_score": "Celkové skóre",
+        "points_gained": "Získané body"
     },
     "play": {
         "enter_game": "Prihlásiť sa do kvízu",

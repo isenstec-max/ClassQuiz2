@@ -311,7 +311,9 @@
         "points_added": "Points added",
         "your_place": "You're on place {{place}}!",
         "players_waiting": "{{count}} player is waiting",
-        "players_waiting_plural": "{{count}} players are waiting"
+        "players_waiting_plural": "{{count}} players are waiting",
+        "total_score": "Total score",
+        "points_gained": "Points gained"
     },
     "play": {
         "enter_game": "Prihlásiť sa do kvízu",

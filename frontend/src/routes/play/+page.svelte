@@ -196,9 +196,6 @@ SPDX-License-Identifier: MPL-2.0
 					<h1 class="text-3xl">{$t('admin_page.no_answers')}</h1>
 				</div>
 			{:else}
-				<div>
-					<h2 class="text-center text-3xl mb-8">{$t('words.result', { count: 2 })}</h2>
-				</div>
 				{#key unique}
 					<KahootResults {username} question_results={answer_results} bind:scores />
 				{/key}
