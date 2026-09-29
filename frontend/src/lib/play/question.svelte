@@ -131,6 +131,20 @@ SPDX-License-Identifier: MPL-2.0
 		}
 	});
 
+	let timer_color = $derived.by(() => {
+		try {
+			const total = Number(question.time);
+			const current = Number(timer_res);
+			if (!total || isNaN(total) || total <= 0) return '#10b981';
+			const ratio = current / total;
+			if (ratio > 0.5) return '#10b981';
+			if (ratio > 0.25) return '#f59e0b';
+			return '#ef4444';
+		} catch {
+			return '#10b981';
+		}
+	});
+
 	const get_div_height = (): string => {
 		if (game_mode === 'normal') {
 			if (question.image) {
@@ -173,7 +187,7 @@ SPDX-License-Identifier: MPL-2.0
 				<div
 					class="absolute top-0 bottom-0 left-0 right-0 m-auto rounded-full h-fit w-fit border-2 border-black shadow-2xl z-40"
 				>
-					<CircularTimer text={timer_res} progress={circular_progress} color="#ef4444" />
+					<CircularTimer text={timer_res} progress={circular_progress} color={timer_color} />
 				</div>
 
 				<div class="grid grid-cols-2 gap-3 w-full p-4 h-full">

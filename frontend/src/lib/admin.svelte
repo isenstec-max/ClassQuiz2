@@ -88,6 +88,26 @@ SPDX-License-Identifier: MPL-2.0
 	};
 
 	const socket_game_controls: SocketGameControls = new SocketGameControls(socket);
+
+	let time_ratio = $derived.by(() => {
+		try {
+			if (!game_state.quiz_data || game_state.selected_question < 0) return 1;
+			const total = parseInt(
+				game_state.quiz_data.questions[game_state.selected_question].time
+			);
+			const current = parseInt(game_state.timer_res);
+			if (!total || isNaN(total) || total <= 0) return 1;
+			return current / total;
+		} catch {
+			return 1;
+		}
+	});
+
+	let timer_bar_class = $derived.by(() => {
+		if (time_ratio > 0.5) return 'bg-emerald-500';
+		if (time_ratio > 0.25) return 'bg-amber-500';
+		return 'bg-red-500';
+	});
 </script>
 
 {#if game_state.control_visible}
@@ -95,8 +115,7 @@ SPDX-License-Identifier: MPL-2.0
 {/if}
 {#if game_state.timer_res !== '0' && game_state.selected_question >= 0}
 	<span
-		class="fixed top-0 bg-red-500 h-8 transition-all"
-		class:mt-10={game_state.control_visible}
+		class="fixed top-0 left-0 {timer_bar_class} h-2.5 md:h-3 transition-all duration-300 shadow-md z-40"
 		style="width: {(100 /
 			parseInt(game_state.quiz_data.questions[game_state.selected_question].time)) *
 			parseInt(game_state.timer_res)}vw"

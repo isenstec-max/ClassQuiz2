@@ -47,30 +47,66 @@ SPDX-License-Identifier: MPL-2.0
 			return 0;
 		}
 	});
+
+	let time_ratio = $derived.by(() => {
+		try {
+			const total = parseInt(quiz_data.questions[selected_question].time);
+			const current = parseInt(timer_res);
+			if (!total || isNaN(total) || total <= 0) return 1;
+			return current / total;
+		} catch {
+			return 1;
+		}
+	});
+
+	let timer_color = $derived.by(() => {
+		if (time_ratio > 0.5) return '#10b981'; // Zelená (green > 50%)
+		if (time_ratio > 0.25) return '#f59e0b'; // Oranžová v polke (orange 25-50%)
+		return '#ef4444'; // Červená v štvrtine (red <= 25%)
+	});
 </script>
 
-<div class="flex flex-col justify-center w-screen h-1/6">
-	<h1 class="text-6xl text-center">
-		{@html quiz_data.questions[selected_question].question}
-	</h1>
-	<!--			<span class='text-center py-2 text-lg'>{$t('admin_page.time_left')}: {timer_res}</span>-->
-	<div class="grid grid-cols-3 my-2">
-		<div class="m-auto flex items-center">
-			<div class="bg-slate-900/85 backdrop-blur-md rounded-2xl py-2 px-4 border border-white/15 shadow-xl flex items-center gap-2.5">
-				<span class="text-xs uppercase font-black tracking-widest text-amber-400 bg-amber-400/20 px-2.5 py-0.5 rounded-lg border border-amber-400/30">Otázka</span>
-				<span class="font-decorative text-2xl md:text-3xl font-black text-white flex items-center gap-1">
+<div class="w-full max-w-6xl mx-auto px-4 pt-2 md:pt-4 flex flex-col items-center">
+	<!-- Karta s textom otázky s dostatočným priestorom, aby neprekrývala časovač -->
+	<div class="bg-white/95 dark:bg-slate-800/95 text-gray-900 dark:text-white px-6 md:px-12 py-4 md:py-6 rounded-3xl shadow-xl border border-black/5 text-center w-full mb-6">
+		<h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+			{@html quiz_data.questions[selected_question].question}
+		</h1>
+	</div>
+
+	<!-- Riadok s časovačom a badge-mi: Otázka vľavo, Časovač v strede, Odpovede vpravo -->
+	<div class="grid grid-cols-3 w-full max-w-5xl items-center mb-6 px-2">
+		<!-- Vľavo: Badge čísla otázky -->
+		<div class="flex justify-start">
+			<div class="bg-slate-900/85 backdrop-blur-md rounded-2xl py-2 px-3.5 sm:px-4 border border-white/15 shadow-xl flex items-center gap-2.5">
+				<span class="text-xs uppercase font-black tracking-widest text-amber-400 bg-amber-400/20 px-2.5 py-0.5 rounded-lg border border-amber-400/30 shrink-0">Otázka</span>
+				<span class="font-decorative text-xl sm:text-2xl md:text-3xl font-black text-white flex items-center gap-1 shrink-0">
 					<span class="text-amber-300 drop-shadow">{selected_question + 1}</span>
-					<span class="text-slate-400 text-xl font-light">/</span>
+					<span class="text-slate-400 text-lg font-light">/</span>
 					<span class="text-slate-200">{quiz_data.questions.length}</span>
 				</span>
 			</div>
 		</div>
-		<div class="m-auto">
-			<CircularTimer text={timer_res} progress={circular_progress} color="#ef4444" />
+
+		<!-- V strede: Kruhový časovač s dynamickou farbou (zelená -> oranžová -> červená) -->
+		<div class="flex justify-center">
+			<CircularTimer text={timer_res} progress={circular_progress} color={timer_color} />
 		</div>
-		<p class="m-auto text-3xl">
-			{$t('admin_page.answers_submitted', { answer_count: answer_count })}
-		</p>
+
+		<!-- Vpravo: Badge počtu odoslaných odpovedí v rovnakom štýle ako otázka 1/20 -->
+		<div class="flex justify-end">
+			<div class="bg-slate-900/85 backdrop-blur-md rounded-2xl py-2 px-3.5 sm:px-4 border border-white/15 shadow-xl flex items-center gap-2.5">
+				<span class="text-xs uppercase font-black tracking-widest text-emerald-400 bg-emerald-400/20 px-2.5 py-0.5 rounded-lg border border-emerald-400/30 shrink-0">
+					Odpovede
+				</span>
+				<span class="font-decorative text-xl sm:text-2xl md:text-3xl font-black text-white flex items-center gap-1.5 shrink-0">
+					<span class="text-emerald-300 drop-shadow">{answer_count}</span>
+					<span class="text-slate-300 text-xs sm:text-sm font-semibold lowercase tracking-normal">
+						{answer_count === 1 ? 'odpoveď' : answer_count >= 2 && answer_count <= 4 ? 'odpovede' : 'odpovedí'}
+					</span>
+				</span>
+			</div>
+		</div>
 	</div>
 </div>
 {#if quiz_data.questions[selected_question].image !== null}
