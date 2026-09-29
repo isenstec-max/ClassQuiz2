@@ -76,6 +76,11 @@ SPDX-License-Identifier: MPL-2.0
 		});
 	});
 
+	let otherPlayers = $derived(player_names.slice(3));
+	let half = $derived(Math.ceil(otherPlayers.length / 2));
+	let leftPlayers = $derived(otherPlayers.slice(0, half));
+	let rightPlayers = $derived(otherPlayers.slice(half));
+
 	onMount(() => {
 		if (typeof window !== 'undefined') {
 			try {
@@ -163,150 +168,224 @@ SPDX-License-Identifier: MPL-2.0
 				</div>
 			</div>
 		{:else}
-			<!-- PÓDIUM (3 stupne víťazov) -->
-			<div class="w-full max-w-5xl mx-auto flex items-end justify-center gap-3 sm:gap-6 md:gap-8 px-2 flex-1 min-h-[460px] pb-6">
-				<!-- 2. MIESTO (VĽAVO - Striebro) -->
-				<div class="flex-1 max-w-[280px] flex flex-col items-center animate-podium-second">
-					{#if player_names.length >= 2}
-						{@const player = player_names[1]}
-						{@const parsed = parsePlayer(player)}
-						<!-- Hlava zvieratka vykukujúca spoza stupienka -->
-						<div class="relative z-10 -mb-6 flex flex-col items-center">
-							<div class="p-1.5 rounded-full bg-white/10 backdrop-blur-sm border-2 border-slate-300 shadow-2xl hover:scale-105 transition-transform">
-								<AnimalAvatar avatarId={parsed.avatarId} size={90} class="drop-shadow-lg" />
-							</div>
+			<!-- ARENA S PÓDIOM A BOČNÝMI PANELMI ÚČASTNÍKOV -->
+			<div class="w-full max-w-[1850px] mx-auto flex flex-col xl:flex-row items-center xl:items-end justify-center gap-4 xl:gap-6 2xl:gap-8 px-2 sm:px-4 flex-1 pb-4">
+				<!-- ĽAVÉ KRÍDLO: Ďalší účastníci (1. polovica, od 4. miesta) -->
+				<div
+					class="w-full max-w-sm xl:w-72 2xl:w-80 bg-slate-900/90 dark:bg-black/90 backdrop-blur-2xl border-2 border-slate-700/70 rounded-3xl p-4 sm:p-5 shadow-2xl flex flex-col h-[440px] md:h-[480px] xl:h-[480px] mb-4 xl:mb-0 ring-2 ring-white/10 shrink-0 animate-fade-up"
+				>
+					<div class="flex items-center justify-between pb-3 border-b border-slate-700/60 mb-3">
+						<div class="flex items-center gap-2">
+							<span class="text-lg">🏅</span>
+							<span class="text-xs uppercase font-black tracking-wider text-amber-300">
+								{leftPlayers.length > 0 ? `4. – ${3 + leftPlayers.length}. miesto` : 'Ďalší účastníci'}
+							</span>
 						</div>
-
-						<!-- Stupienok 2. miesta -->
-						<div
-							class="w-full h-64 md:h-76 bg-gradient-to-b from-indigo-700 via-indigo-900 to-slate-950 rounded-t-3xl shadow-2xl border-t-2 border-indigo-400/50 p-4 flex flex-col items-center justify-start text-center relative overflow-hidden group"
-						>
-							<div class="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-white/15 to-transparent"></div>
-
-							<!-- Kruhová strieborná medaila -->
-							<div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-tr from-slate-400 via-gray-200 to-white shadow-xl shadow-slate-400/30 border-4 border-slate-100 flex items-center justify-center text-slate-800 font-black text-2xl md:text-3xl my-3">
-								2
-							</div>
-
-							<!-- Meno hráča -->
-							<h3 class="font-black text-xl md:text-2xl text-white tracking-wide truncate w-full px-2 drop-shadow">
-								{parsed.name}
-							</h3>
-
-							<!-- Počet bodov -->
-							<p class="font-mono font-bold text-base md:text-lg text-slate-300 mt-1">
-								{formatScoreWithUnit(resolvedScores[player])}
-							</p>
+						<span class="text-[11px] font-bold text-slate-400 bg-white/5 px-2 py-0.5 rounded-full border border-white/10">
+							{leftPlayers.length} {leftPlayers.length === 1 ? 'hráč' : leftPlayers.length >= 2 && leftPlayers.length <= 4 ? 'hráči' : 'hráčov'}
+						</span>
+					</div>
+					{#if leftPlayers.length > 0}
+						<div class="overflow-y-auto space-y-2 pr-1 flex-1 custom-scrollbar">
+							{#each leftPlayers as player, idx}
+								{@const rank = idx + 4}
+								{@const parsed = parsePlayer(player)}
+								<div
+									class="flex items-center justify-between p-2.5 rounded-2xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/60 shadow-sm transition-all {username === player ? 'ring-2 ring-emerald-400 bg-emerald-500/20' : ''}"
+								>
+									<div class="flex items-center gap-2.5 min-w-0">
+										<span class="text-xs font-mono font-black text-amber-400 bg-amber-400/10 px-2 py-1 rounded-lg border border-amber-400/20 shrink-0">
+											#{rank}
+										</span>
+										<AnimalAvatar avatarId={parsed.avatarId} size={32} class="shrink-0 drop-shadow" />
+										<span class="font-extrabold text-sm text-white truncate max-w-[100px] sm:max-w-[120px]">
+											{parsed.name}
+										</span>
+									</div>
+									<span class="font-mono font-black text-xs sm:text-sm text-emerald-400 shrink-0 ml-1">
+										{formatScoreWithUnit(resolvedScores[player])}
+									</span>
+								</div>
+							{/each}
 						</div>
 					{:else}
-						<div class="w-full h-64 md:h-76 opacity-0"></div>
+						<div class="flex-1 flex flex-col items-center justify-center p-6 text-center text-slate-400">
+							<div class="text-4xl mb-2">👥</div>
+							<div class="text-sm font-extrabold text-white mb-1">Žiadni ďalší účastníci</div>
+							<p class="text-xs text-slate-400 max-w-[180px]">
+								Všetci hráči ({player_names.length}) sa umiestnili na stupňoch víťazov!
+							</p>
+						</div>
 					{/if}
 				</div>
 
-				<!-- 1. MIESTO (STRED - Zlato, Víťaz) -->
-				<div class="flex-1 max-w-[320px] flex flex-col items-center z-20 animate-podium-first">
-					{#if player_names.length >= 1}
-						{@const player = player_names[0]}
-						{@const parsed = parsePlayer(player)}
-						<!-- Hlava zvieratka víťaza s korunkou -->
-						<div class="relative z-10 -mb-7 flex flex-col items-center">
-							<div class="p-2 rounded-full bg-yellow-400/20 backdrop-blur-sm border-4 border-yellow-300 shadow-2xl animate-pulse hover:scale-110 transition-transform">
-								<AnimalAvatar avatarId={parsed.avatarId} size={110} class="drop-shadow-2xl" />
-							</div>
-							<span class="text-2xl absolute -top-4">👑</span>
-						</div>
-
-						<!-- Stupienok 1. miesta -->
-						<div
-							class="w-full h-84 md:h-96 bg-gradient-to-b from-indigo-600 via-indigo-900 to-slate-950 rounded-t-3xl shadow-2xl border-t-4 border-yellow-400 p-5 flex flex-col items-center justify-start text-center relative overflow-hidden group"
-						>
-							<div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-yellow-300/25 to-transparent"></div>
-
-							<!-- Kruhová zlatá medaila -->
-							<div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-tr from-amber-500 via-yellow-300 to-yellow-100 shadow-2xl shadow-yellow-500/50 border-4 border-yellow-200 flex items-center justify-center text-amber-950 font-black text-3xl md:text-4xl my-3 animate-bounce">
-								1
+				<!-- STREDNÉ PÓDIUM (3 stupne víťazov) -->
+				<div class="w-full max-w-4xl flex items-end justify-center gap-3 sm:gap-6 md:gap-8 px-2 flex-1 min-h-[460px]">
+					<!-- 2. MIESTO (VĽAVO - Striebro) -->
+					<div class="flex-1 max-w-[280px] flex flex-col items-center animate-podium-second">
+						{#if player_names.length >= 2}
+							{@const player = player_names[1]}
+							{@const parsed = parsePlayer(player)}
+							<!-- Hlava zvieratka vykukujúca spoza stupienka -->
+							<div class="relative z-10 -mb-6 flex flex-col items-center">
+								<div class="p-1.5 rounded-full bg-white/10 backdrop-blur-sm border-2 border-slate-300 shadow-2xl hover:scale-105 transition-transform">
+									<AnimalAvatar avatarId={parsed.avatarId} size={90} class="drop-shadow-lg" />
+								</div>
 							</div>
 
-							<!-- Meno víťaza -->
-							<h3 class="font-black text-2xl md:text-3xl text-white tracking-wide truncate w-full px-2 drop-shadow-md">
-								{parsed.name}
-							</h3>
+							<!-- Stupienok 2. miesta -->
+							<div
+								class="w-full h-64 md:h-76 bg-gradient-to-b from-indigo-700 via-indigo-900 to-slate-950 rounded-t-3xl shadow-2xl border-t-2 border-indigo-400/50 p-4 flex flex-col items-center justify-start text-center relative overflow-hidden group"
+							>
+								<div class="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-white/15 to-transparent"></div>
 
-							<!-- Počet bodov -->
-							<p class="font-mono font-extrabold text-lg md:text-xl text-yellow-300 mt-1">
-								{formatScoreWithUnit(resolvedScores[player])}
-							</p>
-						</div>
-					{:else}
-						<div class="w-full h-84 md:h-96 opacity-0"></div>
-					{/if}
+								<!-- Kruhová strieborná medaila -->
+								<div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-tr from-slate-400 via-gray-200 to-white shadow-xl shadow-slate-400/30 border-4 border-slate-100 flex items-center justify-center text-slate-800 font-black text-2xl md:text-3xl my-3">
+									2
+								</div>
+
+								<!-- Meno hráča -->
+								<h3 class="font-black text-xl md:text-2xl text-white tracking-wide truncate w-full px-2 drop-shadow">
+									{parsed.name}
+								</h3>
+
+								<!-- Počet bodov -->
+								<p class="font-mono font-bold text-base md:text-lg text-slate-300 mt-1">
+									{formatScoreWithUnit(resolvedScores[player])}
+								</p>
+							</div>
+						{:else}
+							<div class="w-full h-64 md:h-76 opacity-0"></div>
+						{/if}
+					</div>
+
+					<!-- 1. MIESTO (STRED - Zlato, Víťaz) -->
+					<div class="flex-1 max-w-[320px] flex flex-col items-center z-20 animate-podium-first">
+						{#if player_names.length >= 1}
+							{@const player = player_names[0]}
+							{@const parsed = parsePlayer(player)}
+							<!-- Hlava zvieratka víťaza s korunkou -->
+							<div class="relative z-10 -mb-7 flex flex-col items-center">
+								<div class="p-2 rounded-full bg-yellow-400/20 backdrop-blur-sm border-4 border-yellow-300 shadow-2xl animate-pulse hover:scale-110 transition-transform">
+									<AnimalAvatar avatarId={parsed.avatarId} size={110} class="drop-shadow-2xl" />
+								</div>
+								<span class="text-2xl absolute -top-4">👑</span>
+							</div>
+
+							<!-- Stupienok 1. miesta -->
+							<div
+								class="w-full h-84 md:h-96 bg-gradient-to-b from-indigo-600 via-indigo-900 to-slate-950 rounded-t-3xl shadow-2xl border-t-4 border-yellow-400 p-5 flex flex-col items-center justify-start text-center relative overflow-hidden group"
+							>
+								<div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-yellow-300/25 to-transparent"></div>
+
+								<!-- Kruhová zlatá medaila -->
+								<div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-tr from-amber-500 via-yellow-300 to-yellow-100 shadow-2xl shadow-yellow-500/50 border-4 border-yellow-200 flex items-center justify-center text-amber-950 font-black text-3xl md:text-4xl my-3 animate-bounce">
+									1
+								</div>
+
+								<!-- Meno víťaza -->
+								<h3 class="font-black text-2xl md:text-3xl text-white tracking-wide truncate w-full px-2 drop-shadow-md">
+									{parsed.name}
+								</h3>
+
+								<!-- Počet bodov -->
+								<p class="font-mono font-extrabold text-lg md:text-xl text-yellow-300 mt-1">
+									{formatScoreWithUnit(resolvedScores[player])}
+								</p>
+							</div>
+						{:else}
+							<div class="w-full h-84 md:h-96 opacity-0"></div>
+						{/if}
+					</div>
+
+					<!-- 3. MIESTO (VPRAVO - Bronz) -->
+					<div class="flex-1 max-w-[280px] flex flex-col items-center animate-podium-third">
+						{#if player_names.length >= 3}
+							{@const player = player_names[2]}
+							{@const parsed = parsePlayer(player)}
+							<!-- Hlava zvieratka 3. miesta -->
+							<div class="relative z-10 -mb-6 flex flex-col items-center">
+								<div class="p-1 rounded-full bg-white/10 backdrop-blur-sm border-2 border-amber-600/70 shadow-xl hover:scale-105 transition-transform">
+									<AnimalAvatar avatarId={parsed.avatarId} size={80} class="drop-shadow-md" />
+								</div>
+							</div>
+
+							<!-- Stupienok 3. miesta -->
+							<div
+								class="w-full h-52 md:h-60 bg-gradient-to-b from-indigo-800 via-indigo-950 to-slate-950 rounded-t-3xl shadow-xl border-t-2 border-amber-600/50 p-4 flex flex-col items-center justify-start text-center relative overflow-hidden group"
+							>
+								<div class="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-white/10 to-transparent"></div>
+
+								<!-- Kruhová bronzová medaila -->
+								<div class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-tr from-amber-700 via-amber-500 to-orange-400 shadow-xl shadow-amber-800/40 border-4 border-amber-300/80 flex items-center justify-center text-amber-950 font-black text-xl md:text-2xl my-2.5">
+									3
+								</div>
+
+								<!-- Meno hráča -->
+								<h3 class="font-black text-lg md:text-xl text-white tracking-wide truncate w-full px-2 drop-shadow">
+									{parsed.name}
+								</h3>
+
+								<!-- Počet bodov -->
+								<p class="font-mono font-bold text-sm md:text-base text-amber-200 mt-1">
+									{formatScoreWithUnit(resolvedScores[player])}
+								</p>
+							</div>
+						{:else}
+							<div class="w-full h-52 md:h-60 opacity-0"></div>
+						{/if}
+					</div>
 				</div>
 
-				<!-- 3. MIESTO (VPRAVO - Bronz) -->
-				<div class="flex-1 max-w-[280px] flex flex-col items-center animate-podium-third">
-					{#if player_names.length >= 3}
-						{@const player = player_names[2]}
-						{@const parsed = parsePlayer(player)}
-						<!-- Hlava zvieratka 3. miesta -->
-						<div class="relative z-10 -mb-6 flex flex-col items-center">
-							<div class="p-1 rounded-full bg-white/10 backdrop-blur-sm border-2 border-amber-600/70 shadow-xl hover:scale-105 transition-transform">
-								<AnimalAvatar avatarId={parsed.avatarId} size={80} class="drop-shadow-md" />
-							</div>
+				<!-- PRAVÉ KRÍDLO: Ďalší účastníci (2. polovica, od X+1. miesta) -->
+				<div
+					class="w-full max-w-sm xl:w-72 2xl:w-80 bg-slate-900/90 dark:bg-black/90 backdrop-blur-2xl border-2 border-slate-700/70 rounded-3xl p-4 sm:p-5 shadow-2xl flex flex-col h-[440px] md:h-[480px] xl:h-[480px] mb-4 xl:mb-0 ring-2 ring-white/10 shrink-0 animate-fade-up"
+				>
+					<div class="flex items-center justify-between pb-3 border-b border-slate-700/60 mb-3">
+						<div class="flex items-center gap-2">
+							<span class="text-lg">🎖️</span>
+							<span class="text-xs uppercase font-black tracking-wider text-amber-300">
+								{rightPlayers.length > 0 ? `${4 + leftPlayers.length}. – ${player_names.length}. miesto` : 'Poradie a body'}
+							</span>
 						</div>
-
-						<!-- Stupienok 3. miesta -->
-						<div
-							class="w-full h-52 md:h-60 bg-gradient-to-b from-indigo-800 via-indigo-950 to-slate-950 rounded-t-3xl shadow-xl border-t-2 border-amber-600/50 p-4 flex flex-col items-center justify-start text-center relative overflow-hidden group"
-						>
-							<div class="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-white/10 to-transparent"></div>
-
-							<!-- Kruhová bronzová medaila -->
-							<div class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-tr from-amber-700 via-amber-500 to-orange-400 shadow-xl shadow-amber-800/40 border-4 border-amber-300/80 flex items-center justify-center text-amber-950 font-black text-xl md:text-2xl my-2.5">
-								3
-							</div>
-
-							<!-- Meno hráča -->
-							<h3 class="font-black text-lg md:text-xl text-white tracking-wide truncate w-full px-2 drop-shadow">
-								{parsed.name}
-							</h3>
-
-							<!-- Počet bodov -->
-							<p class="font-mono font-bold text-sm md:text-base text-amber-200 mt-1">
-								{formatScoreWithUnit(resolvedScores[player])}
-							</p>
+						<span class="text-[11px] font-bold text-slate-400 bg-white/5 px-2 py-0.5 rounded-full border border-white/10">
+							{rightPlayers.length} {rightPlayers.length === 1 ? 'hráč' : rightPlayers.length >= 2 && rightPlayers.length <= 4 ? 'hráči' : 'hráčov'}
+						</span>
+					</div>
+					{#if rightPlayers.length > 0}
+						<div class="overflow-y-auto space-y-2 pr-1 flex-1 custom-scrollbar">
+							{#each rightPlayers as player, idx}
+								{@const rank = idx + 4 + leftPlayers.length}
+								{@const parsed = parsePlayer(player)}
+								<div
+									class="flex items-center justify-between p-2.5 rounded-2xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/60 shadow-sm transition-all {username === player ? 'ring-2 ring-emerald-400 bg-emerald-500/20' : ''}"
+								>
+									<div class="flex items-center gap-2.5 min-w-0">
+										<span class="text-xs font-mono font-black text-amber-400 bg-amber-400/10 px-2 py-1 rounded-lg border border-amber-400/20 shrink-0">
+											#{rank}
+										</span>
+										<AnimalAvatar avatarId={parsed.avatarId} size={32} class="shrink-0 drop-shadow" />
+										<span class="font-extrabold text-sm text-white truncate max-w-[100px] sm:max-w-[120px]">
+											{parsed.name}
+										</span>
+									</div>
+									<span class="font-mono font-black text-xs sm:text-sm text-emerald-400 shrink-0 ml-1">
+										{formatScoreWithUnit(resolvedScores[player])}
+									</span>
+								</div>
+							{/each}
 						</div>
 					{:else}
-						<div class="w-full h-52 md:h-60 opacity-0"></div>
+						<div class="flex-1 flex flex-col items-center justify-center p-6 text-center text-slate-400">
+							<div class="text-4xl mb-2">⭐</div>
+							<div class="text-sm font-extrabold text-white mb-1">Ďalšie miesta (4. a ďalej)</div>
+							<p class="text-xs text-slate-400 max-w-[180px]">
+								Pri väčšom počte hráčov sa tu zobrazí poradie s bodmi.
+							</p>
+						</div>
 					{/if}
 				</div>
 			</div>
-
-			<!-- Ďalšie umiestnenia (4. a ďalšie miesta) -->
-			{#if player_names.length > 3}
-				<div
-					class="w-full max-w-3xl mx-auto mt-4 mb-8 bg-slate-900/85 backdrop-blur-md border border-slate-700/60 rounded-3xl p-5 shadow-2xl animate-fade-up"
-				>
-					<h4 class="text-xs uppercase font-extrabold tracking-wider text-slate-400 text-center mb-3">
-						{$t('results_page.other_places', { default: 'Ďalšie umiestnenia' })}
-					</h4>
-					<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
-						{#each player_names.slice(3) as player, idx}
-							{@const rank = idx + 4}
-							{@const parsed = parsePlayer(player)}
-							<div class="flex items-center justify-between p-2 rounded-xl bg-slate-800/70 border border-slate-700/40">
-								<div class="flex items-center gap-2 min-w-0">
-									<span class="text-xs font-mono font-bold text-slate-400 w-5">#{rank}</span>
-									<AnimalAvatar avatarId={parsed.avatarId} size={28} class="shrink-0" />
-									<span class="font-bold text-sm text-gray-200 truncate">{parsed.name}</span>
-								</div>
-								<span class="font-mono font-semibold text-xs text-emerald-400 shrink-0">
-									{formatScoreWithUnit(resolvedScores[player])}
-								</span>
-							</div>
-						{/each}
-					</div>
-				</div>
-			{/if}
 		{/if}
 
 
@@ -360,5 +439,20 @@ SPDX-License-Identifier: MPL-2.0
 	}
 	.animate-fade-up {
 		animation: fadeUp 0.6s ease-out 0.6s both;
+	}
+
+	.custom-scrollbar::-webkit-scrollbar {
+		width: 5px;
+	}
+	.custom-scrollbar::-webkit-scrollbar-track {
+		background: rgba(255, 255, 255, 0.05);
+		border-radius: 9999px;
+	}
+	.custom-scrollbar::-webkit-scrollbar-thumb {
+		background: rgba(255, 255, 255, 0.2);
+		border-radius: 9999px;
+	}
+	.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+		background: rgba(255, 255, 255, 0.4);
 	}
 </style>
