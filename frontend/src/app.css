@@ -75,3 +75,111 @@ html.dark .cq2-version-badge {
 	background-color: rgba(52, 211, 153, 0.15);
 	color: #6ee7b7;
 }
+
+.lang-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 2.5px 8px;
+	border-radius: 9999px;
+	transition: all 0.2s ease;
+	cursor: pointer;
+}
+.lang-btn svg {
+	transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+/* When Slovak is active: html[lang="sk"] */
+html[lang="sk"] .lang-btn-sk svg {
+	filter: none !important;
+	opacity: 1 !important;
+}
+html[lang="sk"] .lang-btn-sk span {
+	font-weight: 700 !important;
+	color: #111827 !important;
+}
+:global(html.dark[lang="sk"]) .lang-btn-sk span,
+html.dark[lang="sk"] .lang-btn-sk span {
+	color: #ffffff !important;
+}
+html[lang="sk"] .lang-btn-sk {
+	background-color: rgba(255, 255, 255, 0.95);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+:global(html.dark[lang="sk"]) .lang-btn-sk,
+html.dark[lang="sk"] .lang-btn-sk {
+	background-color: rgba(55, 65, 81, 0.95);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+html[lang="sk"] .lang-btn-en svg {
+	filter: grayscale(100%) !important;
+	opacity: 0.38 !important;
+}
+html[lang="sk"] .lang-btn-en span {
+	color: #9ca3af !important;
+	font-weight: 500 !important;
+}
+html[lang="sk"] .lang-btn-en {
+	background-color: transparent !important;
+	box-shadow: none !important;
+}
+html[lang="sk"] .lang-btn-en:hover svg {
+	filter: grayscale(0%) !important;
+	opacity: 0.85 !important;
+}
+
+/* When English / default is active: html:not([lang="sk"]) */
+html:not([lang="sk"]) .lang-btn-en svg {
+	filter: none !important;
+	opacity: 1 !important;
+}
+html:not([lang="sk"]) .lang-btn-en span {
+	font-weight: 700 !important;
+	color: #111827 !important;
+}
+:global(html.dark:not([lang="sk"])) .lang-btn-en span,
+html.dark:not([lang="sk"]) .lang-btn-en span {
+	color: #ffffff !important;
+}
+html:not([lang="sk"]) .lang-btn-en {
+	background-color: rgba(255, 255, 255, 0.95);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+:global(html.dark:not([lang="sk"])) .lang-btn-en,
+html.dark:not([lang="sk"]) .lang-btn-en {
+	background-color: rgba(55, 65, 81, 0.95);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+html:not([lang="sk"]) .lang-btn-sk svg {
+	filter: grayscale(100%) !important;
+	opacity: 0.38 !important;
+}
+html:not([lang="sk"]) .lang-btn-sk span {
+	color: #9ca3af !important;
+	font-weight: 500 !important;
+}
+html:not([lang="sk"]) .lang-btn-sk {
+	background-color: transparent !important;
+	box-shadow: none !important;
+}
+html:not([lang="sk"]) .lang-btn-sk:hover svg {
+	filter: grayscale(0%) !important;
+	opacity: 0.85 !important;
+}
+
+.lang-divider {
+	display: inline-block;
+	width: 1px;
+	height: 14px;
+	background-color: #d1d5db;
+	align-self: center;
+	margin: 0 2px;
+}
+:global(html.dark) .lang-divider,
+html.dark .lang-divider {
+	background-color: #4b5563;
+}
+
+

@@ -120,10 +120,10 @@ SPDX-License-Identifier: MPL-2.0
 				>
 
 				<!-- Language toggle SK / GB with SVG flags -->
-				<div class="flex items-center gap-1 px-1.5 py-1 rounded-full bg-gray-200/70 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 shadow-xs">
+				<div class="flex items-center gap-2.5 px-3 py-1 rounded-full bg-gray-200/70 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 shadow-xs mr-5">
 					<button
 						type="button"
-						class="flex items-center gap-1.5 px-2 py-0.5 rounded-full transition {currentLang === 'sk' ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-xs font-bold' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}"
+						class="lang-btn lang-btn-sk {currentLang === 'sk' ? 'active' : 'inactive'}"
 						onclick={() => setLang('sk')}
 						title="Slovenčina"
 						aria-label="Prepnúť na slovenčinu"
@@ -139,12 +139,12 @@ SPDX-License-Identifier: MPL-2.0
 								<path d="M-6,-90 h12 v110 h-12 z M-36,-65 h72 v12 h-72 z M-26,-35 h52 v12 h-52 z" fill="#ffffff"/>
 							</g>
 						</svg>
-						<span class="font-mono text-xs font-semibold">SK</span>
+						<span class="font-mono text-xs">SK</span>
 					</button>
-					<span class="text-gray-300 dark:text-gray-600 text-xs">|</span>
+					<span class="lang-divider"></span>
 					<button
 						type="button"
-						class="flex items-center gap-1.5 px-2 py-0.5 rounded-full transition {currentLang === 'en' ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-xs font-bold' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}"
+						class="lang-btn lang-btn-en {currentLang === 'en' ? 'active' : 'inactive'}"
 						onclick={() => setLang('en')}
 						title="English"
 						aria-label="Switch to English"
@@ -156,11 +156,11 @@ SPDX-License-Identifier: MPL-2.0
 							<path d="M30 0 v30 M0 15 h60" stroke="#ffffff" stroke-width="10"/>
 							<path d="M30 0 v30 M0 15 h60" stroke="#c8102e" stroke-width="6"/>
 						</svg>
-						<span class="font-mono text-xs font-semibold">GB</span>
+						<span class="font-mono text-xs">GB</span>
 					</button>
 				</div>
 
-				<div class="lg:flex items-center justify-center">
+				<div class="lg:flex items-center justify-center pl-2">
 					{#if darkMode}
 						<button
 							onclick={() => {
@@ -233,10 +233,10 @@ SPDX-License-Identifier: MPL-2.0
 			<!-- Dark/Light mode toggle + Open/Close menu -->
 			<div class="flex items-center">
 				<!-- Language toggle SK / GB with SVG flags -->
-				<div class="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-gray-200/70 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 shadow-xs mr-1">
+				<div class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-gray-200/70 dark:bg-gray-800/80 border border-gray-300 dark:border-gray-700 shadow-xs mr-3">
 					<button
 						type="button"
-						class="flex items-center gap-1 px-1.5 py-0.5 rounded-full transition {currentLang === 'sk' ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-xs font-bold' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}"
+						class="lang-btn lang-btn-sk {currentLang === 'sk' ? 'active' : 'inactive'}"
 						onclick={() => setLang('sk')}
 						title="Slovenčina"
 						aria-label="Prepnúť na slovenčinu"
@@ -254,10 +254,10 @@ SPDX-License-Identifier: MPL-2.0
 						</svg>
 						<span class="font-mono text-[10px]">SK</span>
 					</button>
-					<span class="text-gray-300 dark:text-gray-600 text-xs">|</span>
+					<span class="lang-divider"></span>
 					<button
 						type="button"
-						class="flex items-center gap-1 px-1.5 py-0.5 rounded-full transition {currentLang === 'en' ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-xs font-bold' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}"
+						class="lang-btn lang-btn-en {currentLang === 'en' ? 'active' : 'inactive'}"
 						onclick={() => setLang('en')}
 						title="English"
 						aria-label="Switch to English"
