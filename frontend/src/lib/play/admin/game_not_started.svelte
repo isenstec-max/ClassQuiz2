@@ -111,11 +111,11 @@ SPDX-License-Identifier: MPL-2.0
 
 		<!-- 3. PIN s výraznou medzerou od QR kódu -->
 		<div class="mt-7 flex flex-col items-center">
-			<span class="text-xs uppercase font-extrabold tracking-widest text-slate-400 mb-1.5">
-				{$t('words.pin')}
-			</span>
-			<div class="bg-slate-800/90 hover:bg-slate-800 border-2 border-amber-400/70 px-8 sm:px-10 py-2.5 sm:py-3 rounded-2xl shadow-xl flex items-center gap-2 transition-all hover:scale-105">
-				<span class="text-amber-400 font-mono font-black text-3xl sm:text-4xl md:text-5xl tracking-widest select-all drop-shadow">
+			<div class="inline-flex items-center gap-2 px-5 py-1.5 rounded-full bg-slate-800/90 border border-amber-400/50 text-amber-300 text-sm sm:text-base font-black tracking-widest uppercase mb-3 shadow-lg">
+				<span>🔑</span> <span>PIN KÓD HRY</span>
+			</div>
+			<div class="bg-slate-900/95 hover:bg-slate-900 border-4 border-amber-400 px-10 sm:px-16 py-4 sm:py-6 rounded-3xl shadow-2xl shadow-amber-500/25 ring-4 ring-amber-400/30 flex items-center justify-center transition-all hover:scale-105 select-all">
+				<span class="text-amber-400 font-mono font-black text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-widest drop-shadow-2xl">
 					{game_pin}
 				</span>
 			</div>
@@ -205,9 +205,9 @@ SPDX-License-Identifier: MPL-2.0
 				src="/api/v1/utils/qr/{game_pin}"
 				class="w-full max-w-sm aspect-square object-contain rounded-xl block"
 			/>
-			<div class="mt-4 flex flex-col items-center">
-				<span class="text-xs uppercase font-extrabold tracking-widest text-slate-500 mb-1">PIN</span>
-				<span class="text-amber-500 font-mono font-black text-4xl tracking-widest">{game_pin}</span>
+			<div class="mt-5 flex flex-col items-center">
+				<span class="text-sm uppercase font-black tracking-widest text-amber-600 mb-1">PIN KÓD HRY</span>
+				<span class="text-amber-500 font-mono font-black text-5xl sm:text-6xl tracking-widest">{game_pin}</span>
 			</div>
 			<button
 				class="mt-6 px-6 py-2 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition cursor-pointer"

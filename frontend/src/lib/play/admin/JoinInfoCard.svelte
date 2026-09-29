@@ -74,10 +74,10 @@ SPDX-License-Identifier: MPL-2.0
 
 	<!-- PIN Hry -->
 	<div class="my-2 flex flex-col items-center">
-		<span class="text-[11px] uppercase font-bold text-slate-400 tracking-wider">
-			PIN hry
+		<span class="text-xs uppercase font-extrabold text-amber-300 tracking-wider">
+			PIN KÓD HRY
 		</span>
-		<div class="font-black font-mono tracking-widest text-white leading-none {compact ? 'text-2xl mt-1' : 'text-3xl md:text-4xl mt-1.5 text-emerald-300 drop-shadow'}">
+		<div class="font-black font-mono tracking-widest leading-none {compact ? 'text-3xl mt-1 text-amber-400' : 'text-4xl md:text-5xl mt-2 text-amber-400 drop-shadow-md'}">
 			{formattedPin}
 		</div>
 	</div>
