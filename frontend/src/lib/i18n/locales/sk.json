@@ -282,7 +282,8 @@
         "download_export_results": "Stiahnuť výsledky",
         "downloading_export_results": "Sťahujem výsledky...",
         "download_export_success": "Výsledky stiahnuté!",
-        "export_results": "Exportovať výsledky"
+        "export_results": "Exportovať výsledky",
+        "exit_quiz": "Ukončiť kvíz"
     },
     "search_page": {
         "at_least_3_characters": "Zadajte aspoň 3 znaky...",

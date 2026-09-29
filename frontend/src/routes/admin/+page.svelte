@@ -209,6 +209,14 @@ SPDX-License-Identifier: MPL-2.0
 		socket.emit('save_quiz');
 	};
 
+	const exit_quiz = () => {
+		warnToLeave = false;
+		if (socket && socket.connected) {
+			socket.disconnect();
+		}
+		window.location.href = '/dashboard';
+	};
+
 	$effect(() => {
 		if (show_final_results && !results_saved) {
 			socket.emit('save_quiz');
@@ -290,12 +298,12 @@ SPDX-License-Identifier: MPL-2.0
 		/>
 	{:else if JSON.stringify(game_state.final_results) !== JSON.stringify([null])}
 		{#if game_state.control_visible}
-			<div class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center justify-center w-full max-w-xl px-4 pointer-events-auto">
-				<!-- Jedno samostatné tlačidlo, ktoré rovno stiahne výsledky -->
+			<div class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-wrap items-center justify-center gap-3 w-full max-w-2xl px-4 pointer-events-auto">
+				<!-- Tlačidlo na stiahnutie výsledkov -->
 				<button
 					onclick={request_answer_export}
 					disabled={downloading}
-					class="group flex items-center gap-3 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 text-white font-extrabold text-sm sm:text-base hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-emerald-600/30 border-2 border-emerald-300 ring-4 ring-emerald-500/25 cursor-pointer disabled:opacity-75 disabled:cursor-wait"
+					class="group flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 text-white font-extrabold text-sm sm:text-base hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-emerald-600/30 border-2 border-emerald-300 ring-4 ring-emerald-500/25 cursor-pointer disabled:opacity-75 disabled:cursor-wait"
 				>
 					{#if downloading}
 						<div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -315,6 +323,19 @@ SPDX-License-Identifier: MPL-2.0
 						</div>
 						<span>{$t('admin_page.download_export_results', { default: 'Stiahnuť výsledky' })}</span>
 					{/if}
+				</button>
+
+				<!-- Tlačidlo na ukončenie kvízu -->
+				<button
+					onclick={exit_quiz}
+					class="group flex items-center gap-2.5 px-6 py-3 rounded-2xl bg-slate-900/95 dark:bg-black/95 backdrop-blur-xl border-2 border-rose-500/60 shadow-xl shadow-rose-950/30 text-white font-extrabold text-sm sm:text-base hover:bg-rose-600 hover:border-rose-400 hover:scale-105 active:scale-95 transition-all cursor-pointer ring-4 ring-rose-500/20"
+				>
+					<div class="p-1 rounded-lg bg-rose-500/20 group-hover:bg-black/20 text-rose-300 group-hover:text-white group-hover:scale-110 transition-transform">
+						<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+						</svg>
+					</div>
+					<span>{$t('admin_page.exit_quiz', { default: 'Ukončiť kvíz' })}</span>
 				</button>
 			</div>
 		{/if}
