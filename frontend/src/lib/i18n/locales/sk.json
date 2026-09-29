@@ -223,7 +223,7 @@
         "totp_available": "TOTP je k dispozícii"
     },
     "play_page": {
-        "enter_game": "Prihlásiť sa do quízu",
+        "enter_game": "Prihlásiť sa do kvízu",
         "enter_pin_description": "Zadaj 6-miestny kód z obrazovky alebo projektora",
         "join_by_entering_code": "Zadajte herný PIN kód",
         "join_description": "Pripojte sa na {{url}} a zadajte PIN {{pin}}",
@@ -240,7 +240,7 @@
         "your_place": "Ste na {{place}}. mieste!"
     },
     "play": {
-        "enter_game": "Prihlásiť sa do quízu",
+        "enter_game": "Prihlásiť sa do kvízu",
         "enter_pin_description": "Zadaj 6-miestny kód z obrazovky alebo projektora"
     },
     "results_page": {

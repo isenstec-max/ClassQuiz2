@@ -471,7 +471,7 @@ SPDX-License-Identifier: MPL-2.0
 							disabled={rawUsername.trim().length < 2}
 							class="w-full py-4 px-6 rounded-2xl font-black text-lg text-white bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-500 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed shadow-xl shadow-emerald-500/25 border-2 border-emerald-400/60 ring-4 ring-emerald-500/20 transition-all cursor-pointer flex items-center justify-center gap-3"
 						>
-							<span>{$t('play_page.enter_game', { defaultValue: 'Prihlásiť sa do quízu' })}</span>
+							<span>{$t('play_page.enter_game', { defaultValue: 'Prihlásiť sa do kvízu' })}</span>
 							<AnimalAvatar avatarId={selectedAvatar} size={26} />
 						</button>
 					</div>
