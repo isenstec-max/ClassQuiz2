@@ -112,38 +112,43 @@ SPDX-License-Identifier: MPL-2.0
 		}
 	};
 
+	let is_loading_pin = $state(false);
 	const set_game_pin = async () => {
-		let process_var;
+		if (is_loading_pin || game_pin.length !== 6) return;
+		is_loading_pin = true;
 		try {
-			process_var = process;
-		} catch {
-			process_var = { env: { API_URL: undefined } };
-		}
-
-		const res = await fetch(
-			`${process_var.env.API_URL ?? ''}/api/v1/quiz/play/check_captcha/${game_pin}`
-		);
-		const json = await res.json();
-		game_mode = json.game_mode;
-		if (res.status === 200) {
-			captcha_enabled = json.enabled;
-			custom_field = json.custom_field;
-		}
-		if (res.status === 404) {
-			if (browser) {
-				alert('Hra sa nenašla');
+			let process_var;
+			try {
+				process_var = process;
+			} catch {
+				process_var = { env: { API_URL: undefined } };
 			}
-			game_pin = '';
-			return;
-		}
-		if (res.status !== 200) {
-			alert('Neznáma chyba');
-			return;
+
+			const res = await fetch(
+				`${process_var.env.API_URL ?? ''}/api/v1/quiz/play/check_captcha/${game_pin}`
+			);
+			const json = await res.json();
+			game_mode = json.game_mode;
+			if (res.status === 200) {
+				captcha_enabled = json.enabled;
+				custom_field = json.custom_field;
+			} else if (res.status === 404) {
+				if (browser) {
+					alert('Hra sa nenašla');
+				}
+				game_pin = '';
+				return;
+			} else {
+				alert('Neznáma chyba');
+				return;
+			}
+		} finally {
+			is_loading_pin = false;
 		}
 	};
 
 	$effect(() => {
-		if (game_pin.length > 5) {
+		if (game_pin.length === 6) {
 			set_game_pin();
 		}
 	});
@@ -342,25 +347,20 @@ SPDX-License-Identifier: MPL-2.0
 				</div>
 
 				<!-- 6-digit indicator dots -->
-				<div class="flex items-center justify-center gap-2 mb-6">
+				<div class="flex items-center justify-center gap-2 mb-2">
 					{#each [0, 1, 2, 3, 4, 5] as i}
 						<div
-							class="w-3 h-3 rounded-full transition-all duration-200 {i < game_pin.length ? 'bg-emerald-500 scale-110 shadow-xs shadow-emerald-500' : 'bg-slate-200 dark:bg-slate-700'}"
+							class="w-3.5 h-3.5 rounded-full transition-all duration-200 {i < game_pin.length ? 'bg-emerald-500 scale-110 shadow-xs shadow-emerald-500' : 'bg-slate-200 dark:bg-slate-700'}"
 						></div>
 					{/each}
 				</div>
 
-				<!-- Modern Gaming Submit Button -->
-				<button
-					type="submit"
-					disabled={game_pin.length < 6}
-					class="w-full py-4 px-6 rounded-2xl font-black text-lg text-white bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-500 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed shadow-xl shadow-emerald-500/25 border-2 border-emerald-400/60 ring-4 ring-emerald-500/20 transition-all cursor-pointer flex items-center justify-center gap-3 group"
-				>
-					<span>{$t('words.submit', { default: 'Potvrdiť PIN' })}</span>
-					<svg class="w-6 h-6 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-					</svg>
-				</button>
+				{#if is_loading_pin}
+					<div class="flex items-center gap-2 text-emerald-500 font-bold text-xs mt-3 animate-pulse">
+						<div class="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+						<span>Pripájam k hre...</span>
+					</div>
+				{/if}
 			</form>
 		</main>
 
