@@ -144,7 +144,7 @@ SPDX-License-Identifier: MPL-2.0
 			<table class="w-full text-left border-separate border-spacing-y-2">
 				<thead>
 					<tr class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-						<th class="px-4 py-2 w-16">Poradie</th>
+						<th class="px-4 py-2 w-28">Poradie</th>
 						<th class="px-4 py-2">Hráč</th>
 						<th class="px-4 py-2 w-44">Správne odpovede</th>
 						<th class="px-4 py-2 text-right w-36">Priemerný čas</th>
@@ -159,23 +159,30 @@ SPDX-License-Identifier: MPL-2.0
 						<tr class="bg-slate-50/80 dark:bg-slate-800/40 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all rounded-2xl group">
 							<!-- Poradie -->
 							<td class="px-4 py-3.5 sm:py-4 rounded-l-2xl">
-								{#if p.rank === 1}
-									<span class="w-8 h-8 rounded-xl bg-amber-400/20 text-amber-600 dark:text-amber-400 font-black text-sm flex items-center justify-center border border-amber-400/40 shadow-xs">
-										🥇 1
+								<div class="flex items-center gap-2.5">
+									<!-- Číslo poradia vľavo pred rámčekom -->
+									<span class="w-6 text-right font-mono font-black text-sm text-slate-700 dark:text-slate-300 shrink-0">
+										{p.rank}.
 									</span>
-								{:else if p.rank === 2}
-									<span class="w-8 h-8 rounded-xl bg-slate-300/30 text-slate-600 dark:text-slate-300 font-black text-sm flex items-center justify-center border border-slate-400/30 shadow-xs">
-										🥈 2
-									</span>
-								{:else if p.rank === 3}
-									<span class="w-8 h-8 rounded-xl bg-orange-400/20 text-orange-600 dark:text-orange-400 font-black text-sm flex items-center justify-center border border-orange-400/30 shadow-xs">
-										🥉 3
-									</span>
-								{:else}
-									<span class="w-8 h-8 rounded-xl bg-white dark:bg-slate-700/60 text-slate-500 dark:text-slate-400 font-bold text-xs flex items-center justify-center border border-slate-200 dark:border-slate-700">
-										#{p.rank}
-									</span>
-								{/if}
+
+									<!-- Rámček (v strede rámčeka medaila, resp. medzera v strede rámčeka) -->
+									{#if p.rank === 1}
+										<span class="w-8 h-8 rounded-xl bg-amber-400/20 text-amber-600 dark:text-amber-400 text-lg flex items-center justify-center border border-amber-400/40 shadow-xs shrink-0 select-none">
+											🥇
+										</span>
+									{:else if p.rank === 2}
+										<span class="w-8 h-8 rounded-xl bg-slate-300/30 text-slate-600 dark:text-slate-300 text-lg flex items-center justify-center border border-slate-400/30 shadow-xs shrink-0 select-none">
+											🥈
+										</span>
+									{:else if p.rank === 3}
+										<span class="w-8 h-8 rounded-xl bg-orange-400/20 text-orange-600 dark:text-orange-400 text-lg flex items-center justify-center border border-orange-400/30 shadow-xs shrink-0 select-none">
+											🥉
+										</span>
+									{:else}
+										<span class="w-8 h-8 rounded-xl bg-slate-100/50 dark:bg-slate-800/30 border border-slate-200/50 dark:border-slate-700/50 flex items-center justify-center shrink-0 select-none">
+										</span>
+									{/if}
+								</div>
 							</td>
 
 							<!-- Hráč (Avatar + Meno) -->
