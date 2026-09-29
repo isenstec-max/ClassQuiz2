@@ -28,22 +28,40 @@ SPDX-License-Identifier: MPL-2.0
 			right: boolean;
 			time_taken: number;
 			score: number;
-		}>;
+		}> | string | any;
 		game_pin?: string;
 		players?: Array<{ username: string; sid?: string }>;
 	}
 
 	let { data = $bindable(), question, new_data = [], game_pin = '', players = [] }: Props = $props();
 
-	const group_username_by_score = (new_d: any[]): Record<string, number> => {
+	// Bezpečné parsovanie dát výsledkov (či už prídu ako pole, JSON reťazec alebo objekt)
+	let parsedNewData = $derived.by(() => {
+		if (!new_data) return [];
+		if (Array.isArray(new_data)) return new_data;
+		if (typeof new_data === 'string') {
+			try {
+				const parsed = JSON.parse(new_data);
+				return Array.isArray(parsed) ? parsed : (parsed?.root || []);
+			} catch {
+				return [];
+			}
+		}
+		if (typeof new_data === 'object' && Array.isArray((new_data as any).root)) {
+			return (new_data as any).root;
+		}
+		return [];
+	});
+
+	let score_by_username = $derived.by(() => {
 		const ret_data: Record<string, number> = {};
-		for (const i of new_d || []) {
-			ret_data[i.username] = i.score;
+		for (const i of parsedNewData) {
+			if (i && i.username) {
+				ret_data[i.username] = i.score ?? 0;
+			}
 		}
 		return ret_data;
-	};
-
-	let score_by_username = $derived(group_username_by_score(new_data));
+	});
 
 	// Zjednotenie a zoradenie všetkých účastníkov
 	let allPlayerUsernames = $derived.by(() => {
@@ -56,7 +74,7 @@ SPDX-License-Identifier: MPL-2.0
 		for (const k of Object.keys(data || {})) {
 			set.add(k);
 		}
-		for (const item of new_data || []) {
+		for (const item of parsedNewData) {
 			if (item?.username) set.add(item.username);
 		}
 		return Array.from(set).sort((a, b) => {
@@ -67,7 +85,7 @@ SPDX-License-Identifier: MPL-2.0
 	});
 
 	if (JSON.stringify(data) === '{}') {
-		for (const i of new_data) {
+		for (const i of parsedNewData) {
 			data[i.username] = 0;
 		}
 	}
@@ -81,7 +99,7 @@ SPDX-License-Identifier: MPL-2.0
 			}
 			data[i] = (score_by_username[i] ?? 0) + (data[i] ?? 0);
 		}
-		for (const i of new_data) {
+		for (const i of parsedNewData) {
 			if (data[i.username] === undefined) {
 				data[i.username] = score_by_username[i.username] ?? 0;
 			}
@@ -96,14 +114,26 @@ SPDX-License-Identifier: MPL-2.0
 		setTimeout(show_new_score, 1000);
 	});
 
+	function normalize(val: any): string {
+		if (val === null || val === undefined) return '';
+		return String(val).trim().toLowerCase();
+	}
+
 	// Štatistiky odpovedí pre stĺpcový graf
 	let answerStats = $derived.by(() => {
 		const answers = question?.answers || [];
-		const total = new_data?.length || 0;
+		const list = parsedNewData;
+		const total = list.length;
 		const counts = answers.map((ans, idx) => {
 			let c = 0;
-			for (const item of new_data || []) {
-				if (item.answer === ans.answer || String(item.answer) === String(idx)) {
+			for (const item of list) {
+				const itemAns = normalize(item.answer);
+				const optionAns = normalize(ans.answer);
+				if (
+					itemAns === optionAns ||
+					String(item.answer) === String(idx) ||
+					itemAns === String(idx)
+				) {
 					c += 1;
 				}
 			}
@@ -114,7 +144,7 @@ SPDX-License-Identifier: MPL-2.0
 		return answers.map((ans, idx) => {
 			const count = counts[idx];
 			const percent = total > 0 ? Math.round((count / total) * 100) : 0;
-			const heightPercent = total > 0 ? Math.round((count / maxCount) * 85) + 15 : 15;
+			const heightPercent = total > 0 && count > 0 ? Math.round((count / maxCount) * 85) + 15 : 15;
 			return {
 				answer: ans.answer,
 				right: ans.right,
@@ -131,7 +161,7 @@ SPDX-License-Identifier: MPL-2.0
 	}
 </script>
 
-<div class="h-full min-h-[calc(100vh-6rem)] flex flex-col p-3 md:p-6 w-full max-w-[1700px] mx-auto">
+<div class="w-full max-w-[1700px] mx-auto p-3 md:p-6 flex flex-col justify-start">
 	<!-- Horná lišta s textom otázky -->
 	<div class="bg-white/95 dark:bg-slate-800/95 text-gray-900 dark:text-white px-8 py-3.5 rounded-2xl shadow-xl border border-black/5 text-center max-w-4xl mx-auto mb-6 w-full">
 		<h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">
@@ -140,21 +170,21 @@ SPDX-License-Identifier: MPL-2.0
 	</div>
 
 	<!-- 3 stĺpce: Vľavo (Join), V strede (Stĺpcový graf & Odpovede), Vpravo (Účastníci) -->
-	<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 items-stretch">
+	<div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
 		<!-- Vľavo: Permanentný Join Info Card (QR kód + PIN) -->
-		<div class="lg:col-span-3 xl:col-span-2 flex justify-center">
-			<JoinInfoCard {game_pin} class="w-full max-w-[280px] h-full" />
+		<div class="md:col-span-3 lg:col-span-3 xl:col-span-2 flex justify-center">
+			<JoinInfoCard {game_pin} class="w-full max-w-[280px]" />
 		</div>
 
 		<!-- V strede: Stĺpcový graf vyhodnotenia a bloky odpovedí -->
-		<div class="lg:col-span-6 xl:col-span-7 flex flex-col justify-between bg-slate-900/40 dark:bg-black/40 backdrop-blur-md rounded-3xl p-6 border border-white/10 shadow-2xl">
+		<div class="md:col-span-6 lg:col-span-6 xl:col-span-7 flex flex-col bg-slate-900/40 dark:bg-black/40 backdrop-blur-md rounded-3xl p-5 md:p-6 border border-white/10 shadow-2xl">
 			<!-- Stĺpcový graf (Bar Chart) -->
-			<div class="flex-1 min-h-[220px] max-h-[340px] flex items-end justify-center gap-4 sm:gap-6 md:gap-10 pb-4 px-4 border-b border-white/10">
+			<div class="h-[260px] flex items-end justify-center gap-4 sm:gap-6 md:gap-8 pb-4 px-2 border-b border-white/10">
 				{#each answerStats as stat, i}
 					<div class="flex flex-col items-center justify-end h-full flex-1 max-w-[110px] group">
 						<!-- Počet a percentá nad stĺpcom -->
 						<div class="mb-2 text-center">
-							<span class="text-lg md:text-xl font-black text-white drop-shadow">
+							<span class="text-lg md:text-2xl font-black text-white drop-shadow">
 								{stat.count}
 							</span>
 							<span class="block text-[11px] font-bold text-gray-300">
@@ -195,7 +225,7 @@ SPDX-License-Identifier: MPL-2.0
 			</div>
 
 			<!-- Spodná 2x2 mriežka kariet odpovedí s tvarmi -->
-			<div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-5">
+			<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-5">
 				{#each answerStats as stat, i}
 					<div
 						class="flex items-center gap-3 p-3.5 rounded-2xl shadow-lg border transition-all text-white font-bold"
@@ -226,7 +256,7 @@ SPDX-License-Identifier: MPL-2.0
 		</div>
 
 		<!-- Vpravo: Zoznam všetkých účastníkov s bodmi -->
-		<div class="lg:col-span-3 flex flex-col bg-slate-900/95 text-white rounded-3xl p-5 shadow-2xl border border-slate-700/60 backdrop-blur-md max-h-[680px]">
+		<div class="md:col-span-3 lg:col-span-3 xl:col-span-3 flex flex-col bg-slate-900/95 text-white rounded-3xl p-5 shadow-2xl border border-slate-700/60 backdrop-blur-md max-h-[580px]">
 			<!-- Hlavička zoznamu -->
 			<div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
 				<div class="flex items-center gap-2">

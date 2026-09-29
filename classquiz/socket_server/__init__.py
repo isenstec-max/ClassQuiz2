@@ -119,6 +119,7 @@ async def rejoin_game(sid: str, data: dict):
         "username": data.username,
         "sid_custom": sid,
         "admin": False,
+        "ping": 50,
     }
     await save_session(sid, sio, session)
     await sio.enter_room(sid, data.game_pin)
@@ -142,9 +143,6 @@ async def join_game(sid: str, data: dict):
         print(e)
         return
     game_data = PlayGame.model_validate_json(redis_res)
-    if game_data.started:
-        await sio.emit("game_already_started", room=sid)
-        return
     # +++ START checking captcha +++
     if game_data.captcha_enabled:
         captcha_res = check_captcha(data.captcha)
@@ -160,6 +158,7 @@ async def join_game(sid: str, data: dict):
         "username": data.username,
         "sid_custom": sid,
         "admin": False,
+        "ping": 50,
     }
     await save_session(sid, sio, session)
     await sio.emit(
@@ -303,7 +302,7 @@ async def submit_answer(sid: str, data: dict):
         return
 
     answer_right, answer = check_answer(game_data, data)
-    latency = int(float(session["ping"]))
+    latency = int(float(session.get("ping", 50)))
     time_q_started = datetime.fromisoformat(await redis.get(f"game:{session['game_pin']}:current_time"))
     diff = (time_q_started - now).total_seconds() * 1000  # - timedelta(milliseconds=latency)
     score = 0
@@ -375,13 +374,16 @@ async def show_solutions(sid: str, _data: dict):
 
 @sio.event
 async def echo_time_sync(sid: str, data: str):
-    then_dec = fernet.decrypt(data).decode("utf-8")
-    then = datetime.fromisoformat(then_dec)
-    now = datetime.now()
-    delta = now - then
-    session = await get_session(sid, sio)
-    session["ping"] = delta.microseconds / 1000
-    await save_session(sid, sio, session)
+    try:
+        then_dec = fernet.decrypt(data.encode("utf-8") if isinstance(data, str) else data).decode("utf-8")
+        then = datetime.fromisoformat(then_dec)
+        now = datetime.now()
+        delta = now - then
+        session = await get_session(sid, sio)
+        session["ping"] = delta.microseconds / 1000
+        await save_session(sid, sio, session)
+    except Exception as e:
+        print(f"echo_time_sync exception ignored: {e}")
 
 
 @sio.event

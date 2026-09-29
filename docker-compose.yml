@@ -7,7 +7,7 @@ version: "3"
 services:
   frontend:
     restart: always
-    image: classquiz-frontend:v2.11
+    image: classquiz-frontend:v2.12
     pull_policy: never
     depends_on:
       - redis
@@ -21,6 +21,8 @@ services:
     depends_on: &depends
       - db
       - redis
+    volumes:
+      - ./classquiz:/app/classquiz
 
     environment: &env_vars # --- DON'T CHANGE FROM HERE ---
       DB_URL: "postgresql://postgres:classquiz@db:5432/classquiz" # DON'T CHANGE
@@ -107,6 +109,8 @@ services:
     environment: *env_vars
     depends_on: *depends
     restart: *restart
+    volumes:
+      - ./classquiz:/app/classquiz
     command: arq classquiz.worker.WorkerSettings
 
 volumes:
