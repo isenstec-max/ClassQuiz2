@@ -24,11 +24,12 @@ SPDX-License-Identifier: MPL-2.0
 
 	interface Props {
 		game_token: string;
+		game_pin?: string;
 		bg_color: string;
 		game_state: IGameState;
 	}
 
-	let { game_token, bg_color, game_state = $bindable() }: Props = $props();
+	let { game_token, game_pin = '', bg_color, game_state = $bindable() }: Props = $props();
 
 	socket.on('get_question_results', () => {
 		console.log('get_question_results');
@@ -121,6 +122,7 @@ SPDX-License-Identifier: MPL-2.0
 				timer_res={game_state.timer_res}
 				answer_count={game_state.answer_count}
 				{default_colors}
+				{game_pin}
 			/>
 		{/if}
 	{/if}
@@ -133,12 +135,15 @@ SPDX-License-Identifier: MPL-2.0
 				</div>
 			{/if}
 		{:else if game_state.quiz_data.questions[game_state.selected_question].type === QuizQuestionType.VOTING}
-			{#await import('$lib/play/admin/voting_results.svelte')}
+			{#await import('$lib/play/admin/results.svelte')}
 				<Spinner />
 			{:then c}
 				<c.default
-					data={game_state.question_results}
+					bind:data={game_state.player_scores}
 					question={game_state.quiz_data.questions[game_state.selected_question]}
+					new_data={game_state.question_results}
+					{game_pin}
+					players={game_state.players}
 				/>
 			{/await}
 		{:else}
@@ -149,6 +154,8 @@ SPDX-License-Identifier: MPL-2.0
 					bind:data={game_state.player_scores}
 					question={game_state.quiz_data.questions[game_state.selected_question]}
 					new_data={game_state.question_results}
+					{game_pin}
+					players={game_state.players}
 				/>
 			{/await}
 		{/if}

@@ -95,6 +95,9 @@ SPDX-License-Identifier: MPL-2.0
 	// Socket-events
 	socket.on('joined_game', (data) => {
 		gameData = data;
+		if (data?.started) {
+			gameMeta.started = true;
+		}
 		// eslint-disable-next-line no-undef
 		plausible('Joined Game', { props: { game_id: gameData.game_id } });
 		Cookies.set('joined_game', JSON.stringify({ sid: socket.id, username, game_pin }), {

@@ -304,7 +304,7 @@ SPDX-License-Identifier: MPL-2.0
 			cqc_code={page.url.searchParams.get('cqc_code')}
 		/>
 	{:else}
-		<SomeAdminScreen {game_token} {bg_color} bind:game_state />
+		<SomeAdminScreen {game_token} {game_pin} {bg_color} bind:game_state />
 	{/if}
 </div>
 <a

@@ -13,6 +13,7 @@ SPDX-License-Identifier: MPL-2.0
 	import MediaComponent from '$lib/editor/MediaComponent.svelte';
 	import AnswerShape from '$lib/components/AnswerShape.svelte';
 	import { getLocalization } from '$lib/i18n';
+	import JoinInfoCard from '$lib/play/admin/JoinInfoCard.svelte';
 
 	interface Props {
 		quiz_data: QuizData;
@@ -20,6 +21,7 @@ SPDX-License-Identifier: MPL-2.0
 		timer_res: string;
 		answer_count: number;
 		default_colors: string[];
+		game_pin?: string;
 	}
 
 	let {
@@ -27,7 +29,8 @@ SPDX-License-Identifier: MPL-2.0
 		selected_question,
 		timer_res = $bindable(),
 		answer_count,
-		default_colors
+		default_colors,
+		game_pin = ''
 	}: Props = $props();
 
 	const { t } = getLocalization();
@@ -114,4 +117,10 @@ SPDX-License-Identifier: MPL-2.0
 			<p class="text-2xl">{$t('admin_page.enter_answer_into_field')}</p>
 		</div>
 	{/if}
+{/if}
+
+{#if game_pin}
+	<div class="fixed left-4 bottom-4 z-30 hidden lg:block">
+		<JoinInfoCard {game_pin} compact={true} class="w-48 shadow-2xl" />
+	</div>
 {/if}
