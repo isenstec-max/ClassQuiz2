@@ -194,7 +194,7 @@ SPDX-License-Identifier: MPL-2.0
 			<!-- Stĺpcový graf vyhodnotenia a bloky odpovedí -->
 			<div class="flex-1 flex flex-col justify-between bg-slate-900/50 dark:bg-black/50 backdrop-blur-md rounded-3xl p-5 md:p-6 border border-white/10 shadow-2xl">
 				<!-- Stĺpcový graf (Bar Chart) s dostatočným voľným priestorom hore -->
-				<div class="h-[290px] md:h-[320px] flex items-end justify-center gap-4 sm:gap-6 md:gap-8 pt-8 pb-5 px-3 border-b border-white/10">
+				<div class="h-[290px] md:h-[320px] flex items-end justify-center gap-4 sm:gap-6 md:gap-8 pt-8 pb-5 px-4 sm:px-6 border-b border-white/10">
 				{#each answerStats as stat, i}
 					<div class="flex flex-col items-center justify-end h-full flex-1 max-w-[130px] group">
 						<!-- Počet a percentá nad stĺpcom s príjemným odstupom -->
@@ -209,10 +209,13 @@ SPDX-License-Identifier: MPL-2.0
 
 						<!-- Samotný stĺpec -->
 						<div class="w-full flex flex-col justify-end items-center relative">
-							<!-- Zelená fajka nad správnym stĺpcom -->
+							<!-- Zelená fajka na pravej strane správneho stĺpca -->
 							{#if stat.right}
-								<div class="absolute -top-7 z-10 w-7 h-7 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-white shadow-lg animate-bounce">
-									<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+								<div
+									class="absolute top-0 -right-3.5 sm:-right-4 z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-white shadow-xl animate-bounce"
+									title="Správna odpoveď"
+								>
+									<svg class="w-4 h-4 sm:w-4.5 sm:h-4.5" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
 								</div>
 							{/if}
 
