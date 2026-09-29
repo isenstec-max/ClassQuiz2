@@ -46,8 +46,11 @@ SPDX-License-Identifier: MPL-2.0
 	const getData = async (): Promise<{ items: Array<QuizData>; fuse: Fuse<any> }> => {
 		const items: any[] = [];
 
-		for (const q of data.quizzes) items.push({ ...q, type: 'quiz' });
-		for (const q of data.quiztivities) items.push({ ...q, type: 'quiztivity' });
+		const qList = Array.isArray(data?.quizzes) ? data.quizzes : [];
+		const qtList = Array.isArray(data?.quiztivities) ? data.quiztivities : [];
+
+		for (const q of qList) items.push({ ...q, type: 'quiz' });
+		for (const q of qtList) items.push({ ...q, type: 'quiztivity' });
 
 		const f = new Fuse(items, {
 			keys: ['title', 'description', 'questions.title'],
@@ -59,25 +62,35 @@ SPDX-License-Identifier: MPL-2.0
 
 	const search = () => {
 		if (search_term === '') {
-			items_to_show = all_items;
+			items_to_show = all_items ?? [];
 			return;
 		}
 
-		const res = fuse.search(search_term);
-		items_to_show = res.map((r) => r.item);
+		if (fuse) {
+			const res = fuse.search(search_term);
+			items_to_show = res.map((r) => r.item);
+		} else {
+			items_to_show = all_items ?? [];
+		}
 	};
 
 	onMount(async () => {
-		const { items, fuse: f } = await getData();
-		all_items = items;
-		items_to_show = items;
-		fuse = f;
+		try {
+			const { items, fuse: f } = await getData();
+			all_items = items;
+			items_to_show = items;
+			fuse = f;
 
-		id_to_position_map = {};
-		for (let i = 0; i < items.length; i++) {
-			id_to_position_map[items[i].id] = i;
+			id_to_position_map = {};
+			for (let i = 0; i < items.length; i++) {
+				id_to_position_map[items[i].id] = i;
+			}
+			search();
+		} catch (err) {
+			console.error('Error initializing dashboard items:', err);
+			all_items = [];
+			items_to_show = [];
 		}
-		search();
 	});
 
 	const deleteQuiz = async (to_delete: string, type: 'quiz' | 'quiztivity') => {
