@@ -47,3 +47,14 @@ export function parsePlayer(rawUsername: string): { avatarId: string; name: stri
 export function formatPlayer(name: string, avatarId: string): string {
 	return `[${avatarId}] ${name.trim()}`;
 }
+
+export function splitNameLines(name: string): [string, string?] {
+	const str = (name ?? '').trim();
+	if (!str) return [''];
+	const words = str.split(/\s+/);
+	if (words.length <= 1) return [str];
+	if (words.length === 2) return [words[0], words[1]];
+	// For 3 or more words, split into at most 2 lines (balanced)
+	const mid = Math.ceil(words.length / 2);
+	return [words.slice(0, mid).join(' '), words.slice(mid).join(' ')];
+}

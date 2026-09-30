@@ -14,7 +14,7 @@ SPDX-License-Identifier: MPL-2.0
 	import AccuracyDonut from '$lib/components/AccuracyDonut.svelte';
 	import AnswerShape from '$lib/components/AnswerShape.svelte';
 	import JoinInfoCard from '$lib/play/admin/JoinInfoCard.svelte';
-	import { parsePlayer } from '$lib/avatars';
+	import { parsePlayer, splitNameLines } from '$lib/avatars';
 	import { DEFAULT_ANSWER_COLORS } from '$lib/answer_theme';
 	import { recordRoundData, loadLightningState } from '$lib/play/admin/lightning_store';
 
@@ -356,6 +356,7 @@ SPDX-License-Identifier: MPL-2.0
 						{@const acc = playerAccuracies[player] || { correct: 0, incorrect: 0, total: 0 }}
 						{@const oldRank = initialRanks[player]}
 						{@const rankDiff = oldRank !== undefined ? oldRank - (i + 1) : 0}
+						{@const [nameLine1, nameLine2] = splitNameLines(parsed.name)}
 						<div
 							animate:flip={{ duration: 1800, easing: cubicInOut }}
 							class="relative flex items-center justify-between p-3 rounded-2xl bg-slate-800/80 hover:bg-slate-800 transition-colors border border-slate-700/50 shadow-sm"
@@ -416,10 +417,15 @@ SPDX-License-Identifier: MPL-2.0
 									<AnimalAvatar avatarId={parsed.avatarId} size={36} class="shadow-sm" />
 								</div>
 
-								<div class="flex flex-col justify-center min-w-0 flex-1">
-									<span class="font-bold text-sm md:text-base text-gray-100 truncate leading-tight" title={parsed.name}>
-										{parsed.name}
+								<div class="flex flex-col justify-center min-w-0 flex-1 leading-tight py-0.5" title={parsed.name}>
+									<span class="font-bold text-sm md:text-base text-gray-100 truncate">
+										{nameLine1}
 									</span>
+									{#if nameLine2}
+										<span class="font-bold text-xs md:text-sm text-slate-300 truncate">
+											{nameLine2}
+										</span>
+									{/if}
 								</div>
 							</div>
 
@@ -530,6 +536,7 @@ SPDX-License-Identifier: MPL-2.0
 						{@const acc = playerAccuracies[player] || { correct: 0, incorrect: 0, total: 0 }}
 						{@const oldRank = initialRanks[player]}
 						{@const rankDiff = oldRank !== undefined ? oldRank - (i + 1) : 0}
+						{@const [mNameLine1, mNameLine2] = splitNameLines(parsed.name)}
 						<div
 							class="relative flex items-center justify-between p-3 sm:p-3.5 rounded-2xl bg-slate-800/85 hover:bg-slate-800 border border-slate-700/60 shadow-md transition-all hover:scale-[1.01]"
 						>
@@ -581,10 +588,15 @@ SPDX-License-Identifier: MPL-2.0
 									<AnimalAvatar avatarId={parsed.avatarId} size={38} class="shadow-sm" />
 								</div>
 
-								<div class="flex flex-col justify-center min-w-0 flex-1">
-									<span class="font-extrabold text-sm sm:text-base text-white truncate leading-tight" title={parsed.name}>
-										{parsed.name}
+								<div class="flex flex-col justify-center min-w-0 flex-1 leading-tight py-0.5" title={parsed.name}>
+									<span class="font-extrabold text-sm sm:text-base text-white truncate">
+										{mNameLine1}
 									</span>
+									{#if mNameLine2}
+										<span class="font-bold text-xs sm:text-sm text-slate-300 truncate">
+											{mNameLine2}
+										</span>
+									{/if}
 								</div>
 							</div>
 
