@@ -190,27 +190,6 @@ SPDX-License-Identifier: MPL-2.0
 				</h1>
 			</div>
 
-			<!-- Tlačidlo: Zápočtové body a export do XLS (list + B) -->
-			<button
-				type="button"
-				onclick={() => (show_bonus_points = true)}
-				class="mt-3 inline-flex items-center gap-2.5 px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-500 active:scale-95 text-white font-black text-xs sm:text-sm shadow-xl shadow-amber-500/25 border-2 border-amber-300 ring-4 ring-amber-500/20 transition-all cursor-pointer"
-				title="Zoznam účastníkov, zápočtové body (B) a export do XLS tabuľky"
-			>
-				<div class="relative flex items-center justify-center">
-					<svg class="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-					</svg>
-					<span class="absolute -bottom-1.5 -right-1.5 px-1 py-0.2 rounded bg-white text-amber-700 font-black text-[9px] leading-none shadow-xs border border-amber-300">
-						B
-					</span>
-				</div>
-				<span>Body do zápočtu (B)</span>
-				<span class="px-1.5 py-0.5 rounded-md bg-black/25 text-[10px] uppercase font-mono tracking-wider">
-					XLS
-				</span>
-			</button>
-
 			<!-- Pre pripojeného hráča na jeho vlastnom zariadení (username) -->
 			{#if username && resolvedScores[username] !== undefined}
 				{@const parsed = parsePlayer(username)}

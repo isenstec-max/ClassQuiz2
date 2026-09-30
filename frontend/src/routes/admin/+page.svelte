@@ -299,11 +299,11 @@ SPDX-License-Identifier: MPL-2.0
 		/>
 	{:else if JSON.stringify(game_state.final_results) !== JSON.stringify([null])}
 		{#if game_state.control_visible}
-			<div class="fixed top-3 left-1/2 -translate-x-1/2 z-50 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 w-full max-w-3xl px-4 pointer-events-auto">
+			<div class="fixed top-3 left-1/2 -translate-x-1/2 z-50 flex flex-nowrap items-center justify-center gap-2 sm:gap-2.5 md:gap-3 w-auto max-w-[98vw] px-2 sm:px-4 pointer-events-auto">
 				<!-- Tlačidlo na uloženie výsledkov -->
 				<button
 					onclick={save_quiz}
-					class="group flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 text-white font-extrabold text-sm sm:text-base hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-blue-600/30 border-2 border-blue-300 ring-4 ring-blue-500/25 cursor-pointer disabled:opacity-75"
+					class="group flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 text-white font-extrabold text-xs sm:text-sm md:text-base hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-blue-600/30 border-2 border-blue-300 ring-4 ring-blue-500/25 cursor-pointer disabled:opacity-75 whitespace-nowrap shrink-0"
 				>
 					{#if results_saved}
 						<div class="p-1 rounded-lg bg-black/20 text-white">
@@ -326,7 +326,7 @@ SPDX-License-Identifier: MPL-2.0
 				<button
 					onclick={request_answer_export}
 					disabled={downloading}
-					class="group flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 text-white font-extrabold text-sm sm:text-base hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-emerald-600/30 border-2 border-emerald-300 ring-4 ring-emerald-500/25 cursor-pointer disabled:opacity-75 disabled:cursor-wait"
+					class="group flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 text-white font-extrabold text-xs sm:text-sm md:text-base hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-emerald-600/30 border-2 border-emerald-300 ring-4 ring-emerald-500/25 cursor-pointer disabled:opacity-75 disabled:cursor-wait whitespace-nowrap shrink-0"
 				>
 					{#if downloading}
 						<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -351,7 +351,7 @@ SPDX-License-Identifier: MPL-2.0
 				<!-- Tlačidlo na zápočtové body a export do XLS -->
 				<button
 					onclick={() => (show_bonus_points = true)}
-					class="group flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white font-extrabold text-sm sm:text-base hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-amber-500/30 border-2 border-amber-300 ring-4 ring-amber-500/25 cursor-pointer"
+					class="group flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white font-extrabold text-xs sm:text-sm md:text-base hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-amber-500/30 border-2 border-amber-300 ring-4 ring-amber-500/25 cursor-pointer whitespace-nowrap shrink-0"
 					title="Zobraziť zápočtové body účastníkov a exportovať do XLS"
 				>
 					<div class="relative flex items-center justify-center p-1 rounded-lg bg-black/20 text-white group-hover:scale-110 transition-transform">
@@ -368,7 +368,7 @@ SPDX-License-Identifier: MPL-2.0
 				<!-- Tlačidlo na ukončenie kvízu -->
 				<button
 					onclick={exit_quiz}
-					class="group flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-slate-900/95 dark:bg-black/95 backdrop-blur-xl border-2 border-rose-500/60 shadow-xl shadow-rose-950/30 text-white font-extrabold text-sm sm:text-base hover:bg-rose-600 hover:border-rose-400 hover:scale-105 active:scale-95 transition-all cursor-pointer ring-4 ring-rose-500/20"
+					class="group flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded-2xl bg-slate-900/95 dark:bg-black/95 backdrop-blur-xl border-2 border-rose-500/60 shadow-xl shadow-rose-950/30 text-white font-extrabold text-xs sm:text-sm md:text-base hover:bg-rose-600 hover:border-rose-400 hover:scale-105 active:scale-95 transition-all cursor-pointer ring-4 ring-rose-500/20 whitespace-nowrap shrink-0"
 				>
 					<div class="p-1 rounded-lg bg-rose-500/20 group-hover:bg-black/20 text-rose-300 group-hover:text-white group-hover:scale-110 transition-transform">
 						<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
