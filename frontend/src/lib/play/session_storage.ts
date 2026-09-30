@@ -9,6 +9,7 @@ export interface PlayerSession {
 	game_pin: string;
 	game_mode?: any;
 	avatar?: string;
+	joined?: boolean;
 	timestamp: number;
 }
 
@@ -88,6 +89,7 @@ export function updateSessionSid(newSid: string) {
 	const session = getPlayerSession();
 	if (session) {
 		session.sid = newSid;
+		session.joined = true;
 		session.timestamp = Date.now();
 		savePlayerSession(session);
 	}

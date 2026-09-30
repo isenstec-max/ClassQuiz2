@@ -85,7 +85,7 @@ SPDX-License-Identifier: MPL-2.0
 				selectedAvatar = savedAvatar;
 			}
 			const existing = getPlayerSession();
-			if (existing && existing.game_pin && existing.username) {
+			if (existing && existing.joined && existing.game_pin && existing.username) {
 				existingSession = existing;
 				if (!game_pin) {
 					game_pin = existing.game_pin;
@@ -272,47 +272,27 @@ SPDX-License-Identifier: MPL-2.0
 			return;
 		}
 
-		if (browser) {
-			savePlayerSession({
-				sid: socket.id,
-				username: fullUsername,
-				game_pin: game_pin,
-				avatar: selectedAvatar
-			});
-		}
+		executeJoin(fullUsername);
+	};
 
-		// Rejoin existing session if player enters same game_pin and name
+	socket.on('username_already_exists', () => {
 		const session = getPlayerSession();
-		if (session && session.game_pin === game_pin && session.sid) {
+		const currentTrimmed = rawUsername.trim().toLowerCase();
+		if (session && session.joined && session.game_pin === game_pin && session.sid) {
 			const sessionParsed = parsePlayer(session.username);
-			const cleanSavedName = sessionParsed.name || sessionParsed.cleanName || '';
-			if (cleanSavedName && cleanSavedName.toLowerCase() === trimmed.toLowerCase()) {
-				console.log('Rejoining session for', session.username);
-				username = session.username;
+			const cleanSavedName = (sessionParsed.name || sessionParsed.cleanName || '').toLowerCase();
+			if (cleanSavedName === currentTrimmed) {
+				console.log('Username exists on server, rejoining session for', session.username);
 				socket.emit('rejoin_game', {
 					old_sid: session.sid,
 					username: session.username,
 					game_pin: session.game_pin
 				});
-
-				let resolved = false;
-				const onRejoined = () => {
-					resolved = true;
-					socket.off('rejoined_game', onRejoined);
-				};
-				socket.on('rejoined_game', onRejoined);
-				setTimeout(() => {
-					if (!resolved) {
-						socket.off('rejoined_game', onRejoined);
-						executeJoin(fullUsername);
-					}
-				}, 1500);
 				return;
 			}
 		}
-
-		executeJoin(fullUsername);
-	};
+		alert('Meno hráča už existuje! Ak ste sa odpojili, použite rovnaké zariadenie alebo zadajte iné meno.');
+	});
 
 	socket.on('game_not_found', () => {
 		game_pin = '';
@@ -436,7 +416,7 @@ SPDX-License-Identifier: MPL-2.0
 					{$t('play_page.enter_pin_description', { defaultValue: 'Zadaj 6-miestny kód z obrazovky alebo projektora' })}
 				</p>
 
-				{#if existingSession && existingSession.game_pin}
+				{#if existingSession && existingSession.joined && existingSession.game_pin}
 					{@const pinPlayer = parsePlayer(existingSession.username)}
 					<div class="w-full mb-5 p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/40 text-center">
 						<p class="text-xs font-semibold text-emerald-800 dark:text-emerald-200 mb-2">
@@ -572,7 +552,7 @@ SPDX-License-Identifier: MPL-2.0
 					</div>
 				</div>
 
-				{#if existingSession && existingSession.game_pin === game_pin}
+				{#if existingSession && existingSession.joined && existingSession.game_pin === game_pin}
 					{@const sessPlayer = parsePlayer(existingSession.username)}
 					<div class="mb-4 p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 text-center flex flex-col items-center gap-1.5">
 						<span class="text-xs font-semibold text-emerald-800 dark:text-emerald-200">

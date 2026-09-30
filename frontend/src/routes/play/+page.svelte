@@ -87,32 +87,31 @@ SPDX-License-Identifier: MPL-2.0
 	// Immediate session restoration for smooth reload on mobile
 	if (typeof window !== 'undefined') {
 		const session = getPlayerSession();
-		if (session) {
-			if (!game_pin && session.game_pin) {
+		if (session && session.joined) {
+			if (!game_pin) {
 				game_pin = session.game_pin;
 			}
-			if (!username && session.username) {
-				username = session.username;
+			if (game_pin === session.game_pin) {
+				if (!username) username = session.username;
+				if (session.game_mode) game_mode = session.game_mode;
+
+				const cachedGameData = getGameData();
+				if (cachedGameData) {
+					gameData = cachedGameData;
+					if (cachedGameData.started) {
+						gameMeta.started = true;
+					}
+				}
+				const cachedActiveQ = getActiveQuestion();
+				if (cachedActiveQ) {
+					question_index = cachedActiveQ.question_index;
+					question = cachedActiveQ.question;
+				}
+				const cachedResults = getQuestionResults();
+				if (cachedResults) {
+					answer_results = cachedResults;
+				}
 			}
-			if (session.game_mode) {
-				game_mode = session.game_mode;
-			}
-		}
-		const cachedGameData = getGameData();
-		if (cachedGameData) {
-			gameData = cachedGameData;
-			if (cachedGameData.started) {
-				gameMeta.started = true;
-			}
-		}
-		const cachedActiveQ = getActiveQuestion();
-		if (cachedActiveQ) {
-			question_index = cachedActiveQ.question_index;
-			question = cachedActiveQ.question;
-		}
-		const cachedResults = getQuestionResults();
-		if (cachedResults) {
-			answer_results = cachedResults;
 		}
 	}
 
@@ -123,7 +122,10 @@ SPDX-License-Identifier: MPL-2.0
 	socket.on('connect', async () => {
 		console.log('Connected!');
 		const session = getPlayerSession();
-		if (!session || !session.game_pin || !session.username) {
+		if (!session || !session.game_pin || !session.username || !session.sid || !session.joined) {
+			return;
+		}
+		if (game_pin && game_pin !== session.game_pin) {
 			return;
 		}
 		if (!game_pin) game_pin = session.game_pin;
@@ -144,28 +146,6 @@ SPDX-License-Identifier: MPL-2.0
 		} catch (e) {
 			console.warn('Could not fetch captcha on reconnect', e);
 		}
-
-		// Fallback: If rejoined_game is not acknowledged within 2 seconds
-		let rejoined = false;
-		const handleRejoined = () => {
-			rejoined = true;
-			socket.off('rejoined_game', handleRejoined);
-		};
-		socket.on('rejoined_game', handleRejoined);
-		setTimeout(() => {
-			if (!rejoined) {
-				socket.off('rejoined_game', handleRejoined);
-				const current = getPlayerSession();
-				if (current && current.username && current.game_pin) {
-					console.log('rejoin_game unacknowledged on connect, attempting join_game');
-					socket.emit('join_game', {
-						username: current.username,
-						game_pin: current.game_pin,
-						captcha: undefined
-					});
-				}
-			}
-		}, 2000);
 	});
 
 	// Socket-events
@@ -186,7 +166,8 @@ SPDX-License-Identifier: MPL-2.0
 			sid: socket.id,
 			username: finalUsername,
 			game_pin: finalPin,
-			game_mode
+			game_mode,
+			joined: true
 		});
 	});
 
