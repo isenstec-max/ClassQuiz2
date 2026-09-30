@@ -16,7 +16,7 @@ SPDX-License-Identifier: MPL-2.0
 
 <div align='center'>
     <h2 align='center'>ClassQuiz2</h2>
-    <img src='logo.png' alt='ClassQuiz2 Logo' height='100px' width='100px'>
+    <img src='https://raw.githubusercontent.com/isenstec-max/ClassQuiz2/refs/heads/master/IMG_20260930_200017.jpg' alt='ClassQuiz2 Logo' height='100px' width='100px'>
     <p align='center'>
         The open-source quiz-platform!
         <br/>
