@@ -190,7 +190,7 @@ SPDX-License-Identifier: MPL-2.0
 		</div>
 
 		<!-- V strede: Názov otázky + Stĺpcový graf vyhodnotenia a bloky odpovedí -->
-		<div class="col-span-12 md:col-span-6 lg:col-span-6 xl:col-span-8 flex flex-col gap-4">
+		<div class="col-span-12 md:col-span-5 lg:col-span-5 xl:col-span-7 2xl:col-span-7 flex flex-col gap-4">
 			<!-- Horná lišta s textom otázky - DOKONALE VYCENTROVANÁ PRIAMO NAD STREDNÝM GRAFOM -->
 			<div class="bg-white/95 dark:bg-slate-800/95 text-gray-900 dark:text-white px-6 md:px-10 py-3.5 md:py-4 rounded-2xl shadow-xl border border-black/5 text-center w-full">
 				<h2 class="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">
@@ -282,11 +282,11 @@ SPDX-License-Identifier: MPL-2.0
 	</div>
 
 	<!-- Vpravo: Číslo otázky a Zoznam všetkých účastníkov s bodmi -->
-	<div class="col-span-12 md:col-span-3 lg:col-span-3 xl:col-span-2 flex flex-col gap-3.5">
+	<div class="col-span-12 md:col-span-4 lg:col-span-4 xl:col-span-3 2xl:col-span-3 flex flex-col gap-3.5 min-w-0">
 		<!-- Číslo otázky vycentrované nad zoznamom účastníkov s okrasným fontom -->
 		<div class="w-full flex justify-center">
 			<div class="w-full bg-slate-900/95 dark:bg-black/90 backdrop-blur-md rounded-2xl py-3 px-3 sm:px-4 border border-slate-700/70 shadow-2xl flex items-center justify-center gap-2.5 text-center">
-				<span class="text-xs uppercase font-black tracking-widest bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-lg shrink-0">
+				<span class="text-xs uppercase font-black tracking-widest bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2.5 py-0.5 rounded-lg shrink-0">
 					Otázka
 				</span>
 				<div class="font-decorative text-2xl md:text-3xl font-black tracking-wider text-white drop-shadow flex items-center gap-1 shrink-0">
@@ -298,22 +298,22 @@ SPDX-License-Identifier: MPL-2.0
 		</div>
 
 		<!-- Zoznam všetkých účastníkov s bodmi -->
-		<div class="flex-1 flex flex-col bg-slate-900/95 text-white rounded-3xl p-5 shadow-2xl border border-slate-700/60 backdrop-blur-md min-h-[440px] max-h-[580px] xl:max-h-[640px]">
-			<!-- Hlavička zoznamu -->
-			<div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
-				<div class="flex items-center gap-2">
-					<span class="text-lg">👥</span>
-					<h3 class="font-extrabold text-base md:text-lg tracking-wide text-white">
+		<div class="flex-1 flex flex-col bg-slate-900/95 text-white rounded-3xl p-4 sm:p-5 shadow-2xl border border-slate-700/60 backdrop-blur-md min-h-[440px] max-h-[580px] xl:max-h-[640px]">
+			<!-- Hlavička zoznamu: Účastníci (číslo) vždy na jednom riadku -->
+			<div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-2 gap-2">
+				<div class="flex items-center gap-2 min-w-0">
+					<span class="text-lg shrink-0">👥</span>
+					<h3 class="font-extrabold text-base md:text-lg tracking-wide text-white whitespace-nowrap">
 						Účastníci ({allPlayerUsernames.length})
 					</h3>
 				</div>
-				<span class="text-xs bg-emerald-500/20 text-emerald-400 font-bold px-2.5 py-1 rounded-full">
+				<span class="text-xs bg-emerald-500/20 text-emerald-400 font-bold px-2.5 py-1 rounded-full shrink-0">
 					Body
 				</span>
 			</div>
 
 			<!-- Rolovací zoznam účastníkov -->
-			<div class="flex-1 overflow-y-auto space-y-2 pr-1.5 custom-scroll">
+			<div class="flex-1 overflow-y-auto space-y-3 pt-2 pb-1 pr-1.5 custom-scroll">
 				{#if allPlayerUsernames.length === 0}
 					<div class="text-center py-8 text-slate-400 text-sm">Žiadni účastníci</div>
 				{:else}
@@ -321,9 +321,26 @@ SPDX-License-Identifier: MPL-2.0
 						{@const parsed = parsePlayer(player)}
 						{@const boltCount = lightningCounts[player] || 0}
 						<div
-							class="flex items-center justify-between p-3 rounded-2xl bg-slate-800/80 hover:bg-slate-800 transition-all border border-slate-700/50 shadow-sm"
+							class="relative flex items-center justify-between p-3 rounded-2xl bg-slate-800/80 hover:bg-slate-800 transition-all border border-slate-700/50 shadow-sm"
 						>
-							<!-- Vľavo: Poradie, Avatar a Meno (s bleskami nad menom zľava doprava) -->
+							<!-- Žlté blesky: umiestnené v ľavom hornom rohu rámčeka aby sa neprekrývali s inými položkami -->
+							{#if boltCount > 0}
+								<div
+									class="absolute -top-2 left-2 z-10 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-slate-950/95 border border-amber-400/80 shadow-md shadow-amber-500/20 select-none"
+									title="Najrýchlejšia správna odpoveď: {boltCount}x"
+								>
+									{#each Array(Math.min(boltCount, 5)) as _}
+										<svg class="w-3 h-3 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)] shrink-0" viewBox="0 0 24 24">
+											<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
+										</svg>
+									{/each}
+									{#if boltCount > 5}
+										<span class="text-[9px] font-mono font-black text-amber-300 leading-none">+{boltCount - 5}</span>
+									{/if}
+								</div>
+							{/if}
+
+							<!-- Vľavo: Poradie, Avatar a Meno -->
 							<div class="flex items-center gap-2.5 min-w-0 flex-1 mr-2">
 								<span class="text-xs font-mono font-bold text-slate-400 w-5 text-center shrink-0">{i + 1}.</span>
 								<div class="shrink-0 relative">
@@ -331,16 +348,6 @@ SPDX-License-Identifier: MPL-2.0
 								</div>
 
 								<div class="flex flex-col justify-center min-w-0 flex-1">
-									<!-- Žlté blesky: hore za ikonku nad menom postupne zľava doprava -->
-									{#if boltCount > 0}
-										<div class="flex items-center gap-0.5 mb-0.5" title="Najrýchlejšia správna odpoveď: {boltCount}x">
-											{#each Array(boltCount) as _}
-												<svg class="w-3.5 h-3.5 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)] shrink-0" viewBox="0 0 24 24">
-													<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
-												</svg>
-											{/each}
-										</div>
-									{/if}
 									<span class="font-bold text-sm md:text-base text-gray-100 truncate leading-tight">
 										{parsed.name}
 									</span>
