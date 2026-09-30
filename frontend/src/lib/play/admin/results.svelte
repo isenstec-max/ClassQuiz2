@@ -6,6 +6,8 @@ SPDX-License-Identifier: MPL-2.0
 
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { flip } from 'svelte/animate';
+	import { cubicInOut } from 'svelte/easing';
 	import { getLocalization } from '$lib/i18n';
 	import type { Question } from '$lib/quiz_types';
 	import AnimalAvatar from '$lib/components/AnimalAvatar.svelte';
@@ -114,25 +116,37 @@ SPDX-License-Identifier: MPL-2.0
 		});
 	});
 
+	let initialRanks = $state<Record<string, number>>({});
 	let show_new_score_clicked = $state(false);
 
 	const show_new_score = () => {
 		if (!data) data = {};
+		const updatedData: Record<string, number> = { ...data };
 		for (const i of allPlayerUsernames) {
-			const current = Number(data[i]);
+			const current = Number(updatedData[i]);
 			const add = Number(score_by_username[i] ?? 0);
-			data[i] = (isNaN(current) ? 0 : current) + add;
+			updatedData[i] = (isNaN(current) ? 0 : current) + add;
 		}
 		for (const i of parsedNewData) {
-			if (i?.username && data[i.username] === undefined) {
-				data[i.username] = score_by_username[i.username] ?? 0;
+			if (i?.username && updatedData[i.username] === undefined) {
+				updatedData[i.username] = score_by_username[i.username] ?? 0;
 			}
 		}
+		data = updatedData;
 		show_new_score_clicked = true;
 	};
 
 	onMount(() => {
-		setTimeout(show_new_score, 1000);
+		// Zapamätaj počiatočné poradie pred pripočítaním bodov z tohto kola
+		const ranks: Record<string, number> = {};
+		allPlayerUsernames.forEach((name, idx) => {
+			ranks[name] = idx + 1;
+		});
+		initialRanks = ranks;
+
+		// Po 1200 ms pripočítaj nové body a spusti pomalý presun políčok
+		const timer = setTimeout(show_new_score, 1200);
+		return () => clearTimeout(timer);
 	});
 
 	function normalize(val: any): string {
@@ -326,8 +340,11 @@ SPDX-License-Identifier: MPL-2.0
 						{@const parsed = parsePlayer(player)}
 						{@const boltCount = lightningCounts[player] || 0}
 						{@const acc = playerAccuracies[player] || { correct: 0, incorrect: 0, total: 0 }}
+						{@const oldRank = initialRanks[player]}
+						{@const rankDiff = oldRank !== undefined ? oldRank - (i + 1) : 0}
 						<div
-							class="relative flex items-center justify-between p-3 rounded-2xl bg-slate-800/80 hover:bg-slate-800 transition-all border border-slate-700/50 shadow-sm"
+							animate:flip={{ duration: 1800, easing: cubicInOut }}
+							class="relative flex items-center justify-between p-3 rounded-2xl bg-slate-800/80 hover:bg-slate-800 transition-colors border border-slate-700/50 shadow-sm"
 						>
 							<!-- Žlté blesky: v krúžku (nie v ovále) v ľavom hornom rohu rámčeka -->
 							{#if boltCount > 0}
@@ -348,9 +365,39 @@ SPDX-License-Identifier: MPL-2.0
 								</div>
 							{/if}
 
-							<!-- Vľavo: Poradie, Avatar a Meno -->
+							<!-- Vľavo: Poradie s indikátorom posunu pod číslom, Avatar a Meno -->
 							<div class="flex items-center gap-2.5 min-w-0 flex-1 mr-2">
-								<span class="text-xs font-mono font-bold text-slate-400 w-5 text-center shrink-0">{i + 1}.</span>
+								<div class="flex flex-col items-center justify-center w-6 shrink-0 select-none">
+									<span class="text-xs font-mono font-bold text-slate-300 leading-tight">
+										{i + 1}.
+									</span>
+									<div class="h-4 flex items-center justify-center">
+										{#if show_new_score_clicked && oldRank !== undefined}
+											{#if rankDiff > 0}
+												<!-- Zelená šípka hore pri posune nahor -->
+												<span
+													class="inline-flex items-center text-emerald-400 drop-shadow-[0_0_4px_rgba(52,211,153,0.7)] animate-bounce"
+													title="Posun o {rankDiff} {rankDiff === 1 ? 'miesto' : rankDiff < 5 ? 'miesta' : 'miest'} nahor"
+												>
+													<svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+														<path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+													</svg>
+												</span>
+											{:else if rankDiff < 0}
+												<!-- Červená šípka dole pri poklese -->
+												<span
+													class="inline-flex items-center text-rose-500 drop-shadow-[0_0_4px_rgba(244,63,94,0.7)] animate-bounce"
+													title="Pokles o {Math.abs(rankDiff)} {Math.abs(rankDiff) === 1 ? 'miesto' : Math.abs(rankDiff) < 5 ? 'miesta' : 'miest'} nadol"
+												>
+													<svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+														<path fill-rule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 112 0v7.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+													</svg>
+												</span>
+											{/if}
+										{/if}
+									</div>
+								</div>
+
 								<div class="shrink-0 relative">
 									<AnimalAvatar avatarId={parsed.avatarId} size={36} class="shadow-sm" />
 								</div>
