@@ -118,6 +118,7 @@ SPDX-License-Identifier: MPL-2.0
 
 	let initialRanks = $state<Record<string, number>>({});
 	let show_new_score_clicked = $state(false);
+	let show_all_modal = $state(false);
 
 	const show_new_score = () => {
 		if (!data) data = {};
@@ -318,15 +319,28 @@ SPDX-License-Identifier: MPL-2.0
 
 		<!-- Zoznam všetkých účastníkov s bodmi -->
 		<div class="flex-1 flex flex-col bg-slate-900/95 text-white rounded-3xl p-4 sm:p-5 shadow-2xl border border-slate-700/60 backdrop-blur-md min-h-[440px] max-h-[580px] xl:max-h-[640px]">
-			<!-- Hlavička zoznamu: Účastníci (číslo) vždy na jednom riadku -->
-			<div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-2 gap-2">
+			<!-- Hlavička zoznamu: Účastníci (číslo) - kliknutím otvorí celkový prehľad vo viacerých stĺpcoch -->
+			<div
+				role="button"
+				tabindex="0"
+				onclick={() => (show_all_modal = true)}
+				onkeydown={(e) => {
+					if (e.key === 'Enter' || e.key === ' ') {
+						e.preventDefault();
+						show_all_modal = true;
+					}
+				}}
+				class="flex items-center justify-between pb-3 border-b border-slate-800 mb-2 gap-2 cursor-pointer hover:bg-white/5 p-1.5 -m-1.5 rounded-xl transition-all group select-none"
+				title="Kliknite pre zobrazenie všetkých účastníkov vo viacerých stĺpcoch"
+			>
 				<div class="flex items-center gap-2 min-w-0">
-					<span class="text-lg shrink-0">👥</span>
-					<h3 class="font-extrabold text-base md:text-lg tracking-wide text-white whitespace-nowrap">
-						Účastníci ({allPlayerUsernames.length})
+					<span class="text-lg shrink-0 group-hover:scale-110 transition-transform">👥</span>
+					<h3 class="font-extrabold text-base md:text-lg tracking-wide text-white whitespace-nowrap group-hover:text-amber-300 transition-colors flex items-center gap-1.5">
+						<span>Účastníci ({allPlayerUsernames.length})</span>
+						<span class="text-[11px] bg-slate-800 text-slate-300 group-hover:bg-amber-400/20 group-hover:text-amber-300 px-1.5 py-0.5 rounded-md border border-slate-700/60 font-mono transition-colors">⛶</span>
 					</h3>
 				</div>
-				<span class="text-xs bg-emerald-500/20 text-emerald-400 font-bold px-2.5 py-1 rounded-full shrink-0">
+				<span class="text-xs bg-emerald-500/20 text-emerald-400 font-bold px-2.5 py-1 rounded-full shrink-0 group-hover:bg-emerald-500/30 transition-colors">
 					Body
 				</span>
 			</div>
@@ -454,6 +468,167 @@ SPDX-License-Identifier: MPL-2.0
 	</div>
 </div>
 </div>
+
+{#if show_all_modal}
+	<div
+		class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 md:p-8 animate-fade"
+		role="dialog"
+		aria-modal="true"
+		tabindex="-1"
+		onkeydown={(e) => {
+			if (e.key === 'Escape') show_all_modal = false;
+		}}
+	>
+		<!-- Kliknutie na pozadie zatvorí okno -->
+		<button
+			type="button"
+			class="absolute inset-0 w-full h-full cursor-default bg-transparent border-0 -z-10"
+			onclick={() => (show_all_modal = false)}
+			aria-label="Zatvoriť"
+		></button>
+
+		<!-- Hlavné okno modálu s viacerými stĺpcami -->
+		<div class="w-full max-w-[96vw] 2xl:max-w-[1750px] max-h-[92vh] flex flex-col bg-slate-900/95 dark:bg-black/95 text-white rounded-3xl border-2 border-slate-700/80 shadow-2xl overflow-hidden animate-scale-up">
+			<!-- Hlavička modálu -->
+			<div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/70 shrink-0">
+				<div class="flex items-center gap-3">
+					<div class="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-xl text-amber-300 shadow-inner">
+						👥
+					</div>
+					<div>
+						<h2 class="text-xl sm:text-2xl font-black text-white tracking-wide flex items-center gap-2">
+							<span>Priebežné poradie účastníkov</span>
+							<span class="text-xs sm:text-sm font-bold bg-white/10 text-slate-300 px-2.5 py-0.5 rounded-full border border-white/15">
+								{allPlayerUsernames.length} {allPlayerUsernames.length === 1 ? 'hráč' : allPlayerUsernames.length >= 2 && allPlayerUsernames.length <= 4 ? 'hráči' : 'hráčov'}
+							</span>
+						</h2>
+						<p class="text-xs text-slate-400 mt-0.5">
+							Otázka {question_index} z {total_questions} • Kliknutím mimo alebo krížikom zatvoríte prehľad
+						</p>
+					</div>
+				</div>
+
+				<!-- Tlačidlo Zavrieť -->
+				<button
+					type="button"
+					onclick={() => (show_all_modal = false)}
+					class="w-10 h-10 rounded-2xl bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 border border-slate-700 hover:border-rose-500/40 text-slate-300 flex items-center justify-center transition-all shadow-md group cursor-pointer"
+					title="Zatvoriť prehľad (Esc)"
+				>
+					<svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+					</svg>
+				</button>
+			</div>
+
+			<!-- Telo modálu: Mriežka účastníkov vo viacerých stĺpcoch (1, 2, 3 alebo 4 stĺpce podľa rozlíšenia) -->
+			<div class="flex-1 overflow-y-auto p-4 sm:p-6 custom-scroll">
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-3.5">
+					{#each allPlayerUsernames as player, i (player)}
+						{@const parsed = parsePlayer(player)}
+						{@const boltCount = lightningCounts[player] || 0}
+						{@const acc = playerAccuracies[player] || { correct: 0, incorrect: 0, total: 0 }}
+						{@const oldRank = initialRanks[player]}
+						{@const rankDiff = oldRank !== undefined ? oldRank - (i + 1) : 0}
+						<div
+							class="relative flex items-center justify-between p-3 sm:p-3.5 rounded-2xl bg-slate-800/85 hover:bg-slate-800 border border-slate-700/60 shadow-md transition-all hover:scale-[1.01]"
+						>
+							<!-- Žlté blesky v krúžku v ľavom hornom rohu -->
+							{#if boltCount > 0}
+								<div
+									class="absolute -top-2.5 left-2 z-10 flex items-center justify-center select-none"
+									title="Najrýchlejšia správna odpoveď: {boltCount}x"
+								>
+									<div class="w-6 h-6 rounded-full bg-slate-950/95 border-2 border-amber-400 shadow-md shadow-amber-500/30 flex items-center justify-center relative">
+										<svg class="w-3.5 h-3.5 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)] shrink-0" viewBox="0 0 24 24">
+											<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
+										</svg>
+										{#if boltCount > 1}
+											<span class="absolute -bottom-1 -right-2 px-1 py-0.2 bg-amber-400 text-slate-950 font-mono font-black text-[9px] rounded-full leading-none border border-slate-950 shadow">
+												{boltCount}x
+											</span>
+										{/if}
+									</div>
+								</div>
+							{/if}
+
+							<!-- Vľavo: Poradie s indikátorom posunu pod číslom, Avatar a Meno -->
+							<div class="flex items-center gap-2.5 min-w-0 flex-1 mr-2">
+								<div class="flex flex-col items-center justify-center w-6 shrink-0 select-none">
+									<span class="text-sm font-mono font-black text-slate-200 leading-tight">
+										{i + 1}.
+									</span>
+									<div class="h-4 flex items-center justify-center">
+										{#if show_new_score_clicked && oldRank !== undefined}
+											{#if rankDiff > 0}
+												<span class="inline-flex items-center text-emerald-400 font-bold drop-shadow-[0_0_4px_rgba(52,211,153,0.7)]" title="Posun o {rankDiff} nahor">
+													<svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+														<path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+													</svg>
+												</span>
+											{:else if rankDiff < 0}
+												<span class="inline-flex items-center text-rose-500 font-bold drop-shadow-[0_0_4px_rgba(244,63,94,0.7)]" title="Pokles o {Math.abs(rankDiff)} nadol">
+													<svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+														<path fill-rule="evenodd" d="M14.707 10.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 111.414-1.414L9 12.586V5a1 1 0 112 0v7.586l2.293-2.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+													</svg>
+												</span>
+											{/if}
+										{/if}
+									</div>
+								</div>
+
+								<div class="shrink-0 relative">
+									<AnimalAvatar avatarId={parsed.avatarId} size={38} class="shadow-sm" />
+								</div>
+
+								<div class="flex flex-col justify-center min-w-0 flex-1">
+									<span class="font-extrabold text-sm sm:text-base text-white truncate leading-tight">
+										{parsed.name}
+									</span>
+								</div>
+							</div>
+
+							<!-- Vpravo: Krúžok úspešnosti, Body a Čas -->
+							<div class="flex items-center gap-2.5 sm:gap-3 shrink-0">
+								{#if acc}
+									<AccuracyDonut
+										correct={acc.correct}
+										incorrect={acc.incorrect}
+										total={acc.total}
+										size={36}
+										strokeWidth={4.2}
+									/>
+								{/if}
+
+								<div class="flex flex-col items-end justify-center shrink-0 min-w-[70px]">
+									<div class="flex items-center gap-1.5">
+										{#if show_new_score_clicked && (score_by_username[player] ?? 0) > 0}
+											<span class="text-xs font-black text-emerald-400 bg-emerald-500/25 px-1.5 py-0.5 rounded-md border border-emerald-500/30">
+												+{score_by_username[player]}
+											</span>
+										{/if}
+										<span class="font-black font-mono text-sm sm:text-base text-white tracking-tight">
+											{formatPoints(data?.[player] || 0)}
+										</span>
+									</div>
+
+									{#if time_by_username[player] !== undefined}
+										<div class="mt-1" title="Čas odpovede: {(time_by_username[player] / 1000).toFixed(2)}s">
+											<span class="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-amber-300 bg-slate-950/90 border border-amber-400/50 px-2 py-0.5 rounded-md shadow-sm">
+												<span class="text-amber-400 text-[10px]">⏱</span>
+												<span>{(time_by_username[player] / 1000).toFixed(2)}s</span>
+											</span>
+										</div>
+									{/if}
+								</div>
+							</div>
+						</div>
+					{/each}
+				</div>
+			</div>
+		</div>
+	</div>
+{/if}
 
 <style>
 	.custom-scroll::-webkit-scrollbar {
