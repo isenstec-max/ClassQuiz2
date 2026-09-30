@@ -178,14 +178,14 @@ SPDX-License-Identifier: MPL-2.0
 </script>
 
 {#if show_final_results}
-	<div class="min-h-screen w-full flex flex-col justify-between items-center px-4 {username ? 'pt-4 sm:pt-6' : 'pt-28 sm:pt-36'} pb-8 relative overflow-hidden select-none">
+	<div class="min-h-screen w-full flex flex-col justify-between items-center px-4 {username ? 'pt-4 sm:pt-6' : 'pt-16 sm:pt-20'} pb-6 sm:pb-8 relative overflow-hidden select-none">
 		<!-- Nadpis pódia -->
-		<div class="text-center z-10 mb-4 sm:mb-6 flex flex-col items-center animate-fade-down">
-			<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/90 text-amber-300 border-2 border-amber-400/50 text-xs sm:text-sm font-black tracking-widest uppercase mb-2 shadow-xl backdrop-blur-md ring-2 ring-amber-400/20">
+		<div class="text-center z-10 mb-3 sm:mb-4 flex flex-col items-center animate-fade-down">
+			<div class="inline-flex items-center gap-2 px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full bg-slate-900/90 text-amber-300 border-2 border-amber-400/50 text-[11px] sm:text-xs font-black tracking-widest uppercase mb-1.5 sm:mb-2 shadow-xl backdrop-blur-md ring-2 ring-amber-400/20">
 				<span>🏆</span> {$t('results_page.final_overview', { default: 'Finálne výsledky kvízu' })}
 			</div>
-			<div class="px-8 sm:px-12 py-2 sm:py-3 rounded-3xl bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-2xl">
-				<h1 class="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight drop-shadow-md">
+			<div class="px-6 sm:px-8 py-1.5 sm:py-2 rounded-2xl sm:rounded-3xl bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-2xl">
+				<h1 class="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight drop-shadow-md">
 					{$t('results_page.podium_title', { default: 'Stupne víťazov' })}
 				</h1>
 			</div>
