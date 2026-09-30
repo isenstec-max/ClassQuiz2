@@ -98,7 +98,8 @@ client)
 
 ##### Frontend
 
-I create other modern Frontend like Kahoot !
+I create other modern Frontend like Kahoot!
+<img src="https://raw.githubusercontent.com/isenstec-max/ClassQuiz2/1be59ae8e5da447d08934bf0fd469c8f7fd548be/Screenshot_2026-09-30-19-28-34-199_com.android.chrome.jpg" />
 
 The frontend is made with [SvelteKit](https://kit.svelte.dev/) (web-framework)
 and [TailwindCSS](https://tailwindcss.com/) (Css-Framework).
