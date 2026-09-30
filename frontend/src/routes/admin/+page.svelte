@@ -238,6 +238,7 @@ SPDX-License-Identifier: MPL-2.0
 		game_state.quiz_data ? game_state.quiz_data.background_image : undefined
 	);
 	let results_saved = $state(false);
+	let show_bonus_points = $state(false);
 
 	let show_final_results = $derived(
 		JSON.stringify(game_state.final_results) !== JSON.stringify([null])
@@ -347,6 +348,23 @@ SPDX-License-Identifier: MPL-2.0
 					{/if}
 				</button>
 
+				<!-- Tlačidlo na zápočtové body a export do XLS -->
+				<button
+					onclick={() => (show_bonus_points = true)}
+					class="group flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white font-extrabold text-sm sm:text-base hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-amber-500/30 border-2 border-amber-300 ring-4 ring-amber-500/25 cursor-pointer"
+					title="Zobraziť zápočtové body účastníkov a exportovať do XLS"
+				>
+					<div class="relative flex items-center justify-center p-1 rounded-lg bg-black/20 text-white group-hover:scale-110 transition-transform">
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+						</svg>
+						<span class="absolute -bottom-1 -right-1 px-1 py-0.2 rounded bg-amber-400 text-slate-900 font-black text-[9px] leading-none border border-amber-300">
+							B
+						</span>
+					</div>
+					<span>Body (B) / XLS</span>
+				</button>
+
 				<!-- Tlačidlo na ukončenie kvízu -->
 				<button
 					onclick={exit_quiz}
@@ -366,6 +384,7 @@ SPDX-License-Identifier: MPL-2.0
 			final_results={game_state.final_results}
 			players={game_state.players}
 			{show_final_results}
+			bind:show_bonus_points
 		/>
 	{:else}
 		<SomeAdminScreen {game_token} {game_pin} {bg_color} bind:game_state />
