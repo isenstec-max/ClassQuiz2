@@ -17,6 +17,7 @@ SPDX-License-Identifier: MPL-2.0
 	import { getPlayerSession } from '$lib/play/session_storage';
 	import { APP_VERSION } from '$lib/version';
 	import BrandLogo from '$lib/components/BrandLogo.svelte';
+	import ScoreInfoModal from '$lib/components/ScoreInfoModal.svelte';
 
 	const { t } = getLocalization();
 
@@ -41,6 +42,7 @@ SPDX-License-Identifier: MPL-2.0
 	let custom_field = $state();
 	let custom_field_value = $state();
 	let captcha_enabled = $state();
+	let showScoreInfo = $state(false);
 
 	let hcaptchaSitekey = hcaptcha_site_key;
 
@@ -336,6 +338,17 @@ SPDX-License-Identifier: MPL-2.0
 
 				<!-- Vpravo: prepínač režimu + zmena jazyka blízko nad rámčekom -->
 				<div class="flex items-center gap-1.5 sm:gap-2">
+					<!-- Score info button: classic white question mark in blue box with white border -->
+					<button
+						type="button"
+						onclick={() => (showScoreInfo = true)}
+						class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-95 border-2 border-white shadow-xs hover:shadow-md transition-all flex items-center justify-center text-white font-black text-sm sm:text-base cursor-pointer shrink-0"
+						title="Pravidlá a bodovanie kvízu"
+						aria-label="Bodovanie kvízu"
+					>
+						?
+					</button>
+
 					<!-- Dark mode switch -->
 					<button
 						type="button"
@@ -483,6 +496,17 @@ SPDX-License-Identifier: MPL-2.0
 				</a>
 
 				<div class="flex items-center gap-2">
+					<!-- Score info button: classic white question mark in blue box with white border -->
+					<button
+						type="button"
+						onclick={() => (showScoreInfo = true)}
+						class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-95 border-2 border-white shadow-xs hover:shadow-md transition-all flex items-center justify-center text-white font-black text-sm sm:text-base cursor-pointer shrink-0"
+						title="Pravidlá a bodovanie kvízu"
+						aria-label="Bodovanie kvízu"
+					>
+						?
+					</button>
+
 					<!-- Dark mode switch -->
 					<button
 						type="button"
@@ -634,3 +658,5 @@ SPDX-License-Identifier: MPL-2.0
 	data-size="invisible"
 	data-theme="dark"
 ></div>
+
+<ScoreInfoModal bind:open={showScoreInfo} lang={currentLang} />
