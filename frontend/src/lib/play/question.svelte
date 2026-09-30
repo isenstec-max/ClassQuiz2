@@ -21,6 +21,14 @@ SPDX-License-Identifier: MPL-2.0
 
 	const { t } = getLocalization();
 
+	const getAnswerTextClass = (text: string) => {
+		const len = text ? text.trim().length : 0;
+		if (len > 50) return 'text-[11px] sm:text-xs md:text-sm leading-tight';
+		if (len > 25) return 'text-xs sm:text-sm md:text-base leading-snug';
+		if (len > 12) return 'text-sm sm:text-base md:text-xl leading-snug';
+		return 'text-base sm:text-xl md:text-2xl leading-normal';
+	};
+
 	interface Props {
 		question: Question;
 		game_mode: any;
@@ -298,7 +306,7 @@ SPDX-License-Identifier: MPL-2.0
 				<div class="grid grid-cols-2 gap-3 sm:gap-4 w-full h-full">
 					{#each question.answers as answer, i}
 						<button
-							class="rounded-2xl h-full flex items-center justify-center p-3 sm:p-5 border-2 border-white/20 shadow-xl hover:brightness-105 active:scale-[0.98] transition-all cursor-pointer relative overflow-hidden group {selected_answer === answer.answer ? 'ring-4 ring-white shadow-2xl scale-[1.01]' : selected_answer !== undefined ? 'opacity-40' : ''}"
+							class="rounded-2xl h-full flex items-center justify-center p-2 sm:p-4 border-2 border-white/20 shadow-xl hover:brightness-105 active:scale-[0.98] transition-all cursor-pointer relative overflow-hidden group {selected_answer === answer.answer ? 'ring-4 ring-white shadow-2xl scale-[1.01]' : selected_answer !== undefined ? 'opacity-40' : ''}"
 							style="background-color: {answer.color ??
 								default_colors[i % default_colors.length]}; color: {get_foreground_color(
 								answer.color ?? default_colors[i % default_colors.length]
@@ -309,17 +317,20 @@ SPDX-License-Identifier: MPL-2.0
 							{#if game_mode === 'kahoot'}
 								<AnswerShape shapeIndex={i} class="w-16 h-16 md:w-24 md:h-24 text-white drop-shadow-lg" />
 							{:else}
-								<div class="flex items-center gap-3.5 w-full px-2">
-									<div class="p-2 rounded-xl bg-black/20 shrink-0 flex items-center justify-center">
-										<AnswerShape shapeIndex={i} class="w-7 h-7 sm:w-9 sm:h-9 text-white drop-shadow-md" />
-									</div>
-									<p class="m-auto font-black text-lg sm:text-xl md:text-2xl text-white break-words drop-shadow">
+								<div class="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 p-1 sm:p-1.5 rounded-lg bg-black/25 backdrop-blur-xs border border-white/10 flex items-center justify-center pointer-events-none z-10 shadow-sm">
+									<AnswerShape shapeIndex={i} class="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-white drop-shadow-sm" />
+								</div>
+								<div class="w-full h-full flex items-center justify-center px-2 py-6 sm:px-4 sm:py-7 overflow-hidden">
+									<p
+										class="font-black text-white text-center drop-shadow-md select-none max-w-full {getAnswerTextClass(answer.answer)}"
+										style="overflow-wrap: anywhere; word-break: break-word;"
+									>
 										{answer.answer}
 									</p>
 								</div>
 							{/if}
 							{#if selected_answer === answer.answer}
-								<div class="absolute top-3 right-3 w-7 h-7 rounded-full bg-white text-slate-900 flex items-center justify-center font-black shadow-lg">
+								<div class="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white text-slate-900 flex items-center justify-center font-black shadow-lg text-sm sm:text-base z-10">
 									✓
 								</div>
 							{/if}
