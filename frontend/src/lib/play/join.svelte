@@ -332,7 +332,7 @@ SPDX-License-Identifier: MPL-2.0
 				</div>
 
 				<h1 class="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight mb-2">
-					{$t('words.game_pin', { default: 'Herný PIN' })}
+					{$t('words.game_pin', { default: 'PIN do kvízu' })}
 				</h1>
 				<p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-6 max-w-xs">
 					{$t('play_page.enter_pin_description', { defaultValue: 'Zadaj 6-miestny kód z obrazovky alebo projektora' })}
@@ -346,7 +346,7 @@ SPDX-License-Identifier: MPL-2.0
 						maxlength="6"
 						inputmode="numeric"
 						autocomplete="off"
-						placeholder={$t('words.game_pin', { default: 'PIN hry' })}
+						placeholder={$t('words.game_pin', { default: 'PIN do kvízu' })}
 						autofocus
 					/>
 				</div>

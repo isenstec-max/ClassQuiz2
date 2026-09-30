@@ -135,7 +135,7 @@
         "yes": "Áno",
         "point_plural": "Body",
         "continue": "Pokračovať",
-        "game_pin": "Herný PIN",
+        "game_pin": "PIN do kvízu",
         "like": "Páči sa mi",
         "dislike": "Nepáči sa mi",
         "search": "Hľadať",
@@ -225,7 +225,7 @@
     "play_page": {
         "enter_game": "Prihlásiť sa do kvízu",
         "enter_pin_description": "Zadaj 6-miestny kód z obrazovky alebo projektora",
-        "join_by_entering_code": "Zadajte herný PIN kód",
+        "join_by_entering_code": "Zadajte PIN do kvízu",
         "join_description": "Pripojte sa na {{url}} a zadajte PIN {{pin}}",
         "players_waiting": "{{count}} hráč čaká",
         "players_waiting_plural": "{{count}} hráčov čaká",
