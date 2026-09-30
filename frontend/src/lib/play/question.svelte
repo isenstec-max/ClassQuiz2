@@ -21,12 +21,47 @@ SPDX-License-Identifier: MPL-2.0
 
 	const { t } = getLocalization();
 
-	const getAnswerTextClass = (text: string) => {
-		const len = text ? text.trim().length : 0;
-		if (len > 50) return 'text-[11px] sm:text-xs md:text-sm leading-tight';
-		if (len > 25) return 'text-xs sm:text-sm md:text-base leading-snug';
-		if (len > 12) return 'text-sm sm:text-base md:text-xl leading-snug';
-		return 'text-base sm:text-xl md:text-2xl leading-normal';
+	const getMobileAnswerClass = (text: any): string => {
+		const str = (text ?? '').toString().trim();
+		const len = str.length;
+		if (len === 0) return 'text-2xl';
+		if (len === 1) return 'text-8xl font-black leading-none';
+		if (len <= 2) return 'text-6xl sm:text-7xl font-black leading-none';
+		if (len <= 4) return 'text-4xl sm:text-5xl font-extrabold leading-tight';
+		if (len <= 6) return 'text-3xl sm:text-4xl font-extrabold leading-snug';
+
+		const words = str.split(/\s+/);
+		const maxWord = Math.max(...words.map((w) => w.length));
+
+		if (maxWord <= 9 && len <= 10) return 'text-2xl sm:text-3xl font-extrabold leading-snug';
+		if (maxWord <= 13 && len <= 26) return 'text-xl sm:text-2xl font-bold leading-snug';
+		if (maxWord <= 15 && len <= 45) return 'text-lg sm:text-xl font-bold leading-snug';
+		if (len <= 75) return 'text-base sm:text-lg font-semibold leading-snug';
+		return 'text-sm font-semibold leading-snug';
+	};
+
+	const getDesktopAnswerClass = (answers: any[]): string => {
+		if (!answers || !Array.isArray(answers) || answers.length === 0) return 'md:text-2xl md:leading-snug';
+
+		let maxTotalLen = 0;
+		let maxWordLen = 0;
+		for (const a of answers) {
+			const str = (a?.answer ?? '').toString().trim();
+			if (str.length > maxTotalLen) maxTotalLen = str.length;
+			const words = str.split(/\s+/);
+			for (const w of words) {
+				if (w.length > maxWordLen) maxWordLen = w.length;
+			}
+		}
+
+		if (maxTotalLen <= 1) return 'md:text-7xl md:leading-none';
+		if (maxTotalLen <= 3) return 'md:text-5xl md:leading-tight';
+		if (maxTotalLen <= 6) return 'md:text-4xl md:leading-tight';
+		if (maxTotalLen <= 12 && maxWordLen <= 12) return 'md:text-3xl md:leading-snug';
+		if (maxTotalLen <= 26 && maxWordLen <= 16) return 'md:text-2xl md:leading-snug';
+		if (maxTotalLen <= 50) return 'md:text-xl md:leading-snug';
+		if (maxTotalLen <= 80) return 'md:text-lg md:leading-snug';
+		return 'md:text-base md:leading-snug';
 	};
 
 	interface Props {
@@ -51,6 +86,7 @@ SPDX-License-Identifier: MPL-2.0
 
 	let timer_res = $state(question.time);
 	let selected_answer: string = $state();
+	let desktopClass = $derived(getDesktopAnswerClass(question?.answers));
 
 	// Stop the timer if the question is answered
 	const timer = (time: string) => {
@@ -320,9 +356,9 @@ SPDX-License-Identifier: MPL-2.0
 								<div class="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 p-1 sm:p-1.5 rounded-lg bg-black/25 backdrop-blur-xs border border-white/10 flex items-center justify-center pointer-events-none z-10 shadow-sm">
 									<AnswerShape shapeIndex={i} class="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-white drop-shadow-sm" />
 								</div>
-								<div class="w-full h-full flex items-center justify-center px-2 py-6 sm:px-4 sm:py-7 overflow-hidden">
+								<div class="w-full h-full flex items-center justify-center px-2 py-3 sm:px-4 sm:py-5 overflow-hidden">
 									<p
-										class="font-black text-white text-center drop-shadow-md select-none max-w-full {getAnswerTextClass(answer.answer)}"
+										class="font-black text-white text-center drop-shadow-md select-none max-w-full {getMobileAnswerClass(answer.answer)} {desktopClass}"
 										style="overflow-wrap: anywhere; word-break: break-word;"
 									>
 										{answer.answer}
