@@ -97,18 +97,32 @@ export function clearPlayerSession() {
 	if (typeof window === 'undefined') return;
 	try {
 		localStorage.removeItem(STORAGE_KEY);
+		localStorage.removeItem('cq_game_data');
+		localStorage.removeItem('cq_active_question');
+		localStorage.removeItem('cq_question_results');
+		localStorage.removeItem('cq_solution');
 		sessionStorage.removeItem('cq_game_data');
 		sessionStorage.removeItem('cq_active_question');
 		sessionStorage.removeItem('cq_question_results');
 		sessionStorage.removeItem('cq_solution');
-		const toRemove: string[] = [];
+
+		const toRemoveLocal: string[] = [];
+		for (let i = 0; i < localStorage.length; i++) {
+			const key = localStorage.key(i);
+			if (key && key.startsWith('cq_sel_ans_')) {
+				toRemoveLocal.push(key);
+			}
+		}
+		toRemoveLocal.forEach((k) => localStorage.removeItem(k));
+
+		const toRemoveSession: string[] = [];
 		for (let i = 0; i < sessionStorage.length; i++) {
 			const key = sessionStorage.key(i);
 			if (key && key.startsWith('cq_sel_ans_')) {
-				toRemove.push(key);
+				toRemoveSession.push(key);
 			}
 		}
-		toRemove.forEach((k) => sessionStorage.removeItem(k));
+		toRemoveSession.forEach((k) => sessionStorage.removeItem(k));
 	} catch (e) {}
 	try {
 		Cookies.remove(COOKIE_KEY, { path: '/' });
@@ -119,14 +133,14 @@ export function clearPlayerSession() {
 export function saveGameData(gameData: any) {
 	if (typeof window === 'undefined' || !gameData) return;
 	try {
-		sessionStorage.setItem('cq_game_data', JSON.stringify(gameData));
+		localStorage.setItem('cq_game_data', JSON.stringify(gameData));
 	} catch (e) {}
 }
 
 export function getGameData(): any | null {
 	if (typeof window === 'undefined') return null;
 	try {
-		const raw = sessionStorage.getItem('cq_game_data');
+		const raw = localStorage.getItem('cq_game_data') || sessionStorage.getItem('cq_game_data');
 		if (raw) return JSON.parse(raw);
 	} catch (e) {}
 	return null;
@@ -135,16 +149,17 @@ export function getGameData(): any | null {
 export function saveActiveQuestion(question_index: string | number, question: any) {
 	if (typeof window === 'undefined') return;
 	try {
-		sessionStorage.setItem('cq_active_question', JSON.stringify({ question_index, question }));
-		sessionStorage.removeItem('cq_question_results');
-		sessionStorage.removeItem('cq_solution');
+		const data = JSON.stringify({ question_index, question });
+		localStorage.setItem('cq_active_question', data);
+		localStorage.removeItem('cq_question_results');
+		localStorage.removeItem('cq_solution');
 	} catch (e) {}
 }
 
 export function getActiveQuestion(): { question_index: string | number; question: any } | null {
 	if (typeof window === 'undefined') return null;
 	try {
-		const raw = sessionStorage.getItem('cq_active_question');
+		const raw = localStorage.getItem('cq_active_question') || sessionStorage.getItem('cq_active_question');
 		if (raw) return JSON.parse(raw);
 	} catch (e) {}
 	return null;
@@ -153,14 +168,14 @@ export function getActiveQuestion(): { question_index: string | number; question
 export function saveQuestionResults(results: any) {
 	if (typeof window === 'undefined') return;
 	try {
-		sessionStorage.setItem('cq_question_results', JSON.stringify(results));
+		localStorage.setItem('cq_question_results', JSON.stringify(results));
 	} catch (e) {}
 }
 
 export function getQuestionResults(): any | null {
 	if (typeof window === 'undefined') return null;
 	try {
-		const raw = sessionStorage.getItem('cq_question_results');
+		const raw = localStorage.getItem('cq_question_results') || sessionStorage.getItem('cq_question_results');
 		if (raw) return JSON.parse(raw);
 	} catch (e) {}
 	return null;

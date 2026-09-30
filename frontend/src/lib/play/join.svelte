@@ -76,6 +76,7 @@ SPDX-License-Identifier: MPL-2.0
 	};
 
 	let existingSession = $state<any>(null);
+	let is_rejoining = $state(false);
 
 	onMount(() => {
 		if (browser) {
@@ -84,17 +85,18 @@ SPDX-License-Identifier: MPL-2.0
 				selectedAvatar = savedAvatar;
 			}
 			const existing = getPlayerSession();
-			if (existing && existing.game_pin && existing.username && existing.sid) {
+			if (existing && existing.game_pin && existing.username) {
 				existingSession = existing;
 				if (!game_pin) {
 					game_pin = existing.game_pin;
 				}
 				const parsed = parsePlayer(existing.username);
-				if (!rawUsername) {
-					rawUsername = parsed.cleanName;
+				const cleanName = parsed.name || parsed.cleanName;
+				if (cleanName) {
+					rawUsername = cleanName;
 				}
-				if (parsed.avatar) {
-					selectedAvatar = parsed.avatar;
+				if (parsed.avatar || parsed.avatarId) {
+					selectedAvatar = parsed.avatar || parsed.avatarId;
 				}
 			}
 			prefetch_username();
@@ -110,14 +112,38 @@ SPDX-License-Identifier: MPL-2.0
 	});
 
 	const rejoinExistingSession = () => {
-		if (!existingSession) return;
-		game_pin = existingSession.game_pin;
-		username = existingSession.username;
+		const session = getPlayerSession() || existingSession;
+		if (!session) return;
+		is_rejoining = true;
+		game_pin = session.game_pin;
+		username = session.username;
+
+		// Immediately try rejoin_game
 		socket.emit('rejoin_game', {
-			old_sid: existingSession.sid,
-			username: existingSession.username,
-			game_pin: existingSession.game_pin
+			old_sid: session.sid,
+			username: session.username,
+			game_pin: session.game_pin
 		});
+
+		// Timeout fallback: if server unacknowledged rejoin within 1.5s, fall back to join_game
+		let resolved = false;
+		const onRejoined = () => {
+			resolved = true;
+			is_rejoining = false;
+			socket.off('rejoined_game', onRejoined);
+		};
+		socket.on('rejoined_game', onRejoined);
+
+		setTimeout(() => {
+			if (!resolved) {
+				console.log('rejoin_game timed out, attempting join_game');
+				socket.off('rejoined_game', onRejoined);
+				executeJoin(session.username);
+				setTimeout(() => {
+					is_rejoining = false;
+				}, 1500);
+			}
+		}, 1500);
 	};
 
 	onDestroy(() => {
@@ -131,12 +157,13 @@ SPDX-License-Identifier: MPL-2.0
 	});
 
 	const prefetch_username = async () => {
+		if (rawUsername) return;
 		const res = await fetch('/api/v1/users/me');
 		if (res.status !== 200) {
 			return;
 		}
 		const json = await res.json();
-		if (json.username) {
+		if (json.username && !rawUsername) {
 			rawUsername = json.username;
 		}
 	};
@@ -182,40 +209,8 @@ SPDX-License-Identifier: MPL-2.0
 		}
 	});
 
-	const setUsername = async (e: Event) => {
-		e.preventDefault();
-		const trimmed = rawUsername.trim();
-		if (trimmed.length < 2) {
-			return;
-		}
-		if (browser) {
-			localStorage.setItem('player_avatar', selectedAvatar);
-		}
-		const fullUsername = formatPlayer(trimmed, selectedAvatar);
-		username = fullUsername;
-
+	const executeJoin = async (targetUsername: string) => {
 		let captcha_resp: string;
-		if (Cookies.get('kicked')) {
-			console.log("%cYou're Banned!", 'font-size:6rem');
-			return;
-		}
-
-		// Rejoin existing session if player enters same game_pin and name
-		const session = getPlayerSession();
-		if (session && session.game_pin === game_pin && session.sid) {
-			const sessionParsed = parsePlayer(session.username);
-			if (sessionParsed.cleanName.toLowerCase() === trimmed.toLowerCase()) {
-				console.log('Rejoining session for', session.username);
-				username = session.username;
-				socket.emit('rejoin_game', {
-					old_sid: session.sid,
-					username: session.username,
-					game_pin: session.game_pin
-				});
-				return;
-			}
-		}
-
 		if (captcha_enabled) {
 			if (hcaptchaSitekey) {
 				try {
@@ -224,7 +219,7 @@ SPDX-License-Identifier: MPL-2.0
 					});
 					captcha_resp = response;
 					socket.emit('join_game', {
-						username: fullUsername,
+						username: targetUsername,
 						game_pin: game_pin,
 						captcha: captcha_resp,
 						custom_field: custom_field ? custom_field_value : undefined
@@ -242,7 +237,7 @@ SPDX-License-Identifier: MPL-2.0
 					// eslint-disable-next-line no-undef
 					grecaptcha.execute(recaptcha_key, { action: 'submit' }).then(function (token) {
 						socket.emit('join_game', {
-							username: fullUsername,
+							username: targetUsername,
 							game_pin: game_pin,
 							captcha: token,
 							custom_field: custom_field ? custom_field_value : undefined
@@ -252,12 +247,71 @@ SPDX-License-Identifier: MPL-2.0
 			}
 		} else {
 			socket.emit('join_game', {
-				username: fullUsername,
+				username: targetUsername,
 				game_pin: game_pin,
 				captcha: undefined,
 				custom_field: custom_field ? custom_field_value : undefined
 			});
 		}
+	};
+
+	const setUsername = async (e: Event) => {
+		e.preventDefault();
+		const trimmed = rawUsername.trim();
+		if (trimmed.length < 2) {
+			return;
+		}
+		if (browser) {
+			localStorage.setItem('player_avatar', selectedAvatar);
+		}
+		const fullUsername = formatPlayer(trimmed, selectedAvatar);
+		username = fullUsername;
+
+		if (Cookies.get('kicked')) {
+			console.log("%cYou're Banned!", 'font-size:6rem');
+			return;
+		}
+
+		if (browser) {
+			savePlayerSession({
+				sid: socket.id,
+				username: fullUsername,
+				game_pin: game_pin,
+				avatar: selectedAvatar
+			});
+		}
+
+		// Rejoin existing session if player enters same game_pin and name
+		const session = getPlayerSession();
+		if (session && session.game_pin === game_pin && session.sid) {
+			const sessionParsed = parsePlayer(session.username);
+			const cleanSavedName = sessionParsed.name || sessionParsed.cleanName || '';
+			if (cleanSavedName && cleanSavedName.toLowerCase() === trimmed.toLowerCase()) {
+				console.log('Rejoining session for', session.username);
+				username = session.username;
+				socket.emit('rejoin_game', {
+					old_sid: session.sid,
+					username: session.username,
+					game_pin: session.game_pin
+				});
+
+				let resolved = false;
+				const onRejoined = () => {
+					resolved = true;
+					socket.off('rejoined_game', onRejoined);
+				};
+				socket.on('rejoined_game', onRejoined);
+				setTimeout(() => {
+					if (!resolved) {
+						socket.off('rejoined_game', onRejoined);
+						executeJoin(fullUsername);
+					}
+				}, 1500);
+				return;
+			}
+		}
+
+		executeJoin(fullUsername);
 	};
 
 	socket.on('game_not_found', () => {
@@ -383,9 +437,10 @@ SPDX-License-Identifier: MPL-2.0
 				</p>
 
 				{#if existingSession && existingSession.game_pin}
+					{@const pinPlayer = parsePlayer(existingSession.username)}
 					<div class="w-full mb-5 p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/40 text-center">
 						<p class="text-xs font-semibold text-emerald-800 dark:text-emerald-200 mb-2">
-							Máš rozohraný kvíz s PINom <span class="font-mono font-black">{existingSession.game_pin}</span> ({parsePlayer(existingSession.username).cleanName})
+							Máš rozohraný kvíz s PINom <span class="font-mono font-black">{existingSession.game_pin}</span> ({pinPlayer.name || pinPlayer.cleanName})
 						</p>
 						<button
 							type="button"
@@ -518,17 +573,24 @@ SPDX-License-Identifier: MPL-2.0
 				</div>
 
 				{#if existingSession && existingSession.game_pin === game_pin}
+					{@const sessPlayer = parsePlayer(existingSession.username)}
 					<div class="mb-4 p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 text-center flex flex-col items-center gap-1.5">
 						<span class="text-xs font-semibold text-emerald-800 dark:text-emerald-200">
-							Máš rozohranú reláciu ako <strong class="font-bold">{parsePlayer(existingSession.username).cleanName}</strong>
+							Máš rozohranú reláciu ako <strong class="font-bold">{sessPlayer.name || sessPlayer.cleanName}</strong>
 						</span>
 						<button
 							type="button"
 							onclick={rejoinExistingSession}
-							class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 active:scale-98 text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer flex items-center justify-center gap-2"
+							disabled={is_rejoining}
+							class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-500 active:scale-98 disabled:opacity-50 text-white text-sm font-bold rounded-xl shadow-xs transition cursor-pointer flex items-center justify-center gap-2"
 						>
-							<span>Pokračovať v hre ({parsePlayer(existingSession.username).cleanName})</span>
-							<AnimalAvatar avatarId={parsePlayer(existingSession.username).avatar || selectedAvatar} size={20} />
+							{#if is_rejoining}
+								<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+								<span>Pripájam k hre...</span>
+							{:else}
+								<span>Pokračovať v hre ({sessPlayer.name || sessPlayer.cleanName})</span>
+								<AnimalAvatar avatarId={sessPlayer.avatar || sessPlayer.avatarId || selectedAvatar} size={22} />
+							{/if}
 						</button>
 					</div>
 				{/if}

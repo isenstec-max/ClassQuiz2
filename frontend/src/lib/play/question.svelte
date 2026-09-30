@@ -91,7 +91,9 @@ SPDX-License-Identifier: MPL-2.0
 
 	onMount(() => {
 		if (typeof window !== 'undefined') {
-			const saved = sessionStorage.getItem(`cq_sel_ans_${question_index}`);
+			const saved =
+				localStorage.getItem(`cq_sel_ans_${question_index}`) ||
+				sessionStorage.getItem(`cq_sel_ans_${question_index}`);
 			if (saved) {
 				selected_answer = saved;
 			}
@@ -128,7 +130,7 @@ SPDX-License-Identifier: MPL-2.0
 		selected_answer = answer;
 		if (typeof window !== 'undefined') {
 			try {
-				sessionStorage.setItem(`cq_sel_ans_${question_index}`, answer);
+				localStorage.setItem(`cq_sel_ans_${question_index}`, answer);
 			} catch (e) {}
 		}
 		socket.emit('submit_answer', {
@@ -141,7 +143,7 @@ SPDX-License-Identifier: MPL-2.0
 		selected_answer = 'a';
 		if (typeof window !== 'undefined') {
 			try {
-				sessionStorage.setItem(`cq_sel_ans_${question_index}`, 'a');
+				localStorage.setItem(`cq_sel_ans_${question_index}`, 'a');
 			} catch (e) {}
 		}
 		const new_array = [];

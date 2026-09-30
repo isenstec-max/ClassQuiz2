@@ -123,7 +123,7 @@ SPDX-License-Identifier: MPL-2.0
 	socket.on('connect', async () => {
 		console.log('Connected!');
 		const session = getPlayerSession();
-		if (!session || !session.game_pin || !session.username || !session.sid) {
+		if (!session || !session.game_pin || !session.username) {
 			return;
 		}
 		if (!game_pin) game_pin = session.game_pin;
@@ -144,6 +144,28 @@ SPDX-License-Identifier: MPL-2.0
 		} catch (e) {
 			console.warn('Could not fetch captcha on reconnect', e);
 		}
+
+		// Fallback: If rejoined_game is not acknowledged within 2 seconds
+		let rejoined = false;
+		const handleRejoined = () => {
+			rejoined = true;
+			socket.off('rejoined_game', handleRejoined);
+		};
+		socket.on('rejoined_game', handleRejoined);
+		setTimeout(() => {
+			if (!rejoined) {
+				socket.off('rejoined_game', handleRejoined);
+				const current = getPlayerSession();
+				if (current && current.username && current.game_pin) {
+					console.log('rejoin_game unacknowledged on connect, attempting join_game');
+					socket.emit('join_game', {
+						username: current.username,
+						game_pin: current.game_pin,
+						captcha: undefined
+					});
+				}
+			}
+		}, 2000);
 	});
 
 	// Socket-events
@@ -157,10 +179,13 @@ SPDX-License-Identifier: MPL-2.0
 			// eslint-disable-next-line no-undef
 			plausible('Joined Game', { props: { game_id: gameData.game_id } });
 		} catch (e) {}
+		const session = getPlayerSession();
+		const finalUsername = username || session?.username || '';
+		const finalPin = game_pin || session?.game_pin || '';
 		savePlayerSession({
 			sid: socket.id,
-			username,
-			game_pin,
+			username: finalUsername,
+			game_pin: finalPin,
 			game_mode
 		});
 	});

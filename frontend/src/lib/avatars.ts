@@ -23,14 +23,23 @@ export const ANIMAL_AVATARS: AnimalAvatarDef[] = [
 	{ id: 'penguin', name: 'Tučniak', description: 'V havajskej kvetovanej košeli', bgColor: '#CFFAFE' }
 ];
 
-export function parsePlayer(rawUsername: string): { avatarId: string; name: string } {
-	if (!rawUsername) return { avatarId: 'fox', name: '' };
+export function parsePlayer(rawUsername: string): {
+	avatarId: string;
+	name: string;
+	cleanName: string;
+	avatar: string;
+} {
+	if (!rawUsername) return { avatarId: 'fox', name: '', cleanName: '', avatar: 'fox' };
 	const match = rawUsername.match(/^\[([a-z0-9_-]+)\]\s*(.*)$/i);
 	if (match) {
 		const found = ANIMAL_AVATARS.find((a) => a.id.toLowerCase() === match[1].toLowerCase());
+		const aid = found ? found.id : 'fox';
+		const clean = (match[2] || '').trim();
 		return {
-			avatarId: found ? found.id : 'fox',
-			name: match[2] || rawUsername
+			avatarId: aid,
+			name: clean,
+			cleanName: clean,
+			avatar: aid
 		};
 	}
 	// Deterministický výber avatara podľa hashu mena
@@ -38,9 +47,13 @@ export function parsePlayer(rawUsername: string): { avatarId: string; name: stri
 	for (let i = 0; i < rawUsername.length; i++) {
 		hash = (hash * 31 + rawUsername.charCodeAt(i)) % ANIMAL_AVATARS.length;
 	}
+	const aid = ANIMAL_AVATARS[Math.abs(hash)].id;
+	const clean = rawUsername.trim();
 	return {
-		avatarId: ANIMAL_AVATARS[Math.abs(hash)].id,
-		name: rawUsername
+		avatarId: aid,
+		name: clean,
+		cleanName: clean,
+		avatar: aid
 	};
 }
 
