@@ -22,6 +22,8 @@ if [ -f "$HOME/certs/privkey.pem" ] && [ ! -f "$HOME/certs/key.pem" ]; then
     ln -sf "$HOME/certs/privkey.pem" "$HOME/certs/key.pem"
 fi
 
+mkdir -p uploads
+
 echo ">> Stahujem najnovsie Docker obrazy pre ClassQuiz2..."
 docker compose -f "$COMPOSE_FILE" pull
 

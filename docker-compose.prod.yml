@@ -31,6 +31,11 @@ services:
       ROOT_ADDRESS: "https://industry4.fvt.tuke.sk:8000"
       STORAGE_BACKEND: "local"
       STORAGE_PATH: "/app/data"
+      MAIL_PORT: "587"
+      MAIL_ADDRESS: "email@email@email.email"
+      MAIL_PASSWORD: "PASSWORT"
+      MAIL_USERNAME: "email@email@email.email"
+      MAIL_SERVER: "smtp.email.email"
       SKIP_EMAIL_VERIFICATION: "True"
     volumes:
       - ./uploads:/app/data
