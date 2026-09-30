@@ -327,7 +327,7 @@ SPDX-License-Identifier: MPL-2.0
 
 							<!-- Stupienok 2. miesta -->
 							<div
-								class="w-full h-68 md:h-80 bg-gradient-to-b from-indigo-700 via-indigo-900 to-slate-950 rounded-t-3xl shadow-2xl border-t-2 border-indigo-400/50 p-4 flex flex-col items-center justify-start text-center relative overflow-hidden group"
+								class="w-full h-72 md:h-80 bg-gradient-to-b from-indigo-700 via-indigo-900 to-slate-950 rounded-t-3xl shadow-2xl border-t-2 border-indigo-400/50 p-4 pb-3 flex flex-col items-center justify-start text-center relative overflow-hidden group"
 							>
 								<div class="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-white/15 to-transparent"></div>
 
@@ -351,27 +351,27 @@ SPDX-License-Identifier: MPL-2.0
 									{parsed.name}
 								</h3>
 
-								<!-- Počet bodov -->
-								<p class="font-mono font-bold text-base md:text-lg text-slate-300 mt-1">
+								<!-- Počet bodov (žltá farba) -->
+								<p class="font-mono font-black text-base md:text-lg text-yellow-300 mt-1 drop-shadow-sm">
 									{formatScoreWithUnit(resolvedScores[player])}
 								</p>
 
-								<!-- Kruhový graf úspešnosti -->
+								<!-- Kruhový graf úspešnosti (zarovnaný na spodok stĺpca v rovine) -->
 								{#if acc}
-									<div class="mt-2.5 flex flex-col items-center gap-1">
+									<div class="mt-auto pt-2 flex flex-col items-center gap-1">
 										<AccuracyDonut
 											correct={acc.correct}
 											incorrect={acc.incorrect}
 											total={acc.total}
-											size={54}
+											size={52}
 											strokeWidth={4.8}
 										/>
-										<span class="text-[10px] uppercase font-extrabold text-slate-300 tracking-wider">Úspešnosť</span>
+										<span class="text-[10px] uppercase font-extrabold text-amber-200 tracking-wider">Úspešnosť</span>
 									</div>
 								{/if}
 							</div>
 						{:else}
-							<div class="w-full h-64 md:h-76 opacity-0"></div>
+							<div class="w-full h-72 md:h-80 opacity-0"></div>
 						{/if}
 					</div>
 
@@ -391,7 +391,7 @@ SPDX-License-Identifier: MPL-2.0
 
 							<!-- Stupienok 1. miesta -->
 							<div
-								class="w-full h-88 md:h-[410px] bg-gradient-to-b from-indigo-600 via-indigo-900 to-slate-950 rounded-t-3xl shadow-2xl border-t-4 border-yellow-400 p-5 flex flex-col items-center justify-start text-center relative overflow-hidden group"
+								class="w-full h-88 md:h-[410px] bg-gradient-to-b from-indigo-600 via-indigo-900 to-slate-950 rounded-t-3xl shadow-2xl border-t-4 border-yellow-400 p-4 sm:p-5 pb-3 flex flex-col items-center justify-start text-center relative overflow-hidden group"
 							>
 								<div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-yellow-300/25 to-transparent"></div>
 
@@ -415,27 +415,27 @@ SPDX-License-Identifier: MPL-2.0
 									{parsed.name}
 								</h3>
 
-								<!-- Počet bodov -->
-								<p class="font-mono font-extrabold text-lg md:text-xl text-yellow-300 mt-1">
+								<!-- Počet bodov (žltá farba) -->
+								<p class="font-mono font-black text-lg md:text-xl text-yellow-300 mt-1 drop-shadow-sm">
 									{formatScoreWithUnit(resolvedScores[player])}
 								</p>
 
-								<!-- Kruhový graf úspešnosti -->
+								<!-- Kruhový graf úspešnosti (zarovnaný na spodok stĺpca v rovine) -->
 								{#if acc}
-									<div class="mt-3 flex flex-col items-center gap-1">
+									<div class="mt-auto pt-2 flex flex-col items-center gap-1">
 										<AccuracyDonut
 											correct={acc.correct}
 											incorrect={acc.incorrect}
 											total={acc.total}
-											size={60}
-											strokeWidth={5}
+											size={52}
+											strokeWidth={4.8}
 										/>
 										<span class="text-[10px] uppercase font-extrabold text-amber-200 tracking-wider">Úspešnosť</span>
 									</div>
 								{/if}
 							</div>
 						{:else}
-							<div class="w-full h-84 md:h-96 opacity-0"></div>
+							<div class="w-full h-88 md:h-[410px] opacity-0"></div>
 						{/if}
 					</div>
 
@@ -454,7 +454,7 @@ SPDX-License-Identifier: MPL-2.0
 
 							<!-- Stupienok 3. miesta -->
 							<div
-								class="w-full h-56 md:h-66 bg-gradient-to-b from-indigo-800 via-indigo-950 to-slate-950 rounded-t-3xl shadow-xl border-t-2 border-amber-600/50 p-4 flex flex-col items-center justify-start text-center relative overflow-hidden group"
+								class="w-full h-56 md:h-66 bg-gradient-to-b from-indigo-800 via-indigo-950 to-slate-950 rounded-t-3xl shadow-xl border-t-2 border-amber-600/50 p-4 pb-3 flex flex-col items-center justify-start text-center relative overflow-hidden group"
 							>
 								<div class="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-white/10 to-transparent"></div>
 
@@ -478,22 +478,22 @@ SPDX-License-Identifier: MPL-2.0
 									{parsed.name}
 								</h3>
 
-								<!-- Počet bodov -->
-								<p class="font-mono font-bold text-sm md:text-base text-amber-200 mt-1">
+								<!-- Počet bodov (žltá farba) -->
+								<p class="font-mono font-black text-sm md:text-base text-yellow-300 mt-1 drop-shadow-sm">
 									{formatScoreWithUnit(resolvedScores[player])}
 								</p>
 
-								<!-- Kruhový graf úspešnosti -->
+								<!-- Kruhový graf úspešnosti (zarovnaný na spodok stĺpca v rovine) -->
 								{#if acc}
-									<div class="mt-2 flex flex-col items-center gap-1">
+									<div class="mt-auto pt-2 flex flex-col items-center gap-1">
 										<AccuracyDonut
 											correct={acc.correct}
 											incorrect={acc.incorrect}
 											total={acc.total}
-											size={50}
+											size={52}
 											strokeWidth={4.8}
 										/>
-										<span class="text-[10px] uppercase font-extrabold text-amber-200/90 tracking-wider">Úspešnosť</span>
+										<span class="text-[10px] uppercase font-extrabold text-amber-200 tracking-wider">Úspešnosť</span>
 									</div>
 								{/if}
 							</div>
