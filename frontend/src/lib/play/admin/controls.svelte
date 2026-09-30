@@ -9,6 +9,7 @@ SPDX-License-Identifier: MPL-2.0
 	import { getLocalization } from '$lib/i18n';
 	import { SocketGameControls } from '$lib/play/admin/socket_game_controls.ts';
 	import type { GameState } from '$lib/play/admin/game_state.ts';
+	import { fade, scale } from 'svelte/transition';
 
 	interface Props {
 		bg_color: string;
@@ -20,6 +21,19 @@ SPDX-License-Identifier: MPL-2.0
 	let { bg_color, socket_game_controls, game_token, game_state = $bindable() }: Props = $props();
 
 	const { t } = getLocalization();
+
+	let show_end_confirm = $state(false);
+
+	const handleConfirmEndTest = () => {
+		show_end_confirm = false;
+		if (game_state.timer_res !== '0') {
+			socket_game_controls.show_solutions();
+			game_state.timer_res = '0';
+		}
+		setTimeout(() => {
+			triggerFinalResults();
+		}, 100);
+	};
 
 	const show_solutions = () => {
 		socket_game_controls.show_solutions();
@@ -143,7 +157,7 @@ SPDX-License-Identifier: MPL-2.0
 	<div
 		class="fixed top-3 sm:top-4 left-1/2 -translate-x-1/2 z-40 flex items-center justify-center pointer-events-none w-auto max-w-[95vw] px-2"
 	>
-		<div class="pointer-events-auto flex items-center justify-center shrink-0">
+		<div class="pointer-events-auto flex items-center justify-center gap-2 sm:gap-3 shrink-0">
 			{#if game_state.timer_res === '0' && game_state.selected_question >= 0}
 				{#if game_state.selected_question + 1 !== game_state.quiz_data.questions.length && game_state.question_results !== null}
 					<button
@@ -297,8 +311,76 @@ SPDX-License-Identifier: MPL-2.0
 					</button>
 				{/if}
 			{/if}
+
+			{#if game_state.selected_question !== -1}
+				<!-- Tlačidlo: Ukončiť test (v osobitnom ovále napravo) -->
+				<button
+					type="button"
+					onclick={() => (show_end_confirm = true)}
+					class="group flex flex-nowrap items-center gap-2 sm:gap-2.5 px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded-2xl bg-slate-900/95 dark:bg-black/95 backdrop-blur-xl border-2 border-rose-500/60 hover:border-rose-400 shadow-2xl shadow-rose-950/40 text-white hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer ring-4 ring-rose-500/20 whitespace-nowrap shrink-0"
+					title="Ukončiť test a prejsť na vyhodnotenie"
+				>
+					<!-- Červená ikonka krížika v ovále naľavo pred textom -->
+					<span class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-rose-500/25 border border-rose-400/50 flex items-center justify-center text-rose-400 group-hover:bg-rose-500 group-hover:text-white transition-all shrink-0">
+						<svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+						</svg>
+					</span>
+					<span class="font-extrabold text-xs sm:text-sm md:text-base text-rose-200 group-hover:text-white tracking-wide shrink-0">
+						Ukončiť test
+					</span>
+				</button>
+			{/if}
 		</div>
 	</div>
+
+	<!-- Potvrdzovacie dialógové okno: Naozaj ukončiť test? -->
+	{#if show_end_confirm}
+		<div
+			class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md pointer-events-auto select-none"
+			transition:fade={{ duration: 150 }}
+		>
+			<div
+				class="relative w-full max-w-md bg-slate-900/95 dark:bg-black/95 backdrop-blur-2xl border-2 border-rose-500/80 rounded-3xl p-6 sm:p-8 shadow-[0_25px_60px_rgba(0,0,0,0.8),0_0_50px_rgba(244,63,94,0.35)] text-center flex flex-col items-center overflow-hidden ring-4 ring-rose-500/20"
+				transition:scale={{ duration: 200, start: 0.9 }}
+			>
+				<!-- Horná červená lišta -->
+				<div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-rose-500 via-red-400 to-rose-600"></div>
+
+				<!-- Ikonka krížika -->
+				<div class="w-16 h-16 rounded-full bg-rose-500/20 border-2 border-rose-400/60 flex items-center justify-center text-rose-400 mb-4 shadow-lg shadow-rose-500/20">
+					<svg class="w-8 h-8 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+					</svg>
+				</div>
+
+				<h3 class="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2">
+					Naozaj ukončiť test?
+				</h3>
+				<p class="text-sm text-slate-300 font-medium mb-6 leading-relaxed">
+					Zostávajúce otázky sa preskočia a okamžite sa zobrazí konečné vyhodnotenie a stupne víťazov s doterajšími bodmi.
+				</p>
+
+				<!-- Tlačidlá Áno / Nie -->
+				<div class="flex items-center justify-center gap-3 w-full">
+					<button
+						type="button"
+						onclick={() => (show_end_confirm = false)}
+						class="flex-1 py-3 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm sm:text-base border border-slate-600/80 transition-all cursor-pointer hover:scale-105 active:scale-95"
+					>
+						Nie
+					</button>
+					<button
+						type="button"
+						onclick={handleConfirmEndTest}
+						class="flex-1 py-3 px-4 rounded-2xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-black text-sm sm:text-base shadow-xl shadow-rose-600/30 border border-rose-400/50 transition-all cursor-pointer hover:scale-105 active:scale-95"
+					>
+						Áno
+					</button>
+				</div>
+			</div>
+		</div>
+	{/if}
 {/if}
 
 <style>

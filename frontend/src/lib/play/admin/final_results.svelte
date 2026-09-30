@@ -34,24 +34,26 @@ SPDX-License-Identifier: MPL-2.0
 	let resolvedScores = $derived.by(() => {
 		const scores: Record<string, number> = {};
 
-		// 1. Z bind:data ak existujú body
-		if (data && typeof data === 'object') {
-			for (const [k, v] of Object.entries(data)) {
-				if (k && !isNaN(Number(v))) {
-					scores[k] = Number(v);
-				}
-			}
-		}
-
-		// 2. Z final_results (štruktúra { "0": [...], "1": [...] })
+		// 1. Z final_results ak existujú (štruktúra { "0": [...], "1": [...] })
+		let hasFinalScores = false;
 		if (final_results && typeof final_results === 'object') {
 			for (const qAnswers of Object.values(final_results)) {
 				if (Array.isArray(qAnswers)) {
 					for (const a of qAnswers) {
-						if (a && a.username) {
+						if (a && a.username && a.score !== undefined) {
+							hasFinalScores = true;
 							scores[a.username] = (scores[a.username] || 0) + (Number(a.score) || 0);
 						}
 					}
+				}
+			}
+		}
+
+		// 2. Ak final_results neobsahoval body (napr. na strane hráča), použijeme bind:data
+		if (!hasFinalScores && data && typeof data === 'object') {
+			for (const [k, v] of Object.entries(data)) {
+				if (k && !isNaN(Number(v))) {
+					scores[k] = Number(v);
 				}
 			}
 		}
