@@ -98,6 +98,8 @@ client)
 
 ##### Frontend
 
+I create other modern Frontend like Kahoot !
+
 The frontend is made with [SvelteKit](https://kit.svelte.dev/) (web-framework)
 and [TailwindCSS](https://tailwindcss.com/) (Css-Framework).
 
