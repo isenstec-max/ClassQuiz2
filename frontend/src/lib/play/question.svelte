@@ -192,6 +192,98 @@ SPDX-License-Identifier: MPL-2.0
 					/>
 				</div>
 			{/if}
+
+			<!-- Notifikácia po odkliknutí odpovede: Počkaj na vyhodnotenie otázky + točiaci sa krúžok s logom -->
+			{#if selected_answer !== undefined}
+				<div class="mt-3 sm:mt-4 w-full max-w-lg mx-auto flex items-center justify-center gap-3.5 px-6 py-3 rounded-2xl bg-slate-900/95 dark:bg-black/95 backdrop-blur-xl border-2 border-emerald-500/60 shadow-2xl animate-fade-down z-30">
+					<div class="relative w-11 h-11 flex items-center justify-center shrink-0">
+						<div class="absolute inset-0 rounded-full border-[3px] border-emerald-500/20 border-t-emerald-400 border-r-cyan-400 border-b-indigo-500 animate-spin"></div>
+						<div class="w-6 h-6 flex items-center justify-center">
+							<svg class="w-6 h-6 drop-shadow-sm" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<defs>
+									<linearGradient id="cq2-spin-gold" x1="20" y1="25" x2="45" y2="75" gradientUnits="userSpaceOnUse">
+										<stop offset="0%" stop-color="#FDE047" />
+										<stop offset="100%" stop-color="#F59E0B" />
+									</linearGradient>
+									<linearGradient id="cq2-spin-coral" x1="55" y1="20" x2="85" y2="75" gradientUnits="userSpaceOnUse">
+										<stop offset="0%" stop-color="#FB923C" />
+										<stop offset="100%" stop-color="#E11D48" />
+									</linearGradient>
+									<linearGradient id="cq2-spin-q" x1="32" y1="28" x2="78" y2="78" gradientUnits="userSpaceOnUse">
+										<stop offset="0%" stop-color="#10B981" />
+										<stop offset="35%" stop-color="#06B6D4" />
+										<stop offset="70%" stop-color="#6366F1" />
+										<stop offset="100%" stop-color="#8B5CF6" />
+									</linearGradient>
+								</defs>
+								<path d="M 33 13 C 33 21 28 25 21 25 C 28 25 33 29 33 37 C 33 29 38 25 45 25 C 38 25 33 21 33 13 Z" fill="#FBBF24" />
+								<path d="M 48 10 C 48 14.5 45 16.5 41 16.5 C 45 16.5 48 18.5 48 23 C 48 18.5 51 16.5 55 16.5 C 51 16.5 48 14.5 48 10 Z" fill="#FDE047" />
+								<rect x="18" y="32" width="34" height="44" rx="8" transform="rotate(-20 35 54)" fill="url(#cq2-spin-gold)" />
+								<rect x="52" y="24" width="34" height="44" rx="8" transform="rotate(24 69 46)" fill="url(#cq2-spin-coral)" />
+								<path d="M 76.5 43.5 A 23 23 0 1 0 78.5 65" stroke="white" stroke-width="18" stroke-linecap="round" fill="none" />
+								<path d="M 64 62 L 81 79" stroke="white" stroke-width="18" stroke-linecap="round" />
+								<path d="M 76.5 43.5 A 23 23 0 1 0 78.5 65" stroke="url(#cq2-spin-q)" stroke-width="12" stroke-linecap="round" fill="none" />
+								<path d="M 64 62 L 81 79" stroke="url(#cq2-spin-q)" stroke-width="12" stroke-linecap="round" />
+							</svg>
+						</div>
+					</div>
+					<div class="flex flex-col text-left">
+						<span class="text-sm sm:text-base font-black text-white tracking-wide">
+							{$t('play.wait_for_evaluation', { default: 'Počkaj na vyhodnotenie otázky' })}
+						</span>
+						<span class="text-xs text-emerald-400 font-bold flex items-center gap-1.5">
+							<span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+							{$t('play.answer_recorded', { default: 'Odpoveď bola zaznamenaná ✓' })}
+						</span>
+					</div>
+				</div>
+			{/if}
+		</div>
+	{:else if selected_answer !== undefined}
+		<!-- Pre iný mód (napr. Kahoot mode bez textu otázky na mobile) -->
+		<div class="w-full max-w-lg mx-auto px-4 pt-4 z-30">
+			<div class="flex items-center justify-center gap-3.5 px-6 py-3 rounded-2xl bg-slate-900/95 dark:bg-black/95 backdrop-blur-xl border-2 border-emerald-500/60 shadow-2xl animate-fade-down">
+				<div class="relative w-11 h-11 flex items-center justify-center shrink-0">
+					<div class="absolute inset-0 rounded-full border-[3px] border-emerald-500/20 border-t-emerald-400 border-r-cyan-400 border-b-indigo-500 animate-spin"></div>
+					<div class="w-6 h-6 flex items-center justify-center">
+						<svg class="w-6 h-6 drop-shadow-sm" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<defs>
+								<linearGradient id="cq2-spin-gold-k" x1="20" y1="25" x2="45" y2="75" gradientUnits="userSpaceOnUse">
+									<stop offset="0%" stop-color="#FDE047" />
+									<stop offset="100%" stop-color="#F59E0B" />
+								</linearGradient>
+								<linearGradient id="cq2-spin-coral-k" x1="55" y1="20" x2="85" y2="75" gradientUnits="userSpaceOnUse">
+									<stop offset="0%" stop-color="#FB923C" />
+									<stop offset="100%" stop-color="#E11D48" />
+								</linearGradient>
+								<linearGradient id="cq2-spin-q-k" x1="32" y1="28" x2="78" y2="78" gradientUnits="userSpaceOnUse">
+									<stop offset="0%" stop-color="#10B981" />
+									<stop offset="35%" stop-color="#06B6D4" />
+									<stop offset="70%" stop-color="#6366F1" />
+									<stop offset="100%" stop-color="#8B5CF6" />
+								</linearGradient>
+							</defs>
+							<path d="M 33 13 C 33 21 28 25 21 25 C 28 25 33 29 33 37 C 33 29 38 25 45 25 C 38 25 33 21 33 13 Z" fill="#FBBF24" />
+							<path d="M 48 10 C 48 14.5 45 16.5 41 16.5 C 45 16.5 48 18.5 48 23 C 48 18.5 51 16.5 55 16.5 C 51 16.5 48 14.5 48 10 Z" fill="#FDE047" />
+							<rect x="18" y="32" width="34" height="44" rx="8" transform="rotate(-20 35 54)" fill="url(#cq2-spin-gold-k)" />
+							<rect x="52" y="24" width="34" height="44" rx="8" transform="rotate(24 69 46)" fill="url(#cq2-spin-coral-k)" />
+							<path d="M 76.5 43.5 A 23 23 0 1 0 78.5 65" stroke="white" stroke-width="18" stroke-linecap="round" fill="none" />
+							<path d="M 64 62 L 81 79" stroke="white" stroke-width="18" stroke-linecap="round" />
+							<path d="M 76.5 43.5 A 23 23 0 1 0 78.5 65" stroke="url(#cq2-spin-q-k)" stroke-width="12" stroke-linecap="round" fill="none" />
+							<path d="M 64 62 L 81 79" stroke="url(#cq2-spin-q-k)" stroke-width="12" stroke-linecap="round" />
+						</svg>
+					</div>
+				</div>
+				<div class="flex flex-col text-left">
+					<span class="text-sm sm:text-base font-black text-white tracking-wide">
+						{$t('play.wait_for_evaluation', { default: 'Počkaj na vyhodnotenie otázky' })}
+					</span>
+					<span class="text-xs text-emerald-400 font-bold flex items-center gap-1.5">
+						<span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+						{$t('play.answer_recorded', { default: 'Odpoveď bola zaznamenaná ✓' })}
+					</span>
+				</div>
+			</div>
 		</div>
 	{/if}
 	{#if timer_res !== '0'}

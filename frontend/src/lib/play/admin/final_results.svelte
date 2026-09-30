@@ -202,6 +202,14 @@ SPDX-License-Identifier: MPL-2.0
 							<span class="px-2 py-0.5 rounded-md bg-yellow-400/20 text-yellow-300 text-xs font-black border border-yellow-400/30">
 								#{myRank} z {player_names.length}
 							</span>
+							{#if (playerLightning[username] ?? 0) > 0}
+								<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-950/80 border border-amber-400/50 text-amber-300 font-mono font-black text-xs shadow">
+									<span>{playerLightning[username]}x</span>
+									<svg class="w-3.5 h-3.5 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)] shrink-0" viewBox="0 0 24 24">
+										<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
+									</svg>
+								</span>
+							{/if}
 						</div>
 					</div>
 					{#if acc}
@@ -262,12 +270,11 @@ SPDX-License-Identifier: MPL-2.0
 										<AnimalAvatar avatarId={parsed.avatarId} size={36} class="shrink-0 drop-shadow" />
 										<div class="flex flex-col justify-center min-w-0 flex-1">
 											{#if (playerLightning[player] ?? 0) > 0}
-												<div class="flex items-center gap-0.5 mb-0.5" title="Najrýchlejšia správna odpoveď: {playerLightning[player]}x">
-													{#each Array(playerLightning[player]) as _}
-														<svg class="w-3 h-3 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)] shrink-0" viewBox="0 0 24 24">
-															<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
-														</svg>
-													{/each}
+												<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-950/80 border border-amber-400/50 text-amber-300 font-mono font-black text-xs mb-0.5 w-fit" title="Najrýchlejšia správna odpoveď: {playerLightning[player]}x">
+													<span>{playerLightning[player]}x</span>
+													<svg class="w-3.5 h-3.5 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)] shrink-0" viewBox="0 0 24 24">
+														<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
+													</svg>
 												</div>
 											{/if}
 											<span class="font-extrabold text-sm sm:text-base text-white truncate max-w-[110px] sm:max-w-[130px]">
@@ -331,12 +338,11 @@ SPDX-License-Identifier: MPL-2.0
 
 								<!-- Blesky hráča -->
 								{#if (playerLightning[player] ?? 0) > 0}
-									<div class="flex items-center justify-center gap-0.5 mb-1" title="Najrýchlejšia správna odpoveď: {playerLightning[player]}x">
-										{#each Array(playerLightning[player]) as _}
-											<svg class="w-4 h-4 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)]" viewBox="0 0 24 24">
-												<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
-											</svg>
-										{/each}
+									<div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-950/80 border border-amber-400/50 text-amber-300 font-mono font-black text-xs sm:text-sm mb-1 shadow" title="Najrýchlejšia správna odpoveď: {playerLightning[player]}x">
+										<span>{playerLightning[player]}x</span>
+										<svg class="w-4 h-4 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)]" viewBox="0 0 24 24">
+											<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
+										</svg>
 									</div>
 								{/if}
 
@@ -396,12 +402,11 @@ SPDX-License-Identifier: MPL-2.0
 
 								<!-- Blesky víťaza -->
 								{#if (playerLightning[player] ?? 0) > 0}
-									<div class="flex items-center justify-center gap-0.5 mb-1" title="Najrýchlejšia správna odpoveď: {playerLightning[player]}x">
-										{#each Array(playerLightning[player]) as _}
-											<svg class="w-4 h-4 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)]" viewBox="0 0 24 24">
-												<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
-											</svg>
-										{/each}
+									<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/85 border border-amber-400/60 text-amber-300 font-mono font-black text-sm mb-1 shadow-lg" title="Najrýchlejšia správna odpoveď: {playerLightning[player]}x">
+										<span>{playerLightning[player]}x</span>
+										<svg class="w-4 h-4 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)]" viewBox="0 0 24 24">
+											<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
+										</svg>
 									</div>
 								{/if}
 
@@ -460,12 +465,11 @@ SPDX-License-Identifier: MPL-2.0
 
 								<!-- Blesky hráča -->
 								{#if (playerLightning[player] ?? 0) > 0}
-									<div class="flex items-center justify-center gap-0.5 mb-1" title="Najrýchlejšia správna odpoveď: {playerLightning[player]}x">
-										{#each Array(playerLightning[player]) as _}
-											<svg class="w-4 h-4 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)]" viewBox="0 0 24 24">
-												<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
-											</svg>
-										{/each}
+									<div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-950/80 border border-amber-400/50 text-amber-300 font-mono font-black text-xs sm:text-sm mb-1 shadow" title="Najrýchlejšia správna odpoveď: {playerLightning[player]}x">
+										<span>{playerLightning[player]}x</span>
+										<svg class="w-4 h-4 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)]" viewBox="0 0 24 24">
+											<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
+										</svg>
 									</div>
 								{/if}
 
@@ -530,12 +534,11 @@ SPDX-License-Identifier: MPL-2.0
 										<AnimalAvatar avatarId={parsed.avatarId} size={36} class="shrink-0 drop-shadow" />
 										<div class="flex flex-col justify-center min-w-0 flex-1">
 											{#if (playerLightning[player] ?? 0) > 0}
-												<div class="flex items-center gap-0.5 mb-0.5" title="Najrýchlejšia správna odpoveď: {playerLightning[player]}x">
-													{#each Array(playerLightning[player]) as _}
-														<svg class="w-3 h-3 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)] shrink-0" viewBox="0 0 24 24">
-															<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
-														</svg>
-													{/each}
+												<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-950/80 border border-amber-400/50 text-amber-300 font-mono font-black text-xs mb-0.5 w-fit" title="Najrýchlejšia správna odpoveď: {playerLightning[player]}x">
+													<span>{playerLightning[player]}x</span>
+													<svg class="w-3.5 h-3.5 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)] shrink-0" viewBox="0 0 24 24">
+														<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
+													</svg>
 												</div>
 											{/if}
 											<span class="font-extrabold text-sm sm:text-base text-white truncate max-w-[110px] sm:max-w-[130px]">

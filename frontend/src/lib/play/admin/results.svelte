@@ -9,11 +9,12 @@ SPDX-License-Identifier: MPL-2.0
 	import { getLocalization } from '$lib/i18n';
 	import type { Question } from '$lib/quiz_types';
 	import AnimalAvatar from '$lib/components/AnimalAvatar.svelte';
+	import AccuracyDonut from '$lib/components/AccuracyDonut.svelte';
 	import AnswerShape from '$lib/components/AnswerShape.svelte';
 	import JoinInfoCard from '$lib/play/admin/JoinInfoCard.svelte';
 	import { parsePlayer } from '$lib/avatars';
 	import { DEFAULT_ANSWER_COLORS } from '$lib/answer_theme';
-	import { recordRoundWinner, loadLightningState } from '$lib/play/admin/lightning_store';
+	import { recordRoundData, loadLightningState } from '$lib/play/admin/lightning_store';
 
 	const { t } = getLocalization();
 
@@ -81,12 +82,16 @@ SPDX-License-Identifier: MPL-2.0
 		return ret_data;
 	});
 
-	let lightningCounts = $derived.by(() => {
+	let roundTracking = $derived.by(() => {
 		if (parsedNewData && parsedNewData.length > 0 && question_index !== undefined) {
-			return recordRoundWinner(game_pin, question_index, parsedNewData);
+			return recordRoundData(game_pin, question_index, parsedNewData);
 		}
-		return loadLightningState(game_pin).counts;
+		const s = loadLightningState(game_pin);
+		return { counts: s.counts || {}, accuracy: s.accuracy || {} };
 	});
+
+	let lightningCounts = $derived(roundTracking.counts);
+	let playerAccuracies = $derived(roundTracking.accuracy);
 
 	// Zjednotenie a zoradenie všetkých účastníkov
 	let allPlayerUsernames = $derived.by(() => {
@@ -320,23 +325,26 @@ SPDX-License-Identifier: MPL-2.0
 					{#each allPlayerUsernames as player, i (player)}
 						{@const parsed = parsePlayer(player)}
 						{@const boltCount = lightningCounts[player] || 0}
+						{@const acc = playerAccuracies[player] || { correct: 0, incorrect: 0, total: 0 }}
 						<div
 							class="relative flex items-center justify-between p-3 rounded-2xl bg-slate-800/80 hover:bg-slate-800 transition-all border border-slate-700/50 shadow-sm"
 						>
-							<!-- Žlté blesky: umiestnené v ľavom hornom rohu rámčeka aby sa neprekrývali s inými položkami -->
+							<!-- Žlté blesky: v krúžku (nie v ovále) v ľavom hornom rohu rámčeka -->
 							{#if boltCount > 0}
 								<div
-									class="absolute -top-2 left-2 z-10 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-slate-950/95 border border-amber-400/80 shadow-md shadow-amber-500/20 select-none"
+									class="absolute -top-2.5 left-2 z-10 flex items-center justify-center select-none"
 									title="Najrýchlejšia správna odpoveď: {boltCount}x"
 								>
-									{#each Array(Math.min(boltCount, 5)) as _}
-										<svg class="w-3 h-3 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)] shrink-0" viewBox="0 0 24 24">
+									<div class="w-6 h-6 rounded-full bg-slate-950/95 border-2 border-amber-400 shadow-md shadow-amber-500/30 flex items-center justify-center relative">
+										<svg class="w-3.5 h-3.5 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)] shrink-0" viewBox="0 0 24 24">
 											<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
 										</svg>
-									{/each}
-									{#if boltCount > 5}
-										<span class="text-[9px] font-mono font-black text-amber-300 leading-none">+{boltCount - 5}</span>
-									{/if}
+										{#if boltCount > 1}
+											<span class="absolute -bottom-1 -right-2 px-1 py-0.2 bg-amber-400 text-slate-950 font-mono font-black text-[9px] rounded-full leading-none border border-slate-950 shadow">
+												{boltCount}x
+											</span>
+										{/if}
+									</div>
 								</div>
 							{/if}
 
@@ -354,29 +362,42 @@ SPDX-License-Identifier: MPL-2.0
 								</div>
 							</div>
 
-							<!-- Vpravo: Body a Čas v sekundách pod bodmi s vysokým kontrastom -->
-							<div class="flex flex-col items-end justify-center shrink-0">
-								<!-- Horný riadok: Body (+získané body a celkové skóre) -->
-								<div class="flex items-center gap-1.5">
-									{#if show_new_score_clicked && (score_by_username[player] ?? 0) > 0}
-										<span class="text-xs font-black text-emerald-400 bg-emerald-500/25 px-1.5 py-0.5 rounded-md border border-emerald-500/30">
-											+{score_by_username[player]}
-										</span>
-									{/if}
-									<span class="font-black font-mono text-sm md:text-base text-white tracking-tight">
-										{formatPoints(data?.[player] || 0)}
-									</span>
-								</div>
+							<!-- Vpravo: Krúžok úspešnosti, Body a Čas v sekundách pod bodmi -->
+							<div class="flex items-center gap-2.5 sm:gap-3 shrink-0">
+								<!-- Krúžok úspešnosti s pomerom správnych/nesprávnych odpovedí (červená/zelená) -->
+								{#if acc}
+									<AccuracyDonut
+										correct={acc.correct}
+										incorrect={acc.incorrect}
+										total={acc.total}
+										size={36}
+										strokeWidth={4.2}
+									/>
+								{/if}
 
-								<!-- Spodný riadok: Čas v sekundách pod bodmi s vysokým kontrastom -->
-								{#if time_by_username[player] !== undefined}
-									<div class="mt-1" title="Čas odpovede: {(time_by_username[player] / 1000).toFixed(2)}s">
-										<span class="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-amber-300 bg-slate-950/90 border border-amber-400/50 px-2 py-0.5 rounded-md shadow-sm">
-											<span class="text-amber-400 text-[10px]">⏱</span>
-											<span>{(time_by_username[player] / 1000).toFixed(2)}s</span>
+								<div class="flex flex-col items-end justify-center shrink-0">
+									<!-- Horný riadok: Body (+získané body a celkové skóre) -->
+									<div class="flex items-center gap-1.5">
+										{#if show_new_score_clicked && (score_by_username[player] ?? 0) > 0}
+											<span class="text-xs font-black text-emerald-400 bg-emerald-500/25 px-1.5 py-0.5 rounded-md border border-emerald-500/30">
+												+{score_by_username[player]}
+											</span>
+										{/if}
+										<span class="font-black font-mono text-sm md:text-base text-white tracking-tight">
+											{formatPoints(data?.[player] || 0)}
 										</span>
 									</div>
-								{/if}
+
+									<!-- Spodný riadok: Čas v sekundách pod bodmi s vysokým kontrastom -->
+									{#if time_by_username[player] !== undefined}
+										<div class="mt-1" title="Čas odpovede: {(time_by_username[player] / 1000).toFixed(2)}s">
+											<span class="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-amber-300 bg-slate-950/90 border border-amber-400/50 px-2 py-0.5 rounded-md shadow-sm">
+												<span class="text-amber-400 text-[10px]">⏱</span>
+												<span>{(time_by_username[player] / 1000).toFixed(2)}s</span>
+											</span>
+										</div>
+									{/if}
+								</div>
 							</div>
 						</div>
 					{/each}
