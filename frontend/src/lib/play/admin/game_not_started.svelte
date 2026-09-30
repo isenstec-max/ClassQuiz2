@@ -68,28 +68,46 @@ SPDX-License-Identifier: MPL-2.0
 
 	<!-- Hlavná lobby karta -->
 	<div class="relative z-10 w-full max-w-4xl bg-slate-900/90 dark:bg-black/90 backdrop-blur-2xl rounded-3xl p-6 sm:p-8 md:p-10 border border-white/20 shadow-2xl flex flex-col items-center text-center">
-		<!-- 1. Text Join NAD QR kódom a PIN kódom (zarovnaný od začiatku QR kódu po koniec PIN kódu) -->
-		<div class="flex flex-col items-center gap-2 mb-5 w-full">
-			<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs md:text-sm font-black tracking-widest uppercase shadow-inner">
-				<span class="relative flex h-2 w-2">
+		<!-- 1. Hlavička: Pripojenie k hre vľavo a Spustiť kvíz vpravo (výškovo v jednej rovine, vycentrované) -->
+		<div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-4 w-full">
+			<!-- Odznak Pripojenie k hre -->
+			<div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-emerald-500/20 border-2 border-emerald-400/50 text-emerald-300 text-xs sm:text-sm font-black tracking-widest uppercase shadow-inner h-12">
+				<span class="relative flex h-2.5 w-2.5">
 					<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-					<span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+					<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
 				</span>
 				<span>Pripojenie k hre</span>
 			</div>
 
-			<!-- Riadok inštrukcie: zarovnaný do úrovne začiatku QR kódu a konca rámčeka PIN kódu -->
-			<div class="w-full max-w-[700px] flex items-center justify-between flex-wrap sm:flex-nowrap gap-2 sm:gap-4 text-base sm:text-lg md:text-xl lg:text-2xl font-extrabold text-white tracking-tight leading-normal py-1.5 px-0.5">
-				<span class="text-white shrink-0 text-left">Prejdite na</span>
-				<span class="bg-emerald-950/70 text-emerald-300 px-3.5 sm:px-4 md:px-5 py-1 sm:py-1.5 rounded-2xl font-mono font-black border-2 border-emerald-400/60 shadow-xl shadow-emerald-500/20 select-all tracking-wide shrink-0 text-lg sm:text-xl md:text-2xl text-center">
-					{joinUrl}
-				</span>
-				<span class="text-white shrink-0 text-right">alebo naskenujte QR kód</span>
-			</div>
+			<!-- Tlačidlo Spustiť kvíz (hore vedľa Pripojenie k hre, v rovnakej výške h-12) -->
+			<button
+				disabled={playerCount < 1}
+				onclick={() => {
+					socket_game_controls.start_game();
+				}}
+				class="inline-flex items-center gap-2.5 px-6 sm:px-8 py-2.5 rounded-2xl font-black text-sm sm:text-base tracking-wide transition-all duration-300 shadow-xl h-12 {
+					playerCount < 1
+						? 'bg-slate-800 text-slate-500 border-2 border-slate-700 cursor-not-allowed opacity-60'
+						: 'bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-500 text-white shadow-emerald-500/40 hover:shadow-emerald-500/60 hover:scale-105 active:scale-95 cursor-pointer ring-4 ring-emerald-400/30 border-2 border-emerald-300'
+				}"
+			>
+				<svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+					<path d="M8 5v14l11-7z" />
+				</svg>
+				<span>{$t('admin_page.start_game', { defaultValue: 'Spustiť kvíz' })}</span>
+			</button>
 		</div>
 
-		<!-- 2. QR kód a PIN kód VEDĽA SEBA v rovnakom max-w-[700px] kontajneri -->
-		<div class="flex flex-col md:flex-row items-center justify-between w-full max-w-[700px] gap-6 md:gap-8 my-3">
+		<!-- 2. Riadok inštrukcie: QR alebo link: [url] -->
+		<div class="w-full max-w-[700px] flex items-center justify-center gap-2.5 sm:gap-3.5 text-base sm:text-lg md:text-xl font-extrabold text-white tracking-tight leading-normal mb-5 flex-wrap sm:flex-nowrap">
+			<span class="text-white shrink-0">QR alebo link:</span>
+			<span class="bg-emerald-950/70 text-emerald-300 px-4 sm:px-5 py-1.5 rounded-2xl font-mono font-black border-2 border-emerald-400/60 shadow-xl shadow-emerald-500/20 select-all tracking-wide shrink-0 text-base sm:text-lg md:text-xl text-center">
+				{joinUrl}
+			</span>
+		</div>
+
+		<!-- 3. QR kód a PIN kód VEDĽA SEBA v max-w-[700px] kontajneri -->
+		<div class="flex flex-col md:flex-row items-center justify-between w-full max-w-[700px] gap-6 md:gap-8 my-2">
 			<!-- Naskenujte QR kód (Naľavo, menšie) -->
 			<div
 				class="relative group cursor-pointer shrink-0"
@@ -127,26 +145,6 @@ SPDX-License-Identifier: MPL-2.0
 					</span>
 				</div>
 			</div>
-		</div>
-
-		<!-- 4. Tlačidlo "Spustiť kvíz" vo vizuálnom štýle moderných tlačidiel -->
-		<div class="mt-7 flex flex-col items-center">
-			<button
-				disabled={playerCount < 1}
-				onclick={() => {
-					socket_game_controls.start_game();
-				}}
-				class="px-8 sm:px-12 py-3.5 sm:py-4 rounded-2xl font-black text-lg sm:text-xl tracking-wide transition-all duration-300 flex items-center gap-3 shadow-2xl {
-					playerCount < 1
-						? 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed opacity-60'
-						: 'bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-500 text-white shadow-emerald-500/40 hover:shadow-emerald-500/60 hover:scale-105 active:scale-95 cursor-pointer ring-4 ring-emerald-400/30'
-				}"
-			>
-				<svg class="w-6 h-6 fill-current" viewBox="0 0 24 24">
-					<path d="M8 5v14l11-7z" />
-				</svg>
-				<span>{$t('admin_page.start_game', { defaultValue: 'Spustiť kvíz' })}</span>
-			</button>
 		</div>
 
 		<!-- 5. Počet čakajúcich študentov a zoznam hráčov POD tlačidlom Spustiť kvíz -->
