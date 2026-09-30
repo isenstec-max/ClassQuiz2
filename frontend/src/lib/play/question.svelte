@@ -18,6 +18,7 @@ SPDX-License-Identifier: MPL-2.0
 	import MediaComponent from '$lib/editor/MediaComponent.svelte';
 	import AnswerShape from '$lib/components/AnswerShape.svelte';
 	import { DEFAULT_ANSWER_COLORS } from '$lib/answer_theme';
+	import { onMount } from 'svelte';
 
 	const { t } = getLocalization();
 
@@ -88,6 +89,15 @@ SPDX-License-Identifier: MPL-2.0
 	let selected_answer: string = $state();
 	let desktopClass = $derived(getDesktopAnswerClass(question?.answers));
 
+	onMount(() => {
+		if (typeof window !== 'undefined') {
+			const saved = sessionStorage.getItem(`cq_sel_ans_${question_index}`);
+			if (saved) {
+				selected_answer = saved;
+			}
+		}
+	});
+
 	// Stop the timer if the question is answered
 	const timer = (time: string) => {
 		let seconds = Number(time);
@@ -116,6 +126,11 @@ SPDX-License-Identifier: MPL-2.0
 
 	const selectAnswer = (answer: string) => {
 		selected_answer = answer;
+		if (typeof window !== 'undefined') {
+			try {
+				sessionStorage.setItem(`cq_sel_ans_${question_index}`, answer);
+			} catch (e) {}
+		}
 		socket.emit('submit_answer', {
 			question_index: question_index,
 			answer: answer
@@ -124,6 +139,11 @@ SPDX-License-Identifier: MPL-2.0
 
 	const select_complex_answer = (data) => {
 		selected_answer = 'a';
+		if (typeof window !== 'undefined') {
+			try {
+				sessionStorage.setItem(`cq_sel_ans_${question_index}`, 'a');
+			} catch (e) {}
+		}
 		const new_array = [];
 		for (let i = 0; i < data.length; i++) {
 			new_array.push({ answer: data[i].answer });

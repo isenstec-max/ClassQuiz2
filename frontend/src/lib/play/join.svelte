@@ -13,7 +13,8 @@ SPDX-License-Identifier: MPL-2.0
 	import Cookies from 'js-cookie';
 	import { hcaptcha_site_key, recaptcha_key, sentry_dsn } from '$lib/config';
 	import AnimalAvatar from '$lib/components/AnimalAvatar.svelte';
-	import { ANIMAL_AVATARS, formatPlayer } from '$lib/avatars';
+	import { ANIMAL_AVATARS, formatPlayer, parsePlayer } from '$lib/avatars';
+	import { getPlayerSession } from '$lib/play/session_storage';
 	import { APP_VERSION } from '$lib/version';
 	import BrandLogo from '$lib/components/BrandLogo.svelte';
 
@@ -74,11 +75,27 @@ SPDX-License-Identifier: MPL-2.0
 		}
 	};
 
+	let existingSession = $state<any>(null);
+
 	onMount(() => {
 		if (browser) {
 			const savedAvatar = localStorage.getItem('player_avatar');
 			if (savedAvatar) {
 				selectedAvatar = savedAvatar;
+			}
+			const existing = getPlayerSession();
+			if (existing && existing.game_pin && existing.username && existing.sid) {
+				existingSession = existing;
+				if (!game_pin) {
+					game_pin = existing.game_pin;
+				}
+				const parsed = parsePlayer(existing.username);
+				if (!rawUsername) {
+					rawUsername = parsed.cleanName;
+				}
+				if (parsed.avatar) {
+					selectedAvatar = parsed.avatar;
+				}
 			}
 			prefetch_username();
 			hcaptcha = window.hcaptcha;
@@ -91,6 +108,17 @@ SPDX-License-Identifier: MPL-2.0
 			}
 		}
 	});
+
+	const rejoinExistingSession = () => {
+		if (!existingSession) return;
+		game_pin = existingSession.game_pin;
+		username = existingSession.username;
+		socket.emit('rejoin_game', {
+			old_sid: existingSession.sid,
+			username: existingSession.username,
+			game_pin: existingSession.game_pin
+		});
+	};
 
 	onDestroy(() => {
 		if (browser) {
@@ -170,6 +198,22 @@ SPDX-License-Identifier: MPL-2.0
 		if (Cookies.get('kicked')) {
 			console.log("%cYou're Banned!", 'font-size:6rem');
 			return;
+		}
+
+		// Rejoin existing session if player enters same game_pin and name
+		const session = getPlayerSession();
+		if (session && session.game_pin === game_pin && session.sid) {
+			const sessionParsed = parsePlayer(session.username);
+			if (sessionParsed.cleanName.toLowerCase() === trimmed.toLowerCase()) {
+				console.log('Rejoining session for', session.username);
+				username = session.username;
+				socket.emit('rejoin_game', {
+					old_sid: session.sid,
+					username: session.username,
+					game_pin: session.game_pin
+				});
+				return;
+			}
 		}
 
 		if (captcha_enabled) {
@@ -338,6 +382,21 @@ SPDX-License-Identifier: MPL-2.0
 					{$t('play_page.enter_pin_description', { defaultValue: 'Zadaj 6-miestny kód z obrazovky alebo projektora' })}
 				</p>
 
+				{#if existingSession && existingSession.game_pin}
+					<div class="w-full mb-5 p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/40 text-center">
+						<p class="text-xs font-semibold text-emerald-800 dark:text-emerald-200 mb-2">
+							Máš rozohraný kvíz s PINom <span class="font-mono font-black">{existingSession.game_pin}</span> ({parsePlayer(existingSession.username).cleanName})
+						</p>
+						<button
+							type="button"
+							onclick={() => { game_pin = existingSession.game_pin; set_game_pin(); }}
+							class="w-full py-2 px-3 bg-emerald-600 hover:bg-emerald-500 active:scale-98 text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer"
+						>
+							Pokračovať s PIN {existingSession.game_pin}
+						</button>
+					</div>
+				{/if}
+
 				<!-- Tactile PIN Input -->
 				<div class="w-full relative mb-5">
 					<input
@@ -457,6 +516,22 @@ SPDX-License-Identifier: MPL-2.0
 						{/each}
 					</div>
 				</div>
+
+				{#if existingSession && existingSession.game_pin === game_pin}
+					<div class="mb-4 p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 text-center flex flex-col items-center gap-1.5">
+						<span class="text-xs font-semibold text-emerald-800 dark:text-emerald-200">
+							Máš rozohranú reláciu ako <strong class="font-bold">{parsePlayer(existingSession.username).cleanName}</strong>
+						</span>
+						<button
+							type="button"
+							onclick={rejoinExistingSession}
+							class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 active:scale-98 text-white text-xs font-bold rounded-xl shadow-xs transition cursor-pointer flex items-center justify-center gap-2"
+						>
+							<span>Pokračovať v hre ({parsePlayer(existingSession.username).cleanName})</span>
+							<AnimalAvatar avatarId={parsePlayer(existingSession.username).avatar || selectedAvatar} size={20} />
+						</button>
+					</div>
+				{/if}
 
 				<form onsubmit={setUsername} class="flex flex-col gap-4">
 					<div>
