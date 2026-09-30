@@ -205,12 +205,12 @@ SPDX-License-Identifier: MPL-2.0
 	<!-- 3 stĺpce: Vľavo (Join), V strede (Názov otázky + Graf & Odpovede), Vpravo (Číslo otázky & Účastníci) -->
 	<div class="grid grid-cols-1 md:grid-cols-12 gap-4 lg:gap-5 items-stretch">
 		<!-- Vľavo: Permanentný Join Info Card (QR kód + PIN) -->
-		<div class="col-span-12 md:col-span-3 lg:col-span-3 xl:col-span-2 flex justify-center">
+		<div class="col-span-12 md:col-span-3 lg:col-span-3 xl:col-span-2 2xl:col-span-2 flex justify-center">
 			<JoinInfoCard {game_pin} class="w-full max-w-[280px] md:max-w-none md:h-full" />
 		</div>
 
 		<!-- V strede: Názov otázky + Stĺpcový graf vyhodnotenia a bloky odpovedí -->
-		<div class="col-span-12 md:col-span-5 lg:col-span-5 xl:col-span-7 2xl:col-span-7 flex flex-col gap-4">
+		<div class="col-span-12 md:col-span-4 lg:col-span-4 xl:col-span-6 2xl:col-span-5 flex flex-col gap-4">
 			<!-- Horná lišta s textom otázky - DOKONALE VYCENTROVANÁ PRIAMO NAD STREDNÝM GRAFOM -->
 			<div class="bg-white/95 dark:bg-slate-800/95 text-gray-900 dark:text-white px-6 md:px-10 py-3.5 md:py-4 rounded-2xl shadow-xl border border-black/5 text-center w-full">
 				<h2 class="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">
@@ -302,7 +302,7 @@ SPDX-License-Identifier: MPL-2.0
 	</div>
 
 	<!-- Vpravo: Číslo otázky a Zoznam všetkých účastníkov s bodmi -->
-	<div class="col-span-12 md:col-span-4 lg:col-span-4 xl:col-span-3 2xl:col-span-3 flex flex-col gap-3.5 min-w-0">
+	<div class="col-span-12 md:col-span-5 lg:col-span-5 xl:col-span-4 2xl:col-span-5 flex flex-col gap-3.5 min-w-0">
 		<!-- Číslo otázky vycentrované nad zoznamom účastníkov s okrasným fontom -->
 		<div class="w-full flex justify-center">
 			<div class="w-full bg-slate-900/95 dark:bg-black/90 backdrop-blur-md rounded-2xl py-3 px-3 sm:px-4 border border-slate-700/70 shadow-2xl flex items-center justify-center gap-2.5 text-center">
@@ -380,7 +380,7 @@ SPDX-License-Identifier: MPL-2.0
 							{/if}
 
 							<!-- Vľavo: Poradie s indikátorom posunu pod číslom, Avatar a Meno -->
-							<div class="flex items-center gap-2.5 min-w-0 flex-1 mr-2">
+							<div class="flex items-center gap-2.5 min-w-0 flex-1 mr-3 sm:mr-4">
 								<div class="flex flex-col items-center justify-center w-6 shrink-0 select-none">
 									<span class="text-xs font-mono font-bold text-slate-300 leading-tight">
 										{i + 1}.
@@ -417,7 +417,7 @@ SPDX-License-Identifier: MPL-2.0
 								</div>
 
 								<div class="flex flex-col justify-center min-w-0 flex-1">
-									<span class="font-bold text-sm md:text-base text-gray-100 truncate leading-tight">
+									<span class="font-bold text-sm md:text-base text-gray-100 truncate leading-tight" title={parsed.name}>
 										{parsed.name}
 									</span>
 								</div>
@@ -553,7 +553,7 @@ SPDX-License-Identifier: MPL-2.0
 							{/if}
 
 							<!-- Vľavo: Poradie s indikátorom posunu pod číslom, Avatar a Meno -->
-							<div class="flex items-center gap-2.5 min-w-0 flex-1 mr-2">
+							<div class="flex items-center gap-2.5 min-w-0 flex-1 mr-3 sm:mr-4">
 								<div class="flex flex-col items-center justify-center w-6 shrink-0 select-none">
 									<span class="text-sm font-mono font-black text-slate-200 leading-tight">
 										{i + 1}.
@@ -582,7 +582,7 @@ SPDX-License-Identifier: MPL-2.0
 								</div>
 
 								<div class="flex flex-col justify-center min-w-0 flex-1">
-									<span class="font-extrabold text-sm sm:text-base text-white truncate leading-tight">
+									<span class="font-extrabold text-sm sm:text-base text-white truncate leading-tight" title={parsed.name}>
 										{parsed.name}
 									</span>
 								</div>
