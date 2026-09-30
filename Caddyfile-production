@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: 2026 ClassQuiz2 Production
+# SPDX-License-Identifier: MPL-2.0
+
+:8080 {
+	tls /certs/cert.pem /certs/key.pem
+
+	reverse_proxy * http://frontend:3000
+	reverse_proxy /api/* http://api:80
+	reverse_proxy /openapi.json http://api:80
+	reverse_proxy /socket.io/* api:80
+}
