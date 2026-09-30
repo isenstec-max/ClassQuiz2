@@ -13,7 +13,6 @@ SPDX-License-Identifier: MPL-2.0
 	import MediaComponent from '$lib/editor/MediaComponent.svelte';
 	import AnswerShape from '$lib/components/AnswerShape.svelte';
 	import { getLocalization } from '$lib/i18n';
-	import JoinInfoCard from '$lib/play/admin/JoinInfoCard.svelte';
 	import { fade, scale } from 'svelte/transition';
 	import { browser } from '$app/environment';
 
@@ -143,43 +142,47 @@ SPDX-License-Identifier: MPL-2.0
 	</div>
 {/if}
 {#if quiz_data.questions[selected_question].type === QuizQuestionType.ABCD || quiz_data.questions[selected_question].type === QuizQuestionType.VOTING || quiz_data.questions[selected_question].type === QuizQuestionType.CHECK}
-	<div class="grid grid-cols-2 gap-4 w-full p-6">
-		{#each quiz_data.questions[selected_question].answers as answer, i}
-			<div
-				class="rounded-xl h-fit min-h-[80px] flex items-center px-4 py-3 shadow-lg border border-black/10 transition-all"
-				style="background-color: {answer.color ?? default_colors[i % default_colors.length]};"
-				class:opacity-40={!answer.right &&
-					timer_res === '0' &&
-					quiz_data.questions[selected_question].type === QuizQuestionType.ABCD}
-			>
-				<div class="shrink-0 flex items-center justify-center pl-2">
-					<AnswerShape shapeIndex={i} class="w-10 h-10 text-white drop-shadow-md" />
-				</div>
-				<span
-					class="text-center font-bold text-2xl md:text-3xl px-4 py-2 w-full text-white break-words"
-					>{answer.answer}</span
+	<div class="w-full max-w-6xl 2xl:max-w-7xl mx-auto px-4 sm:px-6 pb-6">
+		<div class="grid grid-cols-2 gap-4 w-full">
+			{#each quiz_data.questions[selected_question].answers as answer, i}
+				<div
+					class="rounded-xl h-fit min-h-[80px] flex items-center px-4 py-3 shadow-lg border border-black/10 transition-all"
+					style="background-color: {answer.color ?? default_colors[i % default_colors.length]};"
+					class:opacity-40={!answer.right &&
+						timer_res === '0' &&
+						quiz_data.questions[selected_question].type === QuizQuestionType.ABCD}
 				>
-				{#if answer.right && timer_res === '0'}
-					<div class="w-10 h-10 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-white shrink-0 shadow-md">
-						<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+					<div class="shrink-0 flex items-center justify-center pl-2">
+						<AnswerShape shapeIndex={i} class="w-10 h-10 text-white drop-shadow-md" />
 					</div>
-				{:else}
-					<span class="w-10 shrink-0"></span>
-				{/if}
-			</div>
-		{/each}
+					<span
+						class="text-center font-bold text-2xl md:text-3xl px-4 py-2 w-full text-white break-words"
+						>{answer.answer}</span
+					>
+					{#if answer.right && timer_res === '0'}
+						<div class="w-10 h-10 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-white shrink-0 shadow-md">
+							<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+						</div>
+					{:else}
+						<span class="w-10 shrink-0"></span>
+					{/if}
+				</div>
+			{/each}
+		</div>
 	</div>
 {:else if quiz_data.questions[selected_question].type === QuizQuestionType.TEXT}
 	{#if timer_res === '0'}
-		<div class="grid grid-cols-2 gap-2 w-full p-4">
-			{#each quiz_data.questions[selected_question].answers as answer, i}
-				<div class="rounded-lg h-fit flex bg-[#B07156]">
-					<span class="text-center text-2xl px-2 py-4 w-full text-black"
-						>{answer.answer}</span
-					>
-					<span class="pl-4 w-10"></span>
-				</div>
-			{/each}
+		<div class="w-full max-w-6xl 2xl:max-w-7xl mx-auto px-4 sm:px-6 pb-6">
+			<div class="grid grid-cols-2 gap-2 w-full">
+				{#each quiz_data.questions[selected_question].answers as answer, i}
+					<div class="rounded-lg h-fit flex bg-[#B07156]">
+						<span class="text-center text-2xl px-2 py-4 w-full text-black"
+							>{answer.answer}</span
+						>
+						<span class="pl-4 w-10"></span>
+					</div>
+				{/each}
+			</div>
 		</div>
 	{:else}
 		<div class="flex justify-center">
@@ -189,18 +192,13 @@ SPDX-License-Identifier: MPL-2.0
 {/if}
 
 {#if game_pin}
-	<!-- Pre ultra-široké obrazovky (min. 1680px): plná karta vľavo zarovnaná s obsahom -->
-	<div class="fixed left-4 xl:left-6 top-24 xl:top-28 z-30 hidden min-[1680px]:block">
-		<JoinInfoCard {game_pin} compact={false} class="w-56 xl:w-64 shadow-2xl" />
-	</div>
-
-	<!-- Pre štandardné a menšie okná / obrazovky (< 1680px): kompaktný responzívny odznak PIN & QR vľavo hore -->
-	<div class="fixed left-3 sm:left-4 top-3 sm:top-4 z-40 min-[1680px]:hidden flex items-center">
+	<!-- Responzívny odznak PIN & QR vľavo hore: vždy viditeľný, nikdy neprekrýva otázky ani odpovede -->
+	<div class="fixed left-3 sm:left-4 top-3 sm:top-4 z-40 flex items-center">
 		<button
 			type="button"
 			onclick={() => (is_qr_modal_open = true)}
 			class="flex items-center gap-1.5 sm:gap-2.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-2xl bg-slate-900/95 dark:bg-black/95 text-white border border-slate-700/80 shadow-xl backdrop-blur-xl hover:border-amber-400 hover:scale-105 active:scale-95 transition-all cursor-pointer group ring-2 ring-white/10"
-			title="Kliknite pre zobrazenie QR kódu"
+			title="Kliknite pre zobrazenie QR kódu na celú obrazovku"
 		>
 			<span class="relative flex h-2.5 w-2.5 shrink-0">
 				<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
