@@ -24,13 +24,16 @@ fi
 
 mkdir -p uploads
 
+echo ">> Aktualizujem konfiguraciu z git repozitara..."
+git pull || true
+
 echo ">> Stahujem najnovsie Docker obrazy pre ClassQuiz2..."
 docker compose -f "$COMPOSE_FILE" pull
 
 echo ">> Spustam / restartujem ClassQuiz2..."
 docker compose -f "$COMPOSE_FILE" up -d --remove-orphans
 
-echo ">> Hotovo! ClassQuiz2 bezi na https://industry4.fvt.tuke.sk:8000"
+echo ">> Hotovo! ClassQuiz2 bezi na https://industry4.fvt.tuke.sk:8000 (aj porte 25)"
 docker compose -f "$COMPOSE_FILE" ps
 
 echo ">> Upratujem nepouzivane stare images..."
