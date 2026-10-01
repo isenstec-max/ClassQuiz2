@@ -246,7 +246,7 @@ SPDX-License-Identifier: MPL-2.0
 			<div class="w-full max-w-[1920px] mx-auto flex flex-col xl:flex-row items-center xl:items-end justify-center gap-4 xl:gap-6 2xl:gap-8 px-2 sm:px-4 flex-1 pb-4">
 				<!-- ĽAVÉ KRÍDLO: Ďalší účastníci (1. polovica, od 4. miesta) -->
 				<div
-					class="w-full max-w-md xl:w-96 2xl:w-[420px] bg-slate-900/90 dark:bg-black/90 backdrop-blur-2xl border-2 border-slate-700/70 rounded-3xl p-4 sm:p-5 shadow-2xl flex flex-col h-[480px] md:h-[520px] xl:h-[540px] mb-4 xl:mb-0 ring-2 ring-white/10 shrink-0 animate-fade-up"
+					class="w-full max-w-md xl:w-96 2xl:w-[420px] bg-slate-900/90 dark:bg-black/90 backdrop-blur-2xl border-2 border-slate-700/70 rounded-3xl p-4 sm:p-5 shadow-2xl flex flex-col h-[480px] md:h-[520px] xl:h-[540px] mb-4 xl:mb-0 ring-2 ring-white/10 shrink-0 animate-fade-up order-2 xl:order-1"
 				>
 					<div class="flex items-center justify-between pb-3 border-b border-slate-700/60 mb-3">
 						<div class="flex items-center gap-2">
@@ -316,7 +316,7 @@ SPDX-License-Identifier: MPL-2.0
 				</div>
 
 				<!-- STREDNÉ PÓDIUM (3 stupne víťazov) -->
-				<div class="w-full max-w-4xl flex items-end justify-center gap-3 sm:gap-6 md:gap-8 px-2 flex-1 min-h-[460px]">
+				<div class="w-full max-w-4xl flex items-end justify-center gap-3 sm:gap-6 md:gap-8 px-2 flex-1 min-h-[460px] order-1 xl:order-2">
 					<!-- 2. MIESTO (VĽAVO - Striebro) -->
 					<div class="flex-1 max-w-[280px] flex flex-col items-center animate-podium-second">
 						{#if player_names.length >= 2}
@@ -510,7 +510,7 @@ SPDX-License-Identifier: MPL-2.0
 
 				<!-- PRAVÉ KRÍDLO: Ďalší účastníci (2. polovica, od X+1. miesta) -->
 				<div
-					class="w-full max-w-md xl:w-96 2xl:w-[420px] bg-slate-900/90 dark:bg-black/90 backdrop-blur-2xl border-2 border-slate-700/70 rounded-3xl p-4 sm:p-5 shadow-2xl flex flex-col h-[480px] md:h-[520px] xl:h-[540px] mb-4 xl:mb-0 ring-2 ring-white/10 shrink-0 animate-fade-up"
+					class="w-full max-w-md xl:w-96 2xl:w-[420px] bg-slate-900/90 dark:bg-black/90 backdrop-blur-2xl border-2 border-slate-700/70 rounded-3xl p-4 sm:p-5 shadow-2xl flex flex-col h-[480px] md:h-[520px] xl:h-[540px] mb-4 xl:mb-0 ring-2 ring-white/10 shrink-0 animate-fade-up order-3 xl:order-3"
 				>
 					<div class="flex items-center justify-between pb-3 border-b border-slate-700/60 mb-3">
 						<div class="flex items-center gap-2">

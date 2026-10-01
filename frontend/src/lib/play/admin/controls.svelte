@@ -87,6 +87,179 @@ SPDX-License-Identifier: MPL-2.0
 			}
 		};
 	});
+
+	// 1. Počítadlo 5 až 0: otázka skončila -> čiastočné výsledky
+	let isQuestionFinishedWaitingResults = $derived.by(() => {
+		if (!game_state.quiz_data?.questions?.length || game_state.selected_question < 0) return false;
+		if (game_state.quiz_data.questions[game_state.selected_question]?.type === QuizQuestionType.SLIDE) return false;
+		return game_state.timer_res === '0' && game_state.question_results === null;
+	});
+
+	let resultsCountdown = $state(5);
+	let resultsInterval: any = null;
+	let resultsTriggered = false;
+	let isResultsPaused = $state(false);
+
+	const triggerShowResults = () => {
+		if (resultsTriggered) return;
+		resultsTriggered = true;
+		if (resultsInterval) {
+			clearInterval(resultsInterval);
+			resultsInterval = null;
+		}
+		if (game_state.quiz_data?.questions?.[game_state.selected_question]?.hide_results === true) {
+			socket_game_controls.get_question_results(game_token, game_state.shown_question_now);
+			setTimeout(() => {
+				socket_game_controls.set_question_number(game_state.selected_question + 1);
+			}, 200);
+		} else {
+			socket_game_controls.get_question_results(game_token, game_state.shown_question_now);
+		}
+	};
+
+	const toggleResultsPause = (e: MouseEvent) => {
+		e.stopPropagation();
+		isResultsPaused = !isResultsPaused;
+		if (isResultsPaused && resultsInterval) {
+			clearInterval(resultsInterval);
+			resultsInterval = null;
+		} else if (!isResultsPaused && isQuestionFinishedWaitingResults && !resultsInterval) {
+			startResultsCountdown();
+		}
+	};
+
+	const startResultsCountdown = () => {
+		if (resultsInterval) clearInterval(resultsInterval);
+		resultsInterval = setInterval(() => {
+			if (resultsCountdown > 1) {
+				resultsCountdown -= 1;
+			} else {
+				resultsCountdown = 0;
+				clearInterval(resultsInterval);
+				resultsInterval = null;
+				triggerShowResults();
+			}
+		}, 1000);
+	};
+
+	$effect(() => {
+		if (isQuestionFinishedWaitingResults && !resultsInterval && !resultsTriggered && !isResultsPaused) {
+			resultsCountdown = 5;
+			startResultsCountdown();
+		}
+
+		if (!isQuestionFinishedWaitingResults) {
+			if (resultsInterval) {
+				clearInterval(resultsInterval);
+				resultsInterval = null;
+			}
+			resultsTriggered = false;
+			resultsCountdown = 5;
+			isResultsPaused = false;
+		}
+
+		return () => {
+			if (resultsInterval) {
+				clearInterval(resultsInterval);
+				resultsInterval = null;
+			}
+		};
+	});
+
+	// 2. Počítadlo 10 až 0: čiastočné výsledky -> ďalšia otázka
+	let isPartialResultsShowing = $derived.by(() => {
+		if (!game_state.quiz_data?.questions?.length || game_state.selected_question < 0) return false;
+		const isLast = game_state.selected_question + 1 === game_state.quiz_data.questions.length;
+		if (isLast) return false;
+		return game_state.timer_res === '0' && game_state.question_results !== null;
+	});
+
+	let nextQuestionCountdown = $state(10);
+	let nextQuestionInterval: any = null;
+	let nextQuestionTriggered = false;
+	let isNextQuestionPaused = $state(false);
+
+	const triggerNextQuestion = () => {
+		if (nextQuestionTriggered) return;
+		nextQuestionTriggered = true;
+		if (nextQuestionInterval) {
+			clearInterval(nextQuestionInterval);
+			nextQuestionInterval = null;
+		}
+		socket_game_controls.set_question_number(game_state.selected_question + 1);
+	};
+
+	const toggleNextQuestionPause = (e: MouseEvent) => {
+		e.stopPropagation();
+		isNextQuestionPaused = !isNextQuestionPaused;
+		if (isNextQuestionPaused && nextQuestionInterval) {
+			clearInterval(nextQuestionInterval);
+			nextQuestionInterval = null;
+		} else if (!isNextQuestionPaused && isPartialResultsShowing && !nextQuestionInterval) {
+			startNextQuestionCountdown();
+		}
+	};
+
+	const startNextQuestionCountdown = () => {
+		if (nextQuestionInterval) clearInterval(nextQuestionInterval);
+		nextQuestionInterval = setInterval(() => {
+			if (nextQuestionCountdown > 1) {
+				nextQuestionCountdown -= 1;
+			} else {
+				nextQuestionCountdown = 0;
+				clearInterval(nextQuestionInterval);
+				nextQuestionInterval = null;
+				triggerNextQuestion();
+			}
+		}, 1000);
+	};
+
+	$effect(() => {
+		if (isPartialResultsShowing && !nextQuestionInterval && !nextQuestionTriggered && !isNextQuestionPaused) {
+			nextQuestionCountdown = 10;
+			startNextQuestionCountdown();
+		}
+
+		if (!isPartialResultsShowing) {
+			if (nextQuestionInterval) {
+				clearInterval(nextQuestionInterval);
+				nextQuestionInterval = null;
+			}
+			nextQuestionTriggered = false;
+			nextQuestionCountdown = 10;
+			isNextQuestionPaused = false;
+		}
+
+		return () => {
+			if (nextQuestionInterval) {
+				clearInterval(nextQuestionInterval);
+				nextQuestionInterval = null;
+			}
+		};
+	});
+
+	// Reset pri zmene otázky
+	let lastQuestionIndex = $state(game_state.selected_question);
+	$effect(() => {
+		if (game_state.selected_question !== lastQuestionIndex) {
+			lastQuestionIndex = game_state.selected_question;
+			finalResultsTriggered = false;
+			resultsTriggered = false;
+			nextQuestionTriggered = false;
+			isResultsPaused = false;
+			isNextQuestionPaused = false;
+			resultsCountdown = 5;
+			nextQuestionCountdown = 10;
+			if (resultsInterval) {
+				clearInterval(resultsInterval);
+				resultsInterval = null;
+			}
+			if (nextQuestionInterval) {
+				clearInterval(nextQuestionInterval);
+				nextQuestionInterval = null;
+			}
+		}
+	});
 </script>
 
 {#if isLastQuestionResults}
@@ -153,6 +326,98 @@ SPDX-License-Identifier: MPL-2.0
 		</div>
 	</div>
 {:else}
+	<!-- Hore v pravom rohu: počítadlo 5 až 0 (prepnutie na čiastočné výsledky) -->
+	{#if isQuestionFinishedWaitingResults}
+		<div class="fixed top-3 sm:top-4 right-3 sm:right-5 z-50 pointer-events-auto animate-fade-in select-none">
+			<div
+				role="button"
+				tabindex="0"
+				onclick={triggerShowResults}
+				onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') triggerShowResults(); }}
+				class="group flex items-center gap-2 sm:gap-2.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-slate-900/95 dark:bg-black/95 backdrop-blur-xl border-2 border-sky-400 shadow-2xl shadow-sky-500/30 text-white hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer ring-4 ring-sky-500/20"
+				title="Zobraziť výsledky (alebo počkajte na automatické prepnutie)"
+			>
+				<div class="relative w-8 h-8 rounded-full bg-sky-500/25 border-2 border-sky-400 flex items-center justify-center shrink-0">
+					{#key resultsCountdown}
+						<span class="font-mono font-black text-sm sm:text-base text-sky-300 drop-shadow">
+							{resultsCountdown}
+						</span>
+					{/key}
+					{#if !isResultsPaused}
+						<span class="absolute inset-0 rounded-full border border-sky-400 animate-ping opacity-40"></span>
+					{/if}
+				</div>
+				<div class="flex flex-col text-left pr-1">
+					<span class="text-[10px] sm:text-[11px] uppercase font-black tracking-wider text-sky-400">
+						Výsledky za
+					</span>
+					<span class="text-xs sm:text-sm font-black text-white leading-tight">
+						{resultsCountdown} s
+					</span>
+				</div>
+				<button
+					type="button"
+					onclick={toggleResultsPause}
+					class="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition shrink-0 ml-0.5 cursor-pointer"
+					title={isResultsPaused ? 'Spustiť odpočítavanie' : 'Pozastaviť odpočítavanie'}
+					aria-label={isResultsPaused ? 'Spustiť' : 'Pozastaviť'}
+				>
+					{#if isResultsPaused}
+						<svg class="w-3.5 h-3.5 fill-current text-emerald-400" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+					{:else}
+						<svg class="w-3.5 h-3.5 fill-current text-slate-300" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+					{/if}
+				</button>
+			</div>
+		</div>
+	{/if}
+
+	<!-- Hore v pravom rohu na čiastočných výsledkoch: počítadlo 10 až 0 (prepnutie na ďalšiu otázku) -->
+	{#if isPartialResultsShowing}
+		<div class="fixed top-3 sm:top-4 right-3 sm:right-5 z-50 pointer-events-auto animate-fade-in select-none">
+			<div
+				role="button"
+				tabindex="0"
+				onclick={triggerNextQuestion}
+				onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') triggerNextQuestion(); }}
+				class="group flex items-center gap-2 sm:gap-2.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-slate-900/95 dark:bg-black/95 backdrop-blur-xl border-2 border-emerald-400 shadow-2xl shadow-emerald-500/30 text-white hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer ring-4 ring-emerald-500/20"
+				title="Ďalšia otázka (alebo počkajte na automatické prepnutie)"
+			>
+				<div class="relative w-8 h-8 rounded-full bg-emerald-500/25 border-2 border-emerald-400 flex items-center justify-center shrink-0">
+					{#key nextQuestionCountdown}
+						<span class="font-mono font-black text-sm sm:text-base text-emerald-300 drop-shadow">
+							{nextQuestionCountdown}
+						</span>
+					{/key}
+					{#if !isNextQuestionPaused}
+						<span class="absolute inset-0 rounded-full border border-emerald-400 animate-ping opacity-40"></span>
+					{/if}
+				</div>
+				<div class="flex flex-col text-left pr-1">
+					<span class="text-[10px] sm:text-[11px] uppercase font-black tracking-wider text-emerald-400">
+						Ďalšia otázka za
+					</span>
+					<span class="text-xs sm:text-sm font-black text-white leading-tight">
+						{nextQuestionCountdown} s
+					</span>
+				</div>
+				<button
+					type="button"
+					onclick={toggleNextQuestionPause}
+					class="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition shrink-0 ml-0.5 cursor-pointer"
+					title={isNextQuestionPaused ? 'Spustiť odpočítavanie' : 'Pozastaviť odpočítavanie'}
+					aria-label={isNextQuestionPaused ? 'Spustiť' : 'Pozastaviť'}
+				>
+					{#if isNextQuestionPaused}
+						<svg class="w-3.5 h-3.5 fill-current text-emerald-400" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+					{:else}
+						<svg class="w-3.5 h-3.5 fill-current text-slate-300" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+					{/if}
+				</button>
+			</div>
+		</div>
+	{/if}
+
 	<!-- Normálna horná lišta ovládania počas kvízu -->
 	<div
 		class="fixed top-3 sm:top-4 left-1/2 -translate-x-1/2 z-40 flex items-center justify-center pointer-events-none w-auto max-w-[95vw] px-2"
@@ -161,9 +426,7 @@ SPDX-License-Identifier: MPL-2.0
 			{#if game_state.timer_res === '0' && game_state.selected_question >= 0}
 				{#if game_state.selected_question + 1 !== game_state.quiz_data.questions.length && game_state.question_results !== null}
 					<button
-						onclick={() => {
-							socket_game_controls.set_question_number(game_state.selected_question + 1);
-						}}
+						onclick={triggerNextQuestion}
 						class="group flex flex-nowrap items-center gap-2 sm:gap-3 px-3.5 sm:px-6 md:px-8 py-2 sm:py-2.5 rounded-2xl bg-slate-900/95 dark:bg-black/95 backdrop-blur-xl border-2 border-emerald-400/60 shadow-2xl shadow-emerald-500/30 text-white hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer ring-4 ring-emerald-500/20 whitespace-nowrap shrink-0"
 					>
 						<span class="text-[10px] sm:text-xs uppercase font-black tracking-widest text-emerald-300 bg-emerald-500/20 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-xl border border-emerald-400/40 shrink-0">
@@ -245,11 +508,7 @@ SPDX-License-Identifier: MPL-2.0
 						</button>
 					{:else}
 						<button
-							onclick={() =>
-								socket_game_controls.get_question_results(
-									game_token,
-									game_state.shown_question_now
-								)}
+							onclick={triggerShowResults}
 							class="group flex flex-nowrap items-center gap-2 sm:gap-3 px-3.5 sm:px-6 md:px-8 py-2 sm:py-2.5 rounded-2xl bg-slate-900/95 dark:bg-black/95 backdrop-blur-xl border-2 border-sky-400/70 shadow-2xl shadow-sky-500/30 text-white hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer ring-4 ring-sky-500/20 whitespace-nowrap shrink-0"
 						>
 							<span class="text-[10px] sm:text-xs uppercase font-black tracking-widest text-sky-300 bg-sky-500/20 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-xl border border-sky-400/40 shrink-0">
