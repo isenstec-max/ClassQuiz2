@@ -33,7 +33,7 @@ docker compose -f "$COMPOSE_FILE" pull
 echo ">> Spustam / restartujem ClassQuiz2..."
 docker compose -f "$COMPOSE_FILE" up -d --remove-orphans
 
-echo ">> Hotovo! ClassQuiz2 bezi na https://industry4.fvt.tuke.sk:3000 (aj porte 25)"
+echo ">> Hotovo! ClassQuiz2 bezi na https://industry4.fvt.tuke.sk:3000"
 docker compose -f "$COMPOSE_FILE" ps
 
 echo ">> Upratujem nepouzivane stare images..."

@@ -96,7 +96,6 @@ services:
     restart: always
     ports:
       - "3000:8080" # The 3000 can be changed.
-      - "25:8080"
   meilisearch:
     image: getmeili/meilisearch:v0.28.0
     restart: always
