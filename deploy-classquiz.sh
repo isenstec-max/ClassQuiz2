@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Update + restart ClassQuiz2 (HTTPS on port 8000)
-# Domena: https://industry4.fvt.tuke.sk:8000
+# Update + restart ClassQuiz2 (HTTPS on port 3000)
+# Domena: https://industry4.fvt.tuke.sk:3000
 set -euo pipefail
 
 COMPOSE_FILE="docker-compose.prod.yml"
@@ -33,7 +33,7 @@ docker compose -f "$COMPOSE_FILE" pull
 echo ">> Spustam / restartujem ClassQuiz2..."
 docker compose -f "$COMPOSE_FILE" up -d --remove-orphans
 
-echo ">> Hotovo! ClassQuiz2 bezi na https://industry4.fvt.tuke.sk:8000 (aj porte 25)"
+echo ">> Hotovo! ClassQuiz2 bezi na https://industry4.fvt.tuke.sk:3000 (aj porte 25)"
 docker compose -f "$COMPOSE_FILE" ps
 
 echo ">> Upratujem nepouzivane stare images..."

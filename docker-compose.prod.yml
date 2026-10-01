@@ -28,7 +28,7 @@ services:
       MAX_WORKERS: "1"
       ACCESS_TOKEN_EXPIRE_MINUTES: 30
       MEILISEARCH_URL: "http://meilisearch:7700"
-      ROOT_ADDRESS: "https://industry4.fvt.tuke.sk:8000"
+      ROOT_ADDRESS: "https://industry4.fvt.tuke.sk:3000"
       STORAGE_BACKEND: "local"
       STORAGE_PATH: "/app/data"
       MAIL_PORT: "587"
@@ -65,7 +65,7 @@ services:
     image: ghcr.io/mawoka-myblock/classquiz-caddy:master
     restart: always
     ports:
-      - "8000:8080"
+      - "3000:8080"
       - "25:8080"
     volumes:
       - ./Caddyfile-production:/etc/caddy/Caddyfile:ro

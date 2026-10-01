@@ -349,10 +349,10 @@ SPDX-License-Identifier: MPL-2.0
 				</div>
 				<div class="flex flex-col text-left pr-1">
 					<span class="text-[10px] sm:text-[11px] uppercase font-black tracking-wider text-sky-400">
-						Výsledky za
+						Výsledky
 					</span>
 					<span class="text-xs sm:text-sm font-black text-white leading-tight">
-						{resultsCountdown} s
+						{isResultsPaused ? 'Pozastavené' : 'Automaticky'}
 					</span>
 				</div>
 				<button
@@ -395,10 +395,10 @@ SPDX-License-Identifier: MPL-2.0
 				</div>
 				<div class="flex flex-col text-left pr-1">
 					<span class="text-[10px] sm:text-[11px] uppercase font-black tracking-wider text-emerald-400">
-						Ďalšia otázka za
+						Ďalšia otázka
 					</span>
 					<span class="text-xs sm:text-sm font-black text-white leading-tight">
-						{nextQuestionCountdown} s
+						{isNextQuestionPaused ? 'Pozastavené' : 'Automaticky'}
 					</span>
 				</div>
 				<button

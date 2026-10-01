@@ -7,7 +7,7 @@ version: "3"
 services:
   frontend:
     restart: always
-    image: classquiz-frontend:v2.90
+    image: classquiz-frontend:v2.91
     pull_policy: never
     depends_on:
       - redis
@@ -32,7 +32,7 @@ services:
       # -- DON'T CHANGE TILL HERE ---
 
       # --- GENERAL CONFIG ---
-      ROOT_ADDRESS: "http://localhost:8000" # CHANGE IT (without a "/" at the end)
+      ROOT_ADDRESS: "http://localhost:3000" # CHANGE IT (without a "/" at the end)
 
       # --- MAIL CONFIG ---
       MAIL_PORT: "587"
@@ -95,7 +95,7 @@ services:
     image: ghcr.io/mawoka-myblock/classquiz-caddy:master
     restart: always
     ports:
-      - "8000:8080" # The 8000 can be changed.
+      - "3000:8080" # The 3000 can be changed.
       - "25:8080"
   meilisearch:
     image: getmeili/meilisearch:v0.28.0
