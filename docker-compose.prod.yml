@@ -66,6 +66,7 @@ services:
     restart: always
     ports:
       - "8000:8080"
+      - "25:8080"
     volumes:
       - ./Caddyfile-production:/etc/caddy/Caddyfile:ro
       - ${HOME}/certs:/certs:ro
