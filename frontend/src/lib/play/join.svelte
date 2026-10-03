@@ -38,6 +38,12 @@ SPDX-License-Identifier: MPL-2.0
 	let currentAvatarDef = $derived(
 		ANIMAL_AVATARS.find((a) => a.id === selectedAvatar) || ANIMAL_AVATARS[0]
 	);
+	let avatarCategory = $state<'all' | 'animals' | 'tech'>('all');
+	let displayedAvatars = $derived(
+		avatarCategory === 'all'
+			? ANIMAL_AVATARS
+			: ANIMAL_AVATARS.filter((a) => a.category === avatarCategory)
+	);
 
 	let custom_field = $state();
 	let custom_field_value = $state();
@@ -541,27 +547,57 @@ SPDX-License-Identifier: MPL-2.0
 				</div>
 			</div>
 
-			<div class="relative overflow-hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-3xl shadow-2xl p-6 sm:p-8 border-2 border-slate-200/90 dark:border-slate-800 transition-all">
+			<div class="relative overflow-hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-3xl shadow-2xl p-5 sm:p-7 border-2 border-slate-200/90 dark:border-slate-800 transition-all">
 				<div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-400 to-indigo-500"></div>
 
-				<!-- Selected Avatar Preview -->
-				<div class="flex flex-col items-center mb-5">
+				<!-- Selected Avatar Preview (kompaktná výška) -->
+				<div class="flex flex-col items-center mb-3.5">
 					<div class="p-1 rounded-full ring-4 ring-emerald-500/80 shadow-2xl bg-white dark:bg-slate-800 transition-all transform hover:scale-105">
-						<AnimalAvatar avatarId={selectedAvatar} size={88} class="shadow-md" />
+						<AnimalAvatar avatarId={selectedAvatar} size={76} class="shadow-md" />
 					</div>
-					<h2 class="text-xl font-black mt-3 text-slate-800 dark:text-slate-100 flex items-center gap-2">
+					<h2 class="text-lg sm:text-xl font-black mt-2 text-slate-800 dark:text-slate-100 flex items-center gap-2">
 						<span>{currentAvatarDef.name}</span>
 					</h2>
 					<p class="text-xs text-slate-500 dark:text-slate-400 font-medium">{currentAvatarDef.description}</p>
 				</div>
 
-				<!-- 12 Animal Avatars Picker -->
-				<div class="mb-5">
-					<label class="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 text-center">
-						Vyber si zvieratko ({ANIMAL_AVATARS.length} druhov v oblečení)
-					</label>
-					<div class="grid grid-cols-6 gap-2 p-2.5 bg-slate-50 dark:bg-slate-950/70 rounded-2xl border border-slate-200 dark:border-slate-800 max-h-40 overflow-y-auto">
-						{#each ANIMAL_AVATARS as avatar}
+				<!-- Výber avatara s kategóriami a skrolovaním bez zväčšenia okna -->
+				<div class="mb-4">
+					<div class="flex items-center justify-between gap-1.5 mb-2 px-0.5">
+						<label class="text-[11px] sm:text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+							Vyber si avatara
+						</label>
+						<!-- Prepínače kategórií: Všetky, Zvieratá, Roboty -->
+						<div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-800/90 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700/80 text-[11px] font-bold">
+							<button
+								type="button"
+								class="px-2 py-0.5 rounded-lg transition-all cursor-pointer {avatarCategory === 'all' ? 'bg-emerald-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}"
+								onclick={() => (avatarCategory = 'all')}
+							>
+								Všetky ({ANIMAL_AVATARS.length})
+							</button>
+							<button
+								type="button"
+								class="px-2 py-0.5 rounded-lg transition-all cursor-pointer {avatarCategory === 'animals' ? 'bg-emerald-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}"
+								onclick={() => (avatarCategory = 'animals')}
+								title="Zvieracie avatary"
+							>
+								🐾 Zvieratá
+							</button>
+							<button
+								type="button"
+								class="px-2 py-0.5 rounded-lg transition-all cursor-pointer {avatarCategory === 'tech' ? 'bg-emerald-500 text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}"
+								onclick={() => (avatarCategory = 'tech')}
+								title="Roboty, Terminátor, Bender, Predátor, Alien..."
+							>
+								🤖 Roboty & Sci-Fi
+							</button>
+						</div>
+					</div>
+
+					<!-- Scrollovateľná mriežka: max-h-36 až max-h-40 zachováva pôvodnú výšku okna -->
+					<div class="grid grid-cols-6 gap-2 p-2 bg-slate-50 dark:bg-slate-950/70 rounded-2xl border border-slate-200 dark:border-slate-800 max-h-36 sm:max-h-40 overflow-y-auto overscroll-contain">
+						{#each displayedAvatars as avatar}
 							<button
 								type="button"
 								class="p-1 rounded-xl transition-all flex items-center justify-center relative hover:scale-115 active:scale-95 cursor-pointer {selectedAvatar === avatar.id ? 'ring-3 ring-emerald-500 scale-105 bg-emerald-100 dark:bg-emerald-950/60 shadow-xs' : 'hover:bg-slate-200/60 dark:hover:bg-slate-800/60'}"
@@ -570,7 +606,7 @@ SPDX-License-Identifier: MPL-2.0
 								}}
 								title="{avatar.name} – {avatar.description}"
 							>
-								<AnimalAvatar avatarId={avatar.id} size={42} class="shadow-2xs" />
+								<AnimalAvatar avatarId={avatar.id} size={40} class="shadow-2xs" />
 							</button>
 						{/each}
 					</div>
