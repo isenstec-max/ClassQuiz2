@@ -309,7 +309,7 @@ SPDX-License-Identifier: MPL-2.0
 		/>
 	{:else if JSON.stringify(game_state.final_results) !== JSON.stringify([null])}
 		{#if game_state.control_visible}
-			<div class="fixed top-3 left-1/2 -translate-x-1/2 z-50 flex flex-nowrap items-center justify-center gap-2 sm:gap-2.5 md:gap-3 w-auto max-w-[98vw] px-2 sm:px-4 pointer-events-auto">
+			<div class="fixed top-2 sm:top-3 left-1/2 -translate-x-1/2 z-50 flex flex-wrap sm:flex-nowrap items-center justify-center gap-1.5 sm:gap-2.5 md:gap-3 w-auto max-w-[98vw] px-1 sm:px-4 pointer-events-auto">
 				<!-- Tlačidlo na uloženie výsledkov -->
 				<button
 					onclick={save_quiz}

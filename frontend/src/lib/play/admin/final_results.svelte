@@ -178,14 +178,14 @@ SPDX-License-Identifier: MPL-2.0
 </script>
 
 {#if show_final_results}
-	<div class="min-h-screen w-full flex flex-col justify-between items-center px-4 {username ? 'pt-4 sm:pt-6' : 'pt-16 sm:pt-20'} pb-6 sm:pb-8 relative overflow-hidden select-none">
+	<div class="min-h-screen w-full flex flex-col justify-between items-center px-1 sm:px-4 {username ? 'pt-3 sm:pt-6' : 'pt-14 sm:pt-20'} pb-4 sm:pb-8 relative overflow-x-hidden select-none">
 		<!-- Nadpis pódia -->
-		<div class="text-center z-10 mb-3 sm:mb-4 flex flex-col items-center animate-fade-down">
-			<div class="inline-flex items-center gap-2 px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full bg-slate-900/90 text-amber-300 border-2 border-amber-400/50 text-[11px] sm:text-xs font-black tracking-widest uppercase mb-1.5 sm:mb-2 shadow-xl backdrop-blur-md ring-2 ring-amber-400/20">
+		<div class="text-center z-10 mb-2 sm:mb-4 flex flex-col items-center animate-fade-down max-w-full px-2">
+			<div class="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full bg-slate-900/90 text-amber-300 border-2 border-amber-400/50 text-[10px] sm:text-xs font-black tracking-widest uppercase mb-1 sm:mb-2 shadow-xl backdrop-blur-md ring-2 ring-amber-400/20">
 				<span>🏆</span> {$t('results_page.final_overview', { default: 'Finálne výsledky kvízu' })}
 			</div>
-			<div class="px-6 sm:px-8 py-1.5 sm:py-2 rounded-2xl sm:rounded-3xl bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-2xl">
-				<h1 class="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight drop-shadow-md">
+			<div class="px-4 sm:px-8 py-1 sm:py-2 rounded-2xl sm:rounded-3xl bg-slate-900/85 backdrop-blur-xl border border-white/15 shadow-2xl">
+				<h1 class="text-xl sm:text-3xl md:text-4xl font-black text-white tracking-tight drop-shadow-md">
 					{$t('results_page.podium_title', { default: 'Stupne víťazov' })}
 				</h1>
 			</div>
@@ -195,22 +195,24 @@ SPDX-License-Identifier: MPL-2.0
 				{@const parsed = parsePlayer(username)}
 				{@const myRank = player_names.indexOf(username) + 1}
 				{@const acc = playerAccuracy[username]}
-				<div class="mt-3 flex items-center gap-3 px-5 py-2.5 rounded-2xl bg-slate-900/95 border-2 border-emerald-500 shadow-2xl backdrop-blur-md text-white">
-					<AnimalAvatar avatarId={parsed.avatarId} size={40} class="shadow-md shrink-0" />
-					<div class="text-left">
-						<div class="text-[10px] uppercase font-bold tracking-wider text-emerald-400">
+				<div class="mt-2.5 sm:mt-3 flex items-center gap-2 sm:gap-3 px-3 sm:px-5 py-2 sm:py-2.5 rounded-2xl bg-slate-900/95 border-2 border-emerald-500 shadow-2xl backdrop-blur-md text-white max-w-full">
+					<div class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center shrink-0">
+						<AnimalAvatar avatarId={parsed.avatarId} size="100%" class="shadow-md" />
+					</div>
+					<div class="text-left min-w-0">
+						<div class="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider text-emerald-400">
 							{$t('results_page.your_result', { default: 'Tvoj výsledok' })}
 						</div>
-						<div class="font-extrabold text-sm sm:text-base text-white flex items-center gap-2.5">
-							<span>{parsed.name}</span>
-							<span class="text-emerald-300 font-mono">({formatScoreWithUnit(resolvedScores[username])})</span>
-							<span class="px-2 py-0.5 rounded-md bg-yellow-400/20 text-yellow-300 text-xs font-black border border-yellow-400/30">
+						<div class="font-extrabold text-xs sm:text-base text-white flex flex-wrap items-center gap-1.5 sm:gap-2.5">
+							<span class="truncate max-w-[120px] sm:max-w-none">{parsed.name}</span>
+							<span class="text-emerald-300 font-mono text-[11px] sm:text-sm">({formatScoreWithUnit(resolvedScores[username])})</span>
+							<span class="px-1.5 sm:px-2 py-0.5 rounded-md bg-yellow-400/20 text-yellow-300 text-[10px] sm:text-xs font-black border border-yellow-400/30">
 								#{myRank} z {player_names.length}
 							</span>
 							{#if (playerLightning[username] ?? 0) > 0}
-								<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-950/80 border border-amber-400/50 text-amber-300 font-mono font-black text-xs shadow">
+								<span class="inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full bg-slate-950/80 border border-amber-400/50 text-amber-300 font-mono font-black text-[10px] sm:text-xs shadow">
 									<span>{playerLightning[username]}x</span>
-									<svg class="w-3.5 h-3.5 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)] shrink-0" viewBox="0 0 24 24">
+									<svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)] shrink-0" viewBox="0 0 24 24">
 										<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
 									</svg>
 								</span>
@@ -218,13 +220,13 @@ SPDX-License-Identifier: MPL-2.0
 						</div>
 					</div>
 					{#if acc}
-						<div class="ml-2">
+						<div class="ml-auto shrink-0">
 							<AccuracyDonut
 								correct={acc.correct}
 								incorrect={acc.incorrect}
 								total={acc.total}
-								size={38}
-								strokeWidth={4.5}
+								size={32}
+								strokeWidth={3.8}
 							/>
 						</div>
 					{/if}
@@ -243,7 +245,7 @@ SPDX-License-Identifier: MPL-2.0
 			</div>
 		{:else}
 			<!-- ARENA S PÓDIOM A BOČNÝMI PANELMI ÚČASTNÍKOV -->
-			<div class="w-full max-w-[1920px] mx-auto flex flex-col xl:flex-row items-center xl:items-end justify-center gap-4 xl:gap-6 2xl:gap-8 px-2 sm:px-4 flex-1 pb-4">
+			<div class="w-full max-w-[1920px] mx-auto flex flex-col xl:flex-row items-center xl:items-end justify-center gap-4 xl:gap-6 2xl:gap-8 px-0.5 sm:px-4 flex-1 pb-4">
 				<!-- ĽAVÉ KRÍDLO: Ďalší účastníci (1. polovica, od 4. miesta) -->
 				<div
 					class="w-full max-w-md xl:w-96 2xl:w-[420px] bg-slate-900/90 dark:bg-black/90 backdrop-blur-2xl border-2 border-slate-700/70 rounded-3xl p-4 sm:p-5 shadow-2xl flex flex-col h-[480px] md:h-[520px] xl:h-[540px] mb-4 xl:mb-0 ring-2 ring-white/10 shrink-0 animate-fade-up order-2 xl:order-1"
@@ -316,194 +318,236 @@ SPDX-License-Identifier: MPL-2.0
 				</div>
 
 				<!-- STREDNÉ PÓDIUM (3 stupne víťazov) -->
-				<div class="w-full max-w-4xl flex items-end justify-center gap-3 sm:gap-6 md:gap-8 px-2 flex-1 min-h-[460px] order-1 xl:order-2">
+				<div class="w-full max-w-4xl flex items-end justify-center gap-1 sm:gap-4 md:gap-8 px-0.5 sm:px-2 flex-1 min-h-[350px] sm:min-h-[460px] order-1 xl:order-2">
 					<!-- 2. MIESTO (VĽAVO - Striebro) -->
-					<div class="flex-1 max-w-[280px] flex flex-col items-center animate-podium-second">
+					<div class="flex-1 min-w-0 max-w-[280px] flex flex-col items-center animate-podium-second">
 						{#if player_names.length >= 2}
 							{@const player = player_names[1]}
 							{@const parsed = parsePlayer(player)}
 							{@const acc = playerAccuracy[player]}
 							<!-- Hlava zvieratka vykukujúca spoza stupienka -->
-							<div class="relative z-10 -mb-6 flex flex-col items-center">
-								<div class="p-1.5 rounded-full bg-white/10 backdrop-blur-sm border-2 border-slate-300 shadow-2xl hover:scale-105 transition-transform">
-									<AnimalAvatar avatarId={parsed.avatarId} size={90} class="drop-shadow-lg" />
+							<div class="relative z-10 -mb-4 sm:-mb-6 flex flex-col items-center">
+								<div class="p-1 sm:p-1.5 rounded-full bg-white/10 backdrop-blur-sm border-2 border-slate-300 shadow-2xl hover:scale-105 transition-transform">
+									<div class="w-11 h-11 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-[90px] lg:h-[90px] flex items-center justify-center">
+										<AnimalAvatar avatarId={parsed.avatarId} size="100%" class="drop-shadow-lg" />
+									</div>
 								</div>
 							</div>
 
 							<!-- Stupienok 2. miesta -->
 							<div
-								class="w-full h-72 md:h-80 bg-gradient-to-b from-indigo-700 via-indigo-900 to-slate-950 rounded-t-3xl shadow-2xl border-t-2 border-indigo-400/50 p-4 pb-3 flex flex-col items-center justify-start text-center relative overflow-hidden group"
+								class="w-full h-56 sm:h-72 md:h-80 bg-gradient-to-b from-indigo-700 via-indigo-900 to-slate-950 rounded-t-2xl sm:rounded-t-3xl shadow-2xl border-t-2 border-indigo-400/50 p-1 sm:p-4 pb-2 sm:pb-3 flex flex-col items-center justify-start text-center relative overflow-hidden group"
 							>
 								<div class="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-white/15 to-transparent"></div>
 
 								<!-- Kruhová strieborná medaila -->
-								<div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-tr from-slate-400 via-gray-200 to-white shadow-xl shadow-slate-400/30 border-4 border-slate-100 flex items-center justify-center text-slate-800 font-black text-2xl md:text-3xl my-2.5">
+								<div class="w-8 h-8 sm:w-12 sm:h-12 md:w-16 md:h-16 rounded-full bg-gradient-to-tr from-slate-400 via-gray-200 to-white shadow-xl shadow-slate-400/30 border-2 sm:border-4 border-slate-100 flex items-center justify-center text-slate-800 font-black text-base sm:text-2xl md:text-3xl my-1 sm:my-2.5">
 									2
 								</div>
 
 								<!-- Blesky hráča -->
 								{#if (playerLightning[player] ?? 0) > 0}
-									<div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-950/80 border border-amber-400/50 text-amber-300 font-mono font-black text-xs sm:text-sm mb-1 shadow" title="Najrýchlejšia správna odpoveď: {playerLightning[player]}x">
+									<div class="inline-flex items-center gap-0.5 sm:gap-1.5 px-1.5 sm:px-2.5 py-0.5 rounded-full bg-slate-950/80 border border-amber-400/50 text-amber-300 font-mono font-black text-[9px] sm:text-xs mb-0.5 sm:mb-1 shadow" title="Najrýchlejšia správna odpoveď: {playerLightning[player]}x">
 										<span>{playerLightning[player]}x</span>
-										<svg class="w-4 h-4 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)]" viewBox="0 0 24 24">
+										<svg class="w-3 h-3 sm:w-4 sm:h-4 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)]" viewBox="0 0 24 24">
 											<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
 										</svg>
 									</div>
 								{/if}
 
 								<!-- Meno hráča -->
-								<h3 class="font-black text-xl md:text-2xl text-white tracking-wide truncate w-full px-2 drop-shadow">
+								<h3 class="font-black text-[11px] sm:text-lg md:text-2xl text-white tracking-tight sm:tracking-wide truncate w-full px-0.5 sm:px-2 drop-shadow">
 									{parsed.name}
 								</h3>
 
 								<!-- Počet bodov (žltá farba) -->
-								<p class="font-mono font-black text-base md:text-lg text-yellow-300 mt-1 drop-shadow-sm">
-									{formatScoreWithUnit(resolvedScores[player])}
+								<p class="font-mono font-black text-[10px] sm:text-base md:text-lg text-yellow-300 mt-0.5 sm:mt-1 drop-shadow-sm truncate w-full">
+									<span class="sm:hidden">{formatScore(resolvedScores[player])} b</span>
+									<span class="hidden sm:inline">{formatScoreWithUnit(resolvedScores[player])}</span>
 								</p>
 
 								<!-- Kruhový graf úspešnosti (zarovnaný na spodok stĺpca v rovine) -->
 								{#if acc}
-									<div class="mt-auto pt-2 flex flex-col items-center gap-1">
-										<AccuracyDonut
-											correct={acc.correct}
-											incorrect={acc.incorrect}
-											total={acc.total}
-											size={52}
-											strokeWidth={4.8}
-										/>
-										<span class="text-[10px] uppercase font-extrabold text-amber-200 tracking-wider">Úspešnosť</span>
+									<div class="mt-auto pt-1 sm:pt-2 flex flex-col items-center gap-0.5 sm:gap-1">
+										<div class="block sm:hidden">
+											<AccuracyDonut
+												correct={acc.correct}
+												incorrect={acc.incorrect}
+												total={acc.total}
+												size={30}
+												strokeWidth={3.5}
+											/>
+										</div>
+										<div class="hidden sm:block">
+											<AccuracyDonut
+												correct={acc.correct}
+												incorrect={acc.incorrect}
+												total={acc.total}
+												size={52}
+												strokeWidth={4.8}
+											/>
+										</div>
+										<span class="text-[7.5px] sm:text-[10px] uppercase font-extrabold text-amber-200 tracking-wider">Úspešnosť</span>
 									</div>
 								{/if}
 							</div>
 						{:else}
-							<div class="w-full h-72 md:h-80 opacity-0"></div>
+							<div class="w-full h-56 sm:h-72 md:h-80 opacity-0"></div>
 						{/if}
 					</div>
 
 					<!-- 1. MIESTO (STRED - Zlato, Víťaz) -->
-					<div class="flex-1 max-w-[320px] flex flex-col items-center z-20 animate-podium-first">
+					<div class="flex-1 min-w-0 max-w-[320px] flex flex-col items-center z-20 animate-podium-first">
 						{#if player_names.length >= 1}
 							{@const player = player_names[0]}
 							{@const parsed = parsePlayer(player)}
 							{@const acc = playerAccuracy[player]}
 							<!-- Hlava zvieratka víťaza s korunkou -->
-							<div class="relative z-10 -mb-7 flex flex-col items-center">
-								<div class="p-2 rounded-full bg-yellow-400/20 backdrop-blur-sm border-4 border-yellow-300 shadow-2xl animate-pulse hover:scale-110 transition-transform">
-									<AnimalAvatar avatarId={parsed.avatarId} size={110} class="drop-shadow-2xl" />
+							<div class="relative z-10 -mb-5 sm:-mb-7 flex flex-col items-center">
+								<div class="p-1 sm:p-2 rounded-full bg-yellow-400/20 backdrop-blur-sm border-2 sm:border-4 border-yellow-300 shadow-2xl animate-pulse hover:scale-110 transition-transform">
+									<div class="w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-[110px] lg:h-[110px] flex items-center justify-center">
+										<AnimalAvatar avatarId={parsed.avatarId} size="100%" class="drop-shadow-2xl" />
+									</div>
 								</div>
-								<span class="text-2xl absolute -top-4">👑</span>
+								<span class="text-xl sm:text-2xl absolute -top-3 sm:-top-4">👑</span>
 							</div>
 
 							<!-- Stupienok 1. miesta -->
 							<div
-								class="w-full h-88 md:h-[410px] bg-gradient-to-b from-indigo-600 via-indigo-900 to-slate-950 rounded-t-3xl shadow-2xl border-t-4 border-yellow-400 p-4 sm:p-5 pb-3 flex flex-col items-center justify-start text-center relative overflow-hidden group"
+								class="w-full h-64 sm:h-88 md:h-[410px] bg-gradient-to-b from-indigo-600 via-indigo-900 to-slate-950 rounded-t-2xl sm:rounded-t-3xl shadow-2xl border-t-2 sm:border-t-4 border-yellow-400 p-1.5 sm:p-5 pb-2 sm:pb-3 flex flex-col items-center justify-start text-center relative overflow-hidden group"
 							>
 								<div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-yellow-300/25 to-transparent"></div>
 
 								<!-- Kruhová zlatá medaila -->
-								<div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-tr from-amber-500 via-yellow-300 to-yellow-100 shadow-2xl shadow-yellow-500/50 border-4 border-yellow-200 flex items-center justify-center text-amber-950 font-black text-3xl md:text-4xl my-2.5 animate-bounce">
+								<div class="w-10 h-10 sm:w-14 sm:h-14 md:w-20 md:h-20 rounded-full bg-gradient-to-tr from-amber-500 via-yellow-300 to-yellow-100 shadow-2xl shadow-yellow-500/50 border-2 sm:border-4 border-yellow-200 flex items-center justify-center text-amber-950 font-black text-lg sm:text-3xl md:text-4xl my-1 sm:my-2.5 animate-bounce">
 									1
 								</div>
 
 								<!-- Blesky víťaza -->
 								{#if (playerLightning[player] ?? 0) > 0}
-									<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-950/85 border border-amber-400/60 text-amber-300 font-mono font-black text-sm mb-1 shadow-lg" title="Najrýchlejšia správna odpoveď: {playerLightning[player]}x">
+									<div class="inline-flex items-center gap-0.5 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-slate-950/85 border border-amber-400/60 text-amber-300 font-mono font-black text-[10px] sm:text-sm mb-0.5 sm:mb-1 shadow-lg" title="Najrýchlejšia správna odpoveď: {playerLightning[player]}x">
 										<span>{playerLightning[player]}x</span>
-										<svg class="w-4 h-4 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)]" viewBox="0 0 24 24">
+										<svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)]" viewBox="0 0 24 24">
 											<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
 										</svg>
 									</div>
 								{/if}
 
 								<!-- Meno víťaza -->
-								<h3 class="font-black text-2xl md:text-3xl text-white tracking-wide truncate w-full px-2 drop-shadow-md">
+								<h3 class="font-black text-xs sm:text-2xl md:text-3xl text-white tracking-tight sm:tracking-wide truncate w-full px-0.5 sm:px-2 drop-shadow-md">
 									{parsed.name}
 								</h3>
 
 								<!-- Počet bodov (žltá farba) -->
-								<p class="font-mono font-black text-lg md:text-xl text-yellow-300 mt-1 drop-shadow-sm">
-									{formatScoreWithUnit(resolvedScores[player])}
+								<p class="font-mono font-black text-xs sm:text-lg md:text-xl text-yellow-300 mt-0.5 sm:mt-1 drop-shadow-sm truncate w-full">
+									<span class="sm:hidden">{formatScore(resolvedScores[player])} b</span>
+									<span class="hidden sm:inline">{formatScoreWithUnit(resolvedScores[player])}</span>
 								</p>
 
 								<!-- Kruhový graf úspešnosti (zarovnaný na spodok stĺpca v rovine) -->
 								{#if acc}
-									<div class="mt-auto pt-2 flex flex-col items-center gap-1">
-										<AccuracyDonut
-											correct={acc.correct}
-											incorrect={acc.incorrect}
-											total={acc.total}
-											size={52}
-											strokeWidth={4.8}
-										/>
-										<span class="text-[10px] uppercase font-extrabold text-amber-200 tracking-wider">Úspešnosť</span>
+									<div class="mt-auto pt-1 sm:pt-2 flex flex-col items-center gap-0.5 sm:gap-1">
+										<div class="block sm:hidden">
+											<AccuracyDonut
+												correct={acc.correct}
+												incorrect={acc.incorrect}
+												total={acc.total}
+												size={32}
+												strokeWidth={3.8}
+											/>
+										</div>
+										<div class="hidden sm:block">
+											<AccuracyDonut
+												correct={acc.correct}
+												incorrect={acc.incorrect}
+												total={acc.total}
+												size={52}
+												strokeWidth={4.8}
+											/>
+										</div>
+										<span class="text-[7.5px] sm:text-[10px] uppercase font-extrabold text-amber-200 tracking-wider">Úspešnosť</span>
 									</div>
 								{/if}
 							</div>
 						{:else}
-							<div class="w-full h-88 md:h-[410px] opacity-0"></div>
+							<div class="w-full h-64 sm:h-88 md:h-[410px] opacity-0"></div>
 						{/if}
 					</div>
 
 					<!-- 3. MIESTO (VPRAVO - Bronz) -->
-					<div class="flex-1 max-w-[280px] flex flex-col items-center animate-podium-third">
+					<div class="flex-1 min-w-0 max-w-[280px] flex flex-col items-center animate-podium-third">
 						{#if player_names.length >= 3}
 							{@const player = player_names[2]}
 							{@const parsed = parsePlayer(player)}
 							{@const acc = playerAccuracy[player]}
 							<!-- Hlava zvieratka 3. miesta -->
-							<div class="relative z-10 -mb-6 flex flex-col items-center">
+							<div class="relative z-10 -mb-4 sm:-mb-6 flex flex-col items-center">
 								<div class="p-1 rounded-full bg-white/10 backdrop-blur-sm border-2 border-amber-600/70 shadow-xl hover:scale-105 transition-transform">
-									<AnimalAvatar avatarId={parsed.avatarId} size={80} class="drop-shadow-md" />
+									<div class="w-10 h-10 sm:w-14 sm:h-14 md:w-18 md:h-18 lg:w-[80px] lg:h-[80px] flex items-center justify-center">
+										<AnimalAvatar avatarId={parsed.avatarId} size="100%" class="drop-shadow-md" />
+									</div>
 								</div>
 							</div>
 
 							<!-- Stupienok 3. miesta -->
 							<div
-								class="w-full h-56 md:h-66 bg-gradient-to-b from-indigo-800 via-indigo-950 to-slate-950 rounded-t-3xl shadow-xl border-t-2 border-amber-600/50 p-4 pb-3 flex flex-col items-center justify-start text-center relative overflow-hidden group"
+								class="w-full h-48 sm:h-56 md:h-66 bg-gradient-to-b from-indigo-800 via-indigo-950 to-slate-950 rounded-t-2xl sm:rounded-t-3xl shadow-xl border-t-2 border-amber-600/50 p-1 sm:p-4 pb-2 sm:pb-3 flex flex-col items-center justify-start text-center relative overflow-hidden group"
 							>
 								<div class="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-white/10 to-transparent"></div>
 
 								<!-- Kruhová bronzová medaila -->
-								<div class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-gradient-to-tr from-amber-700 via-amber-500 to-orange-400 shadow-xl shadow-amber-800/40 border-4 border-amber-300/80 flex items-center justify-center text-amber-950 font-black text-xl md:text-2xl my-2">
+								<div class="w-8 h-8 sm:w-11 sm:h-11 md:w-14 md:h-14 rounded-full bg-gradient-to-tr from-amber-700 via-amber-500 to-orange-400 shadow-xl shadow-amber-800/40 border-2 sm:border-4 border-amber-300/80 flex items-center justify-center text-amber-950 font-black text-base sm:text-xl md:text-2xl my-1 sm:my-2">
 									3
 								</div>
 
 								<!-- Blesky hráča -->
 								{#if (playerLightning[player] ?? 0) > 0}
-									<div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-950/80 border border-amber-400/50 text-amber-300 font-mono font-black text-xs sm:text-sm mb-1 shadow" title="Najrýchlejšia správna odpoveď: {playerLightning[player]}x">
+									<div class="inline-flex items-center gap-0.5 sm:gap-1.5 px-1.5 sm:px-2.5 py-0.5 rounded-full bg-slate-950/80 border border-amber-400/50 text-amber-300 font-mono font-black text-[9px] sm:text-xs mb-0.5 sm:mb-1 shadow" title="Najrýchlejšia správna odpoveď: {playerLightning[player]}x">
 										<span>{playerLightning[player]}x</span>
-										<svg class="w-4 h-4 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)]" viewBox="0 0 24 24">
+										<svg class="w-3 h-3 sm:w-4 sm:h-4 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)]" viewBox="0 0 24 24">
 											<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
 										</svg>
 									</div>
 								{/if}
 
 								<!-- Meno hráča -->
-								<h3 class="font-black text-lg md:text-xl text-white tracking-wide truncate w-full px-2 drop-shadow">
+								<h3 class="font-black text-[11px] sm:text-base md:text-xl text-white tracking-tight sm:tracking-wide truncate w-full px-0.5 sm:px-2 drop-shadow">
 									{parsed.name}
 								</h3>
 
 								<!-- Počet bodov (žltá farba) -->
-								<p class="font-mono font-black text-sm md:text-base text-yellow-300 mt-1 drop-shadow-sm">
-									{formatScoreWithUnit(resolvedScores[player])}
+								<p class="font-mono font-black text-[10px] sm:text-sm md:text-base text-yellow-300 mt-0.5 sm:mt-1 drop-shadow-sm truncate w-full">
+									<span class="sm:hidden">{formatScore(resolvedScores[player])} b</span>
+									<span class="hidden sm:inline">{formatScoreWithUnit(resolvedScores[player])}</span>
 								</p>
 
 								<!-- Kruhový graf úspešnosti (zarovnaný na spodok stĺpca v rovine) -->
 								{#if acc}
-									<div class="mt-auto pt-2 flex flex-col items-center gap-1">
-										<AccuracyDonut
-											correct={acc.correct}
-											incorrect={acc.incorrect}
-											total={acc.total}
-											size={52}
-											strokeWidth={4.8}
-										/>
-										<span class="text-[10px] uppercase font-extrabold text-amber-200 tracking-wider">Úspešnosť</span>
+									<div class="mt-auto pt-1 sm:pt-2 flex flex-col items-center gap-0.5 sm:gap-1">
+										<div class="block sm:hidden">
+											<AccuracyDonut
+												correct={acc.correct}
+												incorrect={acc.incorrect}
+												total={acc.total}
+												size={30}
+												strokeWidth={3.5}
+											/>
+										</div>
+										<div class="hidden sm:block">
+											<AccuracyDonut
+												correct={acc.correct}
+												incorrect={acc.incorrect}
+												total={acc.total}
+												size={52}
+												strokeWidth={4.8}
+											/>
+										</div>
+										<span class="text-[7.5px] sm:text-[10px] uppercase font-extrabold text-amber-200 tracking-wider">Úspešnosť</span>
 									</div>
 								{/if}
 							</div>
 						{:else}
-							<div class="w-full h-52 md:h-60 opacity-0"></div>
+							<div class="w-full h-48 sm:h-56 md:h-66 opacity-0"></div>
 						{/if}
 					</div>
 				</div>
