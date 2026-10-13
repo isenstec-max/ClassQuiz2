@@ -217,9 +217,19 @@ SPDX-License-Identifier: MPL-2.0
 		window.location.href = '/dashboard';
 	};
 
+	let autoExportTriggered = $state(false);
+
 	$effect(() => {
-		if (show_final_results && !results_saved) {
-			socket.emit('save_quiz');
+		if (show_final_results && !autoExportTriggered) {
+			autoExportTriggered = true;
+			// 1. Automaticky uložiť kvíz do databázy
+			if (!results_saved) {
+				socket.emit('save_quiz');
+			}
+			// 2. Automaticky vyžiadať a stiahnuť XLS výstup z kvízu
+			setTimeout(() => {
+				request_answer_export();
+			}, 1200);
 		}
 	});
 

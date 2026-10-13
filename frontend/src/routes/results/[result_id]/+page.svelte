@@ -8,8 +8,10 @@ SPDX-License-Identifier: MPL-2.0
 	import PlayerOverview from './player_overview.svelte';
 	import QuestionOverview from './question_overview.svelte';
 	import GeneralOverview from './general_overview.svelte';
+	import BonusPointsTable from './BonusPointsTable.svelte';
 	import { fade } from 'svelte/transition';
 	import { getLocalization } from '$lib/i18n';
+	import { page } from '$app/state';
 
 	const { t } = getLocalization();
 
@@ -22,10 +24,17 @@ SPDX-License-Identifier: MPL-2.0
 	enum SelectedTab {
 		Overview = 'overview',
 		Players = 'players',
-		Questions = 'questions'
+		Questions = 'questions',
+		BonusPoints = 'bonus_points'
 	}
 
-	let selected_tab: SelectedTab = $state(SelectedTab.Overview);
+	const initialTab =
+		page.url.searchParams.get('tab') === 'points' ||
+		page.url.searchParams.get('tab') === 'bonus_points'
+			? SelectedTab.BonusPoints
+			: SelectedTab.Overview;
+
+	let selected_tab: SelectedTab = $state(initialTab);
 
 	// Bezpečné spracovanie JSON údajov
 	const parseJSON = (d: any) => {
@@ -102,13 +111,24 @@ SPDX-License-Identifier: MPL-2.0
 				</div>
 			</div>
 
-			<!-- Rýchle počty -->
-			<div class="flex items-center gap-2 self-start sm:self-center">
-				<span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-black bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 shadow-2xs">
+			<!-- Akcie a rýchle počty -->
+			<div class="flex flex-wrap items-center gap-2.5 self-start sm:self-center">
+				<!-- Tlačidlo pre Zápočtové body -->
+				<button
+					type="button"
+					onclick={() => (selected_tab = SelectedTab.BonusPoints)}
+					class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-400 text-white font-extrabold text-xs shadow-md shadow-amber-500/20 hover:scale-105 active:scale-95 transition-all cursor-pointer border border-amber-300/40"
+					title="Zobraziť tabuľku zápočtových bodov (2, 1, 0,5, 0,25) a exportovať do XLS"
+				>
+					<span>⭐</span>
+					<span>Body (B) / XLS</span>
+				</button>
+
+				<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 shadow-2xs">
 					<span>👥</span>
 					<span>{playerCount} {playerCount === 1 ? 'hráč' : playerCount >= 2 && playerCount <= 4 ? 'hráči' : 'hráčov'}</span>
 				</span>
-				<span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-black bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300/60 dark:border-emerald-700/60 shadow-2xs">
+				<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300/60 dark:border-emerald-700/60 shadow-2xs">
 					<span>❓</span>
 					<span>{questionCount} {questionCount === 1 ? 'otázka' : questionCount >= 2 && questionCount <= 4 ? 'otázky' : 'otázok'}</span>
 				</span>
@@ -116,11 +136,11 @@ SPDX-License-Identifier: MPL-2.0
 		</div>
 
 		<!-- Segmented Tab Control (Modern Pill Switcher) -->
-		<div class="flex items-center justify-center p-1.5 bg-slate-200/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl max-w-lg mx-auto shadow-inner border border-slate-300/60 dark:border-slate-800 w-full">
+		<div class="flex items-center justify-center p-1.5 bg-slate-200/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl max-w-2xl mx-auto shadow-inner border border-slate-300/60 dark:border-slate-800 w-full">
 			<!-- Tab 1: Prehľad -->
 			<button
 				onclick={() => (selected_tab = SelectedTab.Overview)}
-				class="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer {selected_tab === SelectedTab.Overview ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-md scale-[1.02]' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}"
+				class="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 sm:px-3 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer {selected_tab === SelectedTab.Overview ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-md scale-[1.02]' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}"
 			>
 				<svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -131,7 +151,7 @@ SPDX-License-Identifier: MPL-2.0
 			<!-- Tab 2: Hráči -->
 			<button
 				onclick={() => (selected_tab = SelectedTab.Players)}
-				class="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer {selected_tab === SelectedTab.Players ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-md scale-[1.02]' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}"
+				class="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 sm:px-3 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer {selected_tab === SelectedTab.Players ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-md scale-[1.02]' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}"
 			>
 				<svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -145,7 +165,7 @@ SPDX-License-Identifier: MPL-2.0
 			<!-- Tab 3: Otázky -->
 			<button
 				onclick={() => (selected_tab = SelectedTab.Questions)}
-				class="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer {selected_tab === SelectedTab.Questions ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-md scale-[1.02]' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}"
+				class="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 sm:px-3 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer {selected_tab === SelectedTab.Questions ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-md scale-[1.02]' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}"
 			>
 				<svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -154,6 +174,15 @@ SPDX-License-Identifier: MPL-2.0
 				<span class="px-1.5 py-0.5 rounded-full text-[10px] font-black bg-slate-100 dark:bg-slate-700/80 text-slate-700 dark:text-slate-300">
 					{questionCount}
 				</span>
+			</button>
+
+			<!-- Tab 4: Zápočtové body (2, 1, 0,5, 0,25) -->
+			<button
+				onclick={() => (selected_tab = SelectedTab.BonusPoints)}
+				class="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 sm:px-3 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer {selected_tab === SelectedTab.BonusPoints ? 'bg-white dark:bg-slate-800 text-amber-500 shadow-md scale-[1.02]' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}"
+			>
+				<span class="text-xs">⭐</span>
+				<span>Body (B) / XLS</span>
 			</button>
 		</div>
 
@@ -181,6 +210,16 @@ SPDX-License-Identifier: MPL-2.0
 				<QuestionOverview
 					questions={parsedQuestions}
 					answers={parsedAnswers}
+				/>
+			</div>
+		{:else if selected_tab === SelectedTab.BonusPoints}
+			<div in:fade|global={{ duration: 150 }}>
+				<BonusPointsTable
+					final_results={parsedAnswers}
+					scores={parsedScores}
+					players={Object.keys(parsedScores)}
+					quizTitle={results.title}
+					resultId={results.id}
 				/>
 			</div>
 		{/if}

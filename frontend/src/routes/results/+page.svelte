@@ -222,8 +222,16 @@ SPDX-License-Identifier: MPL-2.0
 										{/if}
 									</td>
 
-									<!-- Action Link -->
+									<!-- Action Links -->
 									<td class="py-4 px-6 text-right whitespace-nowrap">
+										<a
+											href="/results/{result.id}?tab=points"
+											class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-black text-xs bg-amber-500/10 hover:bg-amber-500 text-amber-700 dark:text-amber-300 hover:text-slate-900 border border-amber-500/30 transition-all shadow-2xs cursor-pointer mr-2"
+											title="Zobraziť tabuľku zápočtových bodov (2, 1, 0,5, 0,25) a exportovať XLS"
+										>
+											<span>⭐</span>
+											<span>Body / XLS</span>
+										</a>
 										<a
 											href="/results/{result.id}"
 											class="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl font-bold text-xs bg-slate-100 hover:bg-emerald-600 hover:text-white dark:bg-slate-800 dark:hover:bg-emerald-500 text-slate-700 dark:text-slate-200 transition-all shadow-xs group-hover:shadow-md cursor-pointer"
