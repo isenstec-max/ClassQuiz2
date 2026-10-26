@@ -16,7 +16,8 @@ services:
       API_URL: http://api:80
 
   api:
-    image: ghcr.io/mawoka-myblock/classquiz-backend:master
+    image: classquiz-backend:local
+    pull_policy: never
     restart: &restart always
     depends_on: &depends
       - db
@@ -79,7 +80,8 @@ services:
       - meilisearch-data:/data.ms
 
   worker:
-    image: ghcr.io/mawoka-myblock/classquiz-backend:master
+    image: classquiz-backend:local
+    pull_policy: never
     environment: *env_vars
     depends_on: *depends
     restart: *restart
