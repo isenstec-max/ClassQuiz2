@@ -12,31 +12,64 @@ export const handle: Handle = async ({ event, resolve }) => {
 		event.locals.email = null;
 		return resolve(event);
 	}
-	const jwt = jose.decodeJwt(access_token.replace('Bearer ', ''));
-	if (!jwt) {
+
+	let jwt: any;
+	try {
+		jwt = jose.decodeJwt(access_token.replace('Bearer ', ''));
+	} catch (e) {
+		event.cookies.delete('access_token', { path: '/' });
 		event.locals.email = null;
 		return resolve(event);
 	}
+
+	if (!jwt || !jwt.exp) {
+		event.cookies.delete('access_token', { path: '/' });
+		event.locals.email = null;
+		return resolve(event);
+	}
+
 	// if token expires, do a request to get a new one and set the response-cookies on the response
 	if (Date.now() >= jwt.exp * 1000) {
-		const res = await fetch(`${process.env.API_URL}/api/v1/users/check`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				Cookie: event.request.headers.get('cookie') || ''
+		try {
+			const apiUrl = process.env.API_URL || 'http://api:80';
+			const res = await fetch(`${apiUrl}/api/v1/users/check`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					Cookie: event.request.headers.get('cookie') || ''
+				}
+			});
+			if (res.ok) {
+				try {
+					const data = await res.json();
+					event.locals.email = data.email ?? (typeof jwt.sub === 'string' ? jwt.sub : null);
+				} catch {
+					event.locals.email = typeof jwt.sub === 'string' ? jwt.sub : null;
+				}
+				const resp = await resolve(event);
+				try {
+					const setCookie = res.headers.get('set-cookie');
+					if (setCookie) {
+						resp.headers.set('Set-Cookie', setCookie);
+					}
+				} catch {}
+				return resp;
+			} else {
+				// Refresh failed or token was rejected by API - clean up cookies and log out
+				event.cookies.delete('access_token', { path: '/' });
+				event.locals.email = null;
+				return resolve(event);
 			}
-		});
-		if (res.ok) {
-			event.locals.email = await res.text();
-			const resp = await resolve(event);
-			try {
-				resp.headers.set('Set-Cookie', res.headers.get('set-cookie'));
-			} catch {
-				/* empty */
-			}
-			return resp;
+		} catch (e) {
+			console.error('Failed to verify/refresh token via API:', e);
+			// On network error or backend unavailable, do NOT crash with 500!
+			// Safely fall back to unauthenticated session
+			event.cookies.delete('access_token', { path: '/' });
+			event.locals.email = null;
+			return resolve(event);
 		}
 	}
-	event.locals.email = jwt.sub;
+
+	event.locals.email = typeof jwt.sub === 'string' ? jwt.sub : null;
 	return resolve(event);
 };
