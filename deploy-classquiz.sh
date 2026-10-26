@@ -27,8 +27,14 @@ mkdir -p uploads
 echo ">> Aktualizujem konfiguraciu z git repozitara..."
 git pull || true
 
-echo ">> Stahujem najnovsie Docker obrazy pre ClassQuiz2..."
-docker compose -f "$COMPOSE_FILE" pull
+# Ak obraz classquiz-backend:local neexistuje alebo bol vyziadany rebuild
+if ! docker image inspect classquiz-backend:local >/dev/null 2>&1 || [[ "${1:-}" == "--build-backend" || "${1:-}" == "--rebuild" ]]; then
+    echo ">> Zostavujem lokalny backend obraz (classquiz-backend:local)..."
+    docker build -t classquiz-backend:local .
+fi
+
+echo ">> Stahujem najnovsi frontend z Docker Hub (smarttechlab/classquiz2:latest)..."
+docker compose -f "$COMPOSE_FILE" pull frontend
 
 echo ">> Spustam / restartujem ClassQuiz2..."
 docker compose -f "$COMPOSE_FILE" up -d --remove-orphans
