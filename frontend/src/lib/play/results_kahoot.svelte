@@ -6,8 +6,15 @@ SPDX-License-Identifier: MPL-2.0
 
 <script lang="ts">
 	import AnimalAvatar from '$lib/components/AnimalAvatar.svelte';
+	import AnswerShape from '$lib/components/AnswerShape.svelte';
 	import { parsePlayer } from '$lib/avatars';
 	import { getLocalization } from '$lib/i18n';
+	import { DEFAULT_ANSWER_COLORS } from '$lib/answer_theme';
+	import {
+		savePlayerAnswerRecord,
+		getPlayerAnswerHistory,
+		getSolution
+	} from '$lib/play/session_storage';
 
 	const { t } = getLocalization();
 
@@ -29,9 +36,20 @@ SPDX-License-Identifier: MPL-2.0
 			score: number;
 		}>;
 		username: any;
+		solution?: any;
+		question?: any;
+		question_index?: number | string;
 	}
 
-	let { scores = $bindable(), question_results, username }: Props = $props();
+	let {
+		scores = $bindable(),
+		question_results,
+		username,
+		solution,
+		question,
+		question_index
+	}: Props = $props();
+
 	let score_by_username = $state<Record<string, number>>({});
 
 	if (JSON.stringify(scores) === '{}') {
@@ -68,6 +86,130 @@ SPDX-License-Identifier: MPL-2.0
 	function formatPoints(pts: number): string {
 		return new Intl.NumberFormat('sk-SK').format(pts || 0);
 	}
+
+	// Celkový pomer správnych a nesprávnych odpovedí hráča za celý kvíz
+	let statsOverall = $derived.by(() => {
+		let history = getPlayerAnswerHistory();
+		const currentQKey =
+			question_index !== undefined && question_index !== '' ? String(question_index) : null;
+
+		if (hasAnswered && currentQKey !== null) {
+			if (!history[currentQKey]) {
+				history[currentQKey] = {
+					right: isCorrect,
+					score: pointsGained
+				};
+				savePlayerAnswerRecord(currentQKey, history[currentQKey]);
+			}
+		}
+
+		const entries = Object.values(history);
+		let correct = entries.filter((e) => e.right).length;
+		let incorrect = entries.filter((e) => !e.right).length;
+
+		if (entries.length === 0 && hasAnswered) {
+			if (isCorrect) correct = 1;
+			else incorrect = 1;
+		}
+
+		const total = correct + incorrect;
+		const correctPct = total > 0 ? Math.round((correct / total) * 100) : isCorrect ? 100 : 0;
+		const incorrectPct = total > 0 ? 100 - correctPct : isCorrect ? 0 : 100;
+
+		return {
+			correct,
+			incorrect,
+			total,
+			correctPct,
+			incorrectPct
+		};
+	});
+
+	// Správna odpoveď (farba + text + tvar)
+	let effectiveSolution = $derived(solution || getSolution());
+
+	let correctAnswers = $derived.by(() => {
+		const target = effectiveSolution || question;
+		if (!target || !target.answers) {
+			if (isCorrect && myResult?.answer) {
+				return [
+					{
+						index: 0,
+						shapeIndex: undefined,
+						text: myResult.answer,
+						color: '#10b981'
+					}
+				];
+			}
+			return [];
+		}
+
+		// ABCD / CHECK otázky
+		if (Array.isArray(target.answers)) {
+			const list: Array<{
+				index: number;
+				shapeIndex?: number;
+				text: string;
+				color: string;
+			}> = [];
+
+			target.answers.forEach((ans: any, idx: number) => {
+				const color = ans.color ?? DEFAULT_ANSWER_COLORS[idx % DEFAULT_ANSWER_COLORS.length];
+				if (ans.right === true) {
+					list.push({
+						index: idx,
+						shapeIndex: idx,
+						text: ans.answer,
+						color
+					});
+				}
+			});
+
+			// Fallback: ak target nemá príznak right, ale hráč odpovedal správne
+			if (list.length === 0 && isCorrect && myResult?.answer) {
+				const foundIdx = target.answers.findIndex((a: any) => a.answer === myResult.answer);
+				if (foundIdx >= 0) {
+					const ans = target.answers[foundIdx];
+					list.push({
+						index: foundIdx,
+						shapeIndex: foundIdx,
+						text: ans.answer,
+						color: ans.color ?? DEFAULT_ANSWER_COLORS[foundIdx % DEFAULT_ANSWER_COLORS.length]
+					});
+				}
+			}
+
+			return list;
+		}
+
+		// TEXT otázky
+		if (target.type === 'TEXT' && Array.isArray(target.answers)) {
+			return target.answers.map((a: any, idx: number) => ({
+				index: idx,
+				shapeIndex: undefined,
+				text: a.answer,
+				color: '#10b981'
+			}));
+		}
+
+		// RANGE otázky
+		if (target.type === 'RANGE' && target.answers) {
+			const r = target.answers;
+			const min = r.min_correct ?? r.min;
+			const max = r.max_correct ?? r.max;
+			const text = min === max ? `${min}` : `${min} - ${max}`;
+			return [
+				{
+					index: 0,
+					shapeIndex: undefined,
+					text: `Správny rozsah: ${text}`,
+					color: '#10b981'
+				}
+			];
+		}
+
+		return [];
+	});
 </script>
 
 <div class="min-h-[85vh] w-full flex items-center justify-center p-4 sm:p-6 select-none">
@@ -93,36 +235,105 @@ SPDX-License-Identifier: MPL-2.0
 			<span>{$t('words.result', { default: 'Výsledok' })}</span>
 		</div>
 
-		<!-- Ikona stavu: Správne / Nesprávne -->
+		<!-- Horný riadok krúžkov: Stav otázky + Zeleno-červený koláčový graf celkového pomeru -->
 		{#if hasAnswered}
-			{#if isCorrect}
-				<div
-					class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center text-emerald-400 text-3xl sm:text-4xl shadow-[0_0_30px_rgba(16,185,129,0.4)] mb-2"
-				>
-					✓
+			<div class="flex items-center justify-center gap-6 sm:gap-8 my-2">
+				<!-- 1. Krúžok: Správne / Nesprávne -->
+				<div class="flex flex-col items-center">
+					{#if isCorrect}
+						<div
+							class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center text-emerald-400 text-3xl sm:text-4xl shadow-[0_0_25px_rgba(16,185,129,0.4)]"
+						>
+							✓
+						</div>
+					{:else}
+						<div
+							class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-rose-500/20 border-2 border-rose-400 flex items-center justify-center text-rose-400 text-3xl sm:text-4xl shadow-[0_0_25px_rgba(244,63,94,0.4)]"
+						>
+							✕
+						</div>
+					{/if}
+					<span
+						class="text-[11px] sm:text-xs font-black tracking-wider uppercase mt-1.5 {isCorrect
+							? 'text-emerald-400'
+							: 'text-rose-400'}"
+					>
+						{isCorrect ? 'Správne' : 'Nesprávne'}
+					</span>
 				</div>
-				<h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight">
-					{$t('play_page.correct', { defaultValue: 'Správna odpoveď', default: 'Správna odpoveď' })}
-				</h2>
-			{:else}
-				<div
-					class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-rose-500/20 border-2 border-rose-400 flex items-center justify-center text-rose-400 text-3xl sm:text-4xl shadow-[0_0_30px_rgba(244,63,94,0.4)] mb-2"
-				>
-					✕
+
+				<!-- 2. Krúžok: Zeleno / červený koláčový graf celkového pomeru s percentami -->
+				<div class="flex flex-col items-center">
+					<div
+						class="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center shadow-lg border-2 border-white/20 overflow-hidden"
+						style="background: conic-gradient(#10b981 0% {statsOverall.correctPct}%, #f43f5e {statsOverall.correctPct}% 100%);"
+						title="Celkový pomer: {statsOverall.correct} správnych ({statsOverall.correctPct}%), {statsOverall.incorrect} nesprávnych ({statsOverall.incorrectPct}%)"
+					>
+						<!-- Donut stred -->
+						<div
+							class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-900/95 flex flex-col items-center justify-center shadow-inner"
+						>
+							<span class="text-xs sm:text-sm font-black font-mono text-white leading-none">
+								{statsOverall.correctPct}%
+							</span>
+						</div>
+					</div>
+					<div
+						class="flex items-center gap-1 text-[11px] sm:text-xs font-extrabold tracking-tight mt-1.5"
+						title="Celkovo správne / nesprávne"
+					>
+						<span class="text-emerald-400 font-mono">✓ {statsOverall.correct}</span>
+						<span class="text-slate-500">/</span>
+						<span class="text-rose-400 font-mono">✕ {statsOverall.incorrect}</span>
+					</div>
 				</div>
-				<h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight">
-					{$t('play_page.incorrect', { defaultValue: 'Nesprávna odpoveď', default: 'Nesprávna odpoveď' })}
-				</h2>
-			{/if}
+			</div>
+
+			<h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight mt-1">
+				{isCorrect
+					? $t('play_page.correct', { defaultValue: 'Správna odpoveď', default: 'Správna odpoveď' })
+					: $t('play_page.incorrect', { defaultValue: 'Nesprávna odpoveď', default: 'Nesprávna odpoveď' })}
+			</h2>
 		{:else}
 			<h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight mb-2">
 				{$t('words.result', { default: 'Výsledok' })}
 			</h2>
 		{/if}
 
+		<!-- Správna odpoveď: Farba + Tvar + Text -->
+		{#if correctAnswers.length > 0}
+			<div
+				class="w-full mt-3 p-3.5 sm:p-4 rounded-2xl bg-slate-800/90 border border-slate-700/80 shadow-md flex flex-col items-center gap-2"
+			>
+				<span
+					class="text-xs font-extrabold uppercase tracking-widest text-slate-400 flex items-center gap-1.5"
+				>
+					<span>💡</span>
+					<span>{correctAnswers.length > 1 ? 'Správne odpovede:' : 'Správna odpoveď:'}</span>
+				</span>
+				<div class="w-full flex flex-col gap-2">
+					{#each correctAnswers as ans}
+						<div
+							class="w-full flex items-center justify-center gap-2.5 px-3 py-2.5 rounded-xl border border-white/20 shadow-md text-white font-black text-sm sm:text-base transition-transform"
+							style="background-color: {ans.color};"
+						>
+							{#if ans.shapeIndex !== undefined}
+								<div class="w-5 h-5 flex items-center justify-center shrink-0">
+									<AnswerShape shapeIndex={ans.shapeIndex} class="w-4 h-4 text-white drop-shadow-sm" />
+								</div>
+							{/if}
+							<span class="text-center drop-shadow select-none break-words">
+								{ans.text}
+							</span>
+						</div>
+					{/each}
+				</div>
+			</div>
+		{/if}
+
 		<!-- Profil hráča: Avatar a meno -->
 		<div
-			class="flex items-center gap-2.5 bg-slate-800/90 border border-slate-700/80 px-4 py-2 rounded-full shadow-md my-4"
+			class="flex items-center gap-2.5 bg-slate-800/90 border border-slate-700/80 px-4 py-2 rounded-full shadow-md my-3.5"
 		>
 			<AnimalAvatar avatarId={parsed.avatarId} size={38} class="shadow-sm shrink-0" />
 			<span class="font-extrabold text-base sm:text-lg text-white tracking-wide truncate max-w-[200px]">
@@ -132,7 +343,7 @@ SPDX-License-Identifier: MPL-2.0
 
 		<!-- Získané body za túto otázku -->
 		<div
-			class="w-full rounded-2xl p-4 sm:p-5 my-2 text-center transition-all {pointsGained > 0
+			class="w-full rounded-2xl p-4 sm:p-5 my-1.5 text-center transition-all {pointsGained > 0
 				? 'bg-emerald-500/15 border-2 border-emerald-400/50 shadow-lg ring-2 ring-emerald-500/20'
 				: 'bg-slate-800/50 border border-slate-700/60'}"
 		>
@@ -154,7 +365,7 @@ SPDX-License-Identifier: MPL-2.0
 
 		<!-- Celkové skóre (Total score) - Veľké a prominentné -->
 		<div
-			class="w-full bg-gradient-to-r from-amber-500/15 via-yellow-500/20 to-amber-500/15 border-2 border-amber-400/60 rounded-2xl p-4 sm:p-5 mt-3 shadow-xl ring-2 ring-amber-400/30 text-center"
+			class="w-full bg-gradient-to-r from-amber-500/15 via-yellow-500/20 to-amber-500/15 border-2 border-amber-400/60 rounded-2xl p-4 sm:p-5 mt-2.5 shadow-xl ring-2 ring-amber-400/30 text-center"
 		>
 			<div
 				class="flex items-center justify-center gap-1.5 text-xs sm:text-sm font-black uppercase tracking-widest text-amber-300 mb-1"
@@ -172,7 +383,7 @@ SPDX-License-Identifier: MPL-2.0
 		<!-- Aktuálne umiestnenie v rebríčku -->
 		{#if playerRank && totalPlayers > 0}
 			<div
-				class="inline-flex items-center gap-2 mt-4 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 text-slate-200 text-xs sm:text-sm font-bold shadow-inner"
+				class="inline-flex items-center gap-2 mt-3.5 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/15 text-slate-200 text-xs sm:text-sm font-bold shadow-inner"
 			>
 				<span>🎖️</span>
 				<span>

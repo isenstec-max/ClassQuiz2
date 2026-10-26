@@ -103,10 +103,12 @@ export function clearPlayerSession() {
 		localStorage.removeItem('cq_active_question');
 		localStorage.removeItem('cq_question_results');
 		localStorage.removeItem('cq_solution');
+		localStorage.removeItem('cq_player_history');
 		sessionStorage.removeItem('cq_game_data');
 		sessionStorage.removeItem('cq_active_question');
 		sessionStorage.removeItem('cq_question_results');
 		sessionStorage.removeItem('cq_solution');
+		sessionStorage.removeItem('cq_player_history');
 
 		const toRemoveLocal: string[] = [];
 		for (let i = 0; i < localStorage.length; i++) {
@@ -181,4 +183,59 @@ export function getQuestionResults(): any | null {
 		if (raw) return JSON.parse(raw);
 	} catch (e) {}
 	return null;
+}
+
+export function saveSolution(solution: any) {
+	if (typeof window === 'undefined' || !solution) return;
+	try {
+		const serialized = JSON.stringify(solution);
+		localStorage.setItem('cq_solution', serialized);
+		sessionStorage.setItem('cq_solution', serialized);
+	} catch (e) {}
+}
+
+export function getSolution(): any | null {
+	if (typeof window === 'undefined') return null;
+	try {
+		const raw = localStorage.getItem('cq_solution') || sessionStorage.getItem('cq_solution');
+		if (raw) return JSON.parse(raw);
+	} catch (e) {}
+	return null;
+}
+
+export interface PlayerAnswerRecord {
+	right: boolean;
+	score: number;
+}
+
+export interface PlayerAnswerHistory {
+	[questionIndex: string]: PlayerAnswerRecord;
+}
+
+export function savePlayerAnswerRecord(qIndex: string | number, record: PlayerAnswerRecord) {
+	if (typeof window === 'undefined') return;
+	try {
+		const history = getPlayerAnswerHistory();
+		history[String(qIndex)] = record;
+		const serialized = JSON.stringify(history);
+		localStorage.setItem('cq_player_history', serialized);
+		sessionStorage.setItem('cq_player_history', serialized);
+	} catch (e) {}
+}
+
+export function getPlayerAnswerHistory(): PlayerAnswerHistory {
+	if (typeof window === 'undefined') return {};
+	try {
+		const raw = localStorage.getItem('cq_player_history') || sessionStorage.getItem('cq_player_history');
+		if (raw) return JSON.parse(raw);
+	} catch (e) {}
+	return {};
+}
+
+export function clearPlayerAnswerHistory() {
+	if (typeof window === 'undefined') return;
+	try {
+		localStorage.removeItem('cq_player_history');
+		sessionStorage.removeItem('cq_player_history');
+	} catch (e) {}
 }

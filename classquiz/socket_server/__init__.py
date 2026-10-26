@@ -237,6 +237,16 @@ async def get_question_results(sid: str, data: dict):
     game_data = await PlayGame.get_from_redis(game_pin)
     game_data.question_show = False
     await game_data.save(game_pin)
+    try:
+        q_idx = int(float(data["question_number"]))
+        if 0 <= q_idx < len(game_data.questions):
+            await sio.emit(
+                "solutions",
+                game_data.questions[q_idx].model_dump(),
+                room=game_pin,
+            )
+    except Exception as e:
+        print("Error emitting solutions in get_question_results:", e)
     await sio.emit("question_results", answer_data_list.model_dump(), room=game_pin)
 
 

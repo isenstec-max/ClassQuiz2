@@ -26,7 +26,10 @@ SPDX-License-Identifier: MPL-2.0
 		saveQuestionResults,
 		getQuestionResults,
 		saveGameData,
-		getGameData
+		getGameData,
+		saveSolution,
+		getSolution,
+		clearPlayerAnswerHistory
 	} from '$lib/play/session_storage';
 
 	const { t } = getLocalization();
@@ -110,6 +113,10 @@ SPDX-License-Identifier: MPL-2.0
 				const cachedResults = getQuestionResults();
 				if (cachedResults) {
 					answer_results = cachedResults;
+				}
+				const cachedSolution = getSolution();
+				if (cachedSolution) {
+					solution = cachedSolution;
 				}
 			}
 		}
@@ -212,6 +219,9 @@ SPDX-License-Identifier: MPL-2.0
 		question_index = data.question_index;
 		answer_results = undefined;
 		saveActiveQuestion(data.question_index, data.question);
+		if (data.question_index === 0) {
+			clearPlayerAnswerHistory();
+		}
 	});
 
 	socket.on('start_game', () => {
@@ -249,6 +259,7 @@ SPDX-License-Identifier: MPL-2.0
 
 	socket.on('solutions', (data) => {
 		solution = data;
+		saveSolution(data);
 	});
 
 	let bg_color = $derived(gameData ? gameData.background_color : undefined);
@@ -290,7 +301,14 @@ SPDX-License-Identifier: MPL-2.0
 				</div>
 			{:else}
 				{#key unique}
-					<KahootResults {username} question_results={answer_results} bind:scores />
+					<KahootResults
+						{username}
+						question_results={answer_results}
+						bind:scores
+						{solution}
+						{question}
+						{question_index}
+					/>
 				{/key}
 			{/if}
 		{/if}
