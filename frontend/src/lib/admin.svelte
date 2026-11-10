@@ -36,6 +36,8 @@ SPDX-License-Identifier: MPL-2.0
 
 	let { game_token, game_pin = '', bg_color, game_state = $bindable() }: Props = $props();
 
+	let preview_interval: any = null;
+
 	socket.on('get_question_results', () => {
 		console.log('get_question_results');
 	});
@@ -43,30 +45,74 @@ SPDX-License-Identifier: MPL-2.0
 		game_state.timer_res = '0';
 		game_state.question_results = null;
 		game_state.shown_question_now = data.question_index;
-		game_state.timer_res = game_state.quiz_data.questions[data.question_index].time;
 		game_state.selected_question = game_state.selected_question + 1;
 		game_state.answer_count = 0;
 
 		clearInterval(timer_interval);
-		timer(game_state.timer_res);
+		if (preview_interval) {
+			clearInterval(preview_interval);
+			preview_interval = null;
+		}
+
+		const currentQ = game_state.quiz_data.questions[data.question_index];
+		const isSlide = currentQ.type === QuizQuestionType.SLIDE;
+
+		if (!isSlide) {
+			game_state.preview_seconds = 5;
+			game_state.timer_res = currentQ.time;
+			preview_interval = setInterval(() => {
+				if ((game_state.preview_seconds ?? 0) <= 1) {
+					game_state.preview_seconds = 0;
+					clearInterval(preview_interval);
+					preview_interval = null;
+					timer(game_state.timer_res);
+				} else {
+					game_state.preview_seconds = (game_state.preview_seconds ?? 1) - 1;
+				}
+			}, 1000);
+		} else {
+			game_state.preview_seconds = 0;
+			game_state.timer_res = currentQ.time;
+			timer(game_state.timer_res);
+		}
 	});
 
 	socket.on('solutions', (_) => {
+		if (preview_interval) {
+			clearInterval(preview_interval);
+			preview_interval = null;
+		}
+		game_state.preview_seconds = 0;
 		game_state.timer_res = '0';
 		clearInterval(timer_interval);
 	});
 
 	socket.on('final_results', (data) => {
+		if (preview_interval) {
+			clearInterval(preview_interval);
+			preview_interval = null;
+		}
+		game_state.preview_seconds = 0;
 		final_results_clicked = true;
 		game_state.timer_res = '0';
 		game_state.final_results = data;
 	});
 
 	socket.on('everyone_answered', (_) => {
+		if (preview_interval) {
+			clearInterval(preview_interval);
+			preview_interval = null;
+		}
+		game_state.preview_seconds = 0;
 		game_state.timer_res = '0';
 	});
 
 	socket.on('question_results', (data) => {
+		if (preview_interval) {
+			clearInterval(preview_interval);
+			preview_interval = null;
+		}
+		game_state.preview_seconds = 0;
 		game_state.question_results = data;
 		game_state.timer_res = '0';
 	});
@@ -115,7 +161,12 @@ SPDX-License-Identifier: MPL-2.0
 {#if game_state.control_visible && game_state.selected_question >= 0}
 	<Controls {bg_color} {socket_game_controls} {game_token} bind:game_state />
 {/if}
-{#if game_state.timer_res !== '0' && game_state.selected_question >= 0}
+{#if (game_state.preview_seconds ?? 0) > 0 && game_state.selected_question >= 0}
+	<span
+		class="fixed top-0 left-0 bg-amber-400 h-2.5 md:h-3 transition-all duration-300 shadow-md z-40"
+		style="width: {((game_state.preview_seconds ?? 0) / 5) * 100}vw"
+	></span>
+{:else if game_state.timer_res !== '0' && game_state.selected_question >= 0}
 	<span
 		class="fixed top-0 left-0 {timer_bar_class} h-2.5 md:h-3 transition-all duration-300 shadow-md z-40"
 		style="width: {(100 /
@@ -149,6 +200,7 @@ SPDX-License-Identifier: MPL-2.0
 				answer_count={game_state.answer_count}
 				{default_colors}
 				{game_pin}
+				preview_seconds={game_state.preview_seconds ?? 0}
 			/>
 		{/if}
 	{/if}

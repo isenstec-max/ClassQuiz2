@@ -92,7 +92,7 @@ SPDX-License-Identifier: MPL-2.0
 	let isQuestionFinishedWaitingResults = $derived.by(() => {
 		if (!game_state.quiz_data?.questions?.length || game_state.selected_question < 0) return false;
 		if (game_state.quiz_data.questions[game_state.selected_question]?.type === QuizQuestionType.SLIDE) return false;
-		return game_state.timer_res === '0' && game_state.question_results === null;
+		return game_state.timer_res === '0' && game_state.question_results === null && (!game_state.preview_seconds || game_state.preview_seconds === 0);
 	});
 
 	let resultsCountdown = $state(5);

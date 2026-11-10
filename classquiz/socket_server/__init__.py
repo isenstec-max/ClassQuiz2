@@ -23,7 +23,7 @@ from classquiz.db.models import (
     AnswerData,
 )
 from pydantic import BaseModel, ValidationError
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from classquiz.socket_server.helpers import (
     check_answer,
@@ -261,7 +261,9 @@ async def set_question_number(sid: str, data: str):
     game_data.current_question = int(float(data))
     game_data.question_show = True
     await game_data.save(session["game_pin"])
-    await redis.set(f"game:{session['game_pin']}:current_time", datetime.now().isoformat(), ex=7200)
+    preview_delay = 5 if game_data.questions[int(float(data))].type != QuizQuestionType.SLIDE else 0
+    start_time = datetime.now() + timedelta(seconds=preview_delay)
+    await redis.set(f"game:{session['game_pin']}:current_time", start_time.isoformat(), ex=7200)
     temp_return = game_data.model_dump(include={"questions"})["questions"][int(float(data))]
     if game_data.questions[int(float(data))].type == QuizQuestionType.SLIDE:
         await sio.emit(
@@ -314,21 +316,26 @@ async def submit_answer(sid: str, data: dict):
     answer_right, answer = check_answer(game_data, data)
     latency = int(float(session.get("ping", 50)))
     time_q_started = datetime.fromisoformat(await redis.get(f"game:{session['game_pin']}:current_time"))
-    diff = (time_q_started - now).total_seconds() * 1000  # - timedelta(milliseconds=latency)
+    time_diff = (now - time_q_started).total_seconds() * 1000
+    if time_diff < 0:
+        time_diff = 0
+    time_taken = max(0.0, time_diff - latency)
     score = 0
     if answer_right:
         score = calculate_score(
-            abs(diff) - latency,
+            time_taken,
             int(float(game_data.questions[question_index].time)),
         )
         if score > 1000:
             score = 1000
+        elif score < 0:
+            score = 0
     await redis.hincrby(f"game_session:{session['game_pin']}:player_scores", session["username"], score)
     answer_data = AnswerData(
         username=session["username"],
         answer=answer,
         right=answer_right,
-        time_taken=abs(diff) - latency,
+        time_taken=time_taken,
         score=score,
     )
     answers = await redis.get(f"game_session:{session['game_pin']}:{data.question_index}")

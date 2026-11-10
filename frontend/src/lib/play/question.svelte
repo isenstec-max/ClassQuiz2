@@ -18,7 +18,7 @@ SPDX-License-Identifier: MPL-2.0
 	import MediaComponent from '$lib/editor/MediaComponent.svelte';
 	import AnswerShape from '$lib/components/AnswerShape.svelte';
 	import { DEFAULT_ANSWER_COLORS } from '$lib/answer_theme';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 
 	const { t } = getLocalization();
 
@@ -89,21 +89,17 @@ SPDX-License-Identifier: MPL-2.0
 	let selected_answer: string = $state();
 	let desktopClass = $derived(getDesktopAnswerClass(question?.answers));
 
-	onMount(() => {
-		if (typeof window !== 'undefined') {
-			const saved =
-				localStorage.getItem(`cq_sel_ans_${question_index}`) ||
-				sessionStorage.getItem(`cq_sel_ans_${question_index}`);
-			if (saved) {
-				selected_answer = saved;
-			}
-		}
-	});
+	let preview_seconds = $state(
+		question.type === QuizQuestionType.SLIDE ? 0 : 5
+	);
+	let timer_interval: any = null;
+	let preview_interval: any = null;
 
-	// Stop the timer if the question is answered
-	const timer = (time: string) => {
-		let seconds = Number(time);
-		let timer_interval = setInterval(() => {
+	const startQuestionTimer = () => {
+		if (timer_interval) clearInterval(timer_interval);
+		let seconds = Number(question.time);
+		timer_res = seconds.toString();
+		timer_interval = setInterval(() => {
 			if (timer_res === '0') {
 				clearInterval(timer_interval);
 				return;
@@ -114,14 +110,63 @@ SPDX-License-Identifier: MPL-2.0
 			timer_res = seconds.toString();
 		}, 1000);
 	};
+
+	const startReadingPhase = () => {
+		if (preview_seconds <= 0) {
+			startQuestionTimer();
+			return;
+		}
+		if (preview_interval) clearInterval(preview_interval);
+		preview_interval = setInterval(() => {
+			if (preview_seconds <= 1) {
+				preview_seconds = 0;
+				clearInterval(preview_interval);
+				preview_interval = null;
+				startQuestionTimer();
+			} else {
+				preview_seconds--;
+			}
+		}, 1000);
+	};
+
+	onMount(() => {
+		if (typeof window !== 'undefined') {
+			const saved =
+				localStorage.getItem(`cq_sel_ans_${question_index}`) ||
+				sessionStorage.getItem(`cq_sel_ans_${question_index}`);
+			if (saved) {
+				selected_answer = saved;
+				preview_seconds = 0;
+			}
+		}
+		if (preview_seconds > 0) {
+			startReadingPhase();
+		} else {
+			startQuestionTimer();
+		}
+	});
+
+	onDestroy(() => {
+		if (preview_interval) clearInterval(preview_interval);
+		if (timer_interval) clearInterval(timer_interval);
+	});
+
 	socket.on('everyone_answered', (_) => {
+		if (preview_interval) {
+			clearInterval(preview_interval);
+			preview_interval = null;
+		}
+		preview_seconds = 0;
 		timer_res = '0';
 	});
 
-	timer(question.time);
-
 	$effect(() => {
 		if (solution !== undefined) {
+			if (preview_interval) {
+				clearInterval(preview_interval);
+				preview_interval = null;
+			}
+			preview_seconds = 0;
 			timer_res = '0';
 		}
 	});
@@ -227,7 +272,12 @@ SPDX-License-Identifier: MPL-2.0
 
 <div class="h-screen w-screen flex flex-col justify-between overflow-hidden relative select-none">
 	<!-- Horná lišta odpočtu času s plynulou zmenou farby -->
-	{#if timer_res !== '0'}
+	{#if preview_seconds > 0}
+		<span
+			class="fixed top-0 left-0 h-2 sm:h-2.5 transition-all duration-300 shadow-md z-50 rounded-r-full bg-amber-400 shadow-amber-400/40"
+			style="width: {((preview_seconds / 5) * 100)}vw;"
+		></span>
+	{:else if timer_res !== '0'}
 		<span
 			class="fixed top-0 left-0 h-2 sm:h-2.5 transition-all duration-300 shadow-md z-50 rounded-r-full"
 			style="width: {((Number(timer_res) / Number(question.time)) * 100)}vw; background-color: {timer_color};"
@@ -352,7 +402,37 @@ SPDX-License-Identifier: MPL-2.0
 			</div>
 		</div>
 	{/if}
-	{#if timer_res !== '0'}
+	{#if preview_seconds > 0}
+		<div class="w-full flex-1 min-h-0 flex flex-col items-center justify-center p-4 sm:p-6 z-20">
+			<div class="w-full max-w-md bg-slate-900/95 dark:bg-black/95 backdrop-blur-xl border-2 border-amber-400/50 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col items-center text-center gap-4 animate-fade">
+				<div class="relative w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center">
+					<div class="absolute inset-0 rounded-full border-4 border-amber-400/30 animate-ping"></div>
+					<div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-tr from-amber-500 via-amber-400 to-yellow-300 text-slate-950 font-black text-4xl sm:text-5xl flex items-center justify-center shadow-xl border-2 border-white/50">
+						{preview_seconds}
+					</div>
+				</div>
+				<div class="flex flex-col gap-1.5">
+					<span class="inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-black tracking-widest uppercase border border-amber-400/30 mx-auto">
+						<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+						{$t('play.reading_phase', { default: 'Čítanie otázky' })}
+					</span>
+					<h2 class="text-xl sm:text-2xl font-black text-white tracking-tight">
+						{$t('play.read_carefully', { default: 'Prečítajte si otázku' })}
+					</h2>
+					<p class="text-xs sm:text-sm text-amber-200/90 font-medium">
+						{$t('play.answers_in_seconds', { seconds: preview_seconds, default: `Možnosti na odpoveď sa zobrazia o ${preview_seconds} s...` })}
+					</p>
+				</div>
+				<div class="flex items-center gap-2 pt-2">
+					{#each [5, 4, 3, 2, 1] as sec}
+						<div
+							class="h-2 rounded-full transition-all duration-300 {preview_seconds >= sec ? 'w-6 sm:w-8 bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.7)]' : 'w-2 bg-slate-700/80'}"
+						></div>
+					{/each}
+				</div>
+			</div>
+		</div>
+	{:else if timer_res !== '0'}
 		{#if question.type === QuizQuestionType.ABCD || question.type === QuizQuestionType.VOTING}
 			<div class="w-full relative flex-1 min-h-0 p-3 sm:p-5">
 				<div

@@ -23,6 +23,7 @@ SPDX-License-Identifier: MPL-2.0
 		answer_count: number;
 		default_colors: string[];
 		game_pin?: string;
+		preview_seconds?: number;
 	}
 
 	let {
@@ -31,7 +32,8 @@ SPDX-License-Identifier: MPL-2.0
 		timer_res = $bindable(),
 		answer_count,
 		default_colors,
-		game_pin = ''
+		game_pin = '',
+		preview_seconds = 0
 	}: Props = $props();
 
 	const { t } = getLocalization();
@@ -111,23 +113,36 @@ SPDX-License-Identifier: MPL-2.0
 			</div>
 		</div>
 
-		<!-- V strede: Kruhový časovač s dynamickou farbou (zelená -> oranžová -> červená) -->
+		<!-- V strede: Kruhový časovač s dynamickou farbou alebo odpočet čítania -->
 		<div class="flex justify-center">
-			<CircularTimer text={timer_res} progress={circular_progress} color={timer_color} />
+			{#if preview_seconds > 0}
+				<CircularTimer text={preview_seconds.toString()} progress={1 - preview_seconds / 5} color="#f59e0b" />
+			{:else}
+				<CircularTimer text={timer_res} progress={circular_progress} color={timer_color} />
+			{/if}
 		</div>
 
-		<!-- Vpravo: Badge počtu odoslaných odpovedí v rovnakom štýle ako otázka 1/20 -->
+		<!-- Vpravo: Badge počtu odoslaných odpovedí alebo fáza prípravy -->
 		<div class="flex justify-end">
 			<div class="bg-slate-900/85 backdrop-blur-md rounded-2xl py-2 px-3.5 sm:px-4 border border-white/15 shadow-xl flex items-center gap-2.5">
-				<span class="text-xs uppercase font-black tracking-widest text-emerald-400 bg-emerald-400/20 px-2.5 py-0.5 rounded-lg border border-emerald-400/30 shrink-0">
-					Odpovede
-				</span>
-				<span class="font-decorative text-xl sm:text-2xl md:text-3xl font-black text-white flex items-center gap-1.5 shrink-0">
-					<span class="text-emerald-300 drop-shadow">{answer_count}</span>
-					<span class="text-slate-300 text-xs sm:text-sm font-semibold lowercase tracking-normal">
-						{answer_count === 1 ? 'odpoveď' : answer_count >= 2 && answer_count <= 4 ? 'odpovede' : 'odpovedí'}
+				{#if preview_seconds > 0}
+					<span class="text-xs uppercase font-black tracking-widest text-amber-400 bg-amber-400/20 px-2.5 py-0.5 rounded-lg border border-amber-400/30 shrink-0">
+						Príprava
 					</span>
-				</span>
+					<span class="font-decorative text-sm sm:text-base md:text-lg font-bold text-amber-300 flex items-center gap-1 shrink-0">
+						Odpovede o {preview_seconds}s
+					</span>
+				{:else}
+					<span class="text-xs uppercase font-black tracking-widest text-emerald-400 bg-emerald-400/20 px-2.5 py-0.5 rounded-lg border border-emerald-400/30 shrink-0">
+						Odpovede
+					</span>
+					<span class="font-decorative text-xl sm:text-2xl md:text-3xl font-black text-white flex items-center gap-1.5 shrink-0">
+						<span class="text-emerald-300 drop-shadow">{answer_count}</span>
+						<span class="text-slate-300 text-xs sm:text-sm font-semibold lowercase tracking-normal">
+							{answer_count === 1 ? 'odpoveď' : answer_count >= 2 && answer_count <= 4 ? 'odpovede' : 'odpovedí'}
+						</span>
+					</span>
+				{/if}
 			</div>
 		</div>
 	</div>
@@ -141,7 +156,33 @@ SPDX-License-Identifier: MPL-2.0
 		/>
 	</div>
 {/if}
-{#if quiz_data.questions[selected_question].type === QuizQuestionType.ABCD || quiz_data.questions[selected_question].type === QuizQuestionType.VOTING || quiz_data.questions[selected_question].type === QuizQuestionType.CHECK}
+{#if preview_seconds > 0}
+	<div class="w-full max-w-4xl mx-auto px-4 py-4 md:py-6 flex flex-col items-center justify-center animate-fade">
+		<div class="bg-slate-900/95 dark:bg-black/95 backdrop-blur-xl border-2 border-amber-400/50 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col items-center text-center gap-4 max-w-lg w-full">
+			<div class="relative w-20 h-20 flex items-center justify-center">
+				<div class="absolute inset-0 rounded-full border-4 border-amber-400/30 animate-ping"></div>
+				<div class="w-20 h-20 rounded-full bg-gradient-to-tr from-amber-500 via-amber-400 to-yellow-300 text-slate-950 font-black text-4xl flex items-center justify-center shadow-xl border-2 border-white/50">
+					{preview_seconds}
+				</div>
+			</div>
+			<div class="flex flex-col gap-1.5">
+				<span class="inline-flex items-center justify-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-black tracking-widest uppercase border border-amber-400/30 mx-auto">
+					<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+					Čítanie otázky
+				</span>
+				<h2 class="text-xl sm:text-2xl font-black text-white tracking-tight">Prečítajte si otázku</h2>
+				<p class="text-sm text-amber-200/90 font-medium">Možnosti odpovedí sa zobrazia o {preview_seconds} s...</p>
+			</div>
+			<div class="flex items-center gap-2 pt-1">
+				{#each [5, 4, 3, 2, 1] as sec}
+					<div
+						class="h-2 rounded-full transition-all duration-300 {preview_seconds >= sec ? 'w-6 bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.7)]' : 'w-2 bg-slate-700/80'}"
+					></div>
+				{/each}
+			</div>
+		</div>
+	</div>
+{:else if quiz_data.questions[selected_question].type === QuizQuestionType.ABCD || quiz_data.questions[selected_question].type === QuizQuestionType.VOTING || quiz_data.questions[selected_question].type === QuizQuestionType.CHECK}
 	<div class="w-full max-w-6xl 2xl:max-w-7xl mx-auto px-4 sm:px-6 pb-6">
 		<div class="grid grid-cols-2 gap-4 w-full">
 			{#each quiz_data.questions[selected_question].answers as answer, i}

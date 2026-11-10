@@ -22,6 +22,7 @@ export interface IGameState {
 	game_started: boolean;
 	quiz_data: QuizData;
 	control_visible: boolean;
+	preview_seconds?: number;
 
 	constructor(game_id: string);
 }

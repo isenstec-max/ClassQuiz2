@@ -24,6 +24,8 @@ SPDX-License-Identifier: MPL-2.0
 	const { t } = getLocalization();
 	let timer_interval: NodeJS.Timeout;
 	let timer_res = $state(undefined);
+	let preview_interval: any = null;
+	let preview_seconds = $state(0);
 	let selected_question = $state(-1);
 	let game_started = $state(false);
 	let question_results = $state();
@@ -145,11 +147,34 @@ SPDX-License-Identifier: MPL-2.0
 	socket.on('set_question_number', (data) => {
 		timer_res = '0';
 		clearInterval(timer_interval);
+		if (preview_interval) {
+			clearInterval(preview_interval);
+			preview_interval = null;
+		}
 		question_results = null;
 		shown_question_now = data.question_index;
-		timer_res = game_data.questions[data.question_index].time;
 		selected_question = selected_question + 1;
-		timer(timer_res);
+
+		const currentQ = game_data.questions[data.question_index];
+		const isSlide = currentQ.type === QuizQuestionType.SLIDE;
+		timer_res = currentQ.time;
+
+		if (!isSlide) {
+			preview_seconds = 5;
+			preview_interval = setInterval(() => {
+				if (preview_seconds <= 1) {
+					preview_seconds = 0;
+					clearInterval(preview_interval);
+					preview_interval = null;
+					timer(timer_res);
+				} else {
+					preview_seconds--;
+				}
+			}, 1000);
+		} else {
+			preview_seconds = 0;
+			timer(timer_res);
+		}
 	});
 
 	socket.on('final_results', (data) => {

@@ -71,6 +71,11 @@ SPDX-License-Identifier: MPL-2.0
 			}
 		}
 
+		// 4. Ak je prítomné username pripojeného hráča a chýba v skóre, pridaj s 0
+		if (username && scores[username] === undefined) {
+			scores[username] = 0;
+		}
+
 		return scores;
 	});
 
@@ -95,6 +100,9 @@ SPDX-License-Identifier: MPL-2.0
 					}
 				}
 			}
+		}
+		if (username && !map[username]) {
+			map[username] = { correct: 0, incorrect: 0, total: 0, pct: 0 };
 		}
 		for (const u of Object.keys(map)) {
 			const item = map[u];
@@ -191,45 +199,46 @@ SPDX-License-Identifier: MPL-2.0
 			</div>
 
 			<!-- Pre pripojeného hráča na jeho vlastnom zariadení (username) -->
-			{#if username && resolvedScores[username] !== undefined}
+			{#if username}
 				{@const parsed = parsePlayer(username)}
-				{@const myRank = player_names.indexOf(username) + 1}
-				{@const acc = playerAccuracy[username]}
-				<div class="mt-2.5 sm:mt-3 flex items-center gap-2 sm:gap-3 px-3 sm:px-5 py-2 sm:py-2.5 rounded-2xl bg-slate-900/95 border-2 border-emerald-500 shadow-2xl backdrop-blur-md text-white max-w-full">
-					<div class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center shrink-0">
-						<AnimalAvatar avatarId={parsed.avatarId} size="100%" class="shadow-md" />
-					</div>
-					<div class="text-left min-w-0">
-						<div class="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider text-emerald-400">
-							{$t('results_page.your_result', { default: 'Tvoj výsledok' })}
+				{@const myRank = player_names.indexOf(username) !== -1 ? player_names.indexOf(username) + 1 : player_names.length + 1}
+				{@const acc = playerAccuracy[username] || { correct: 0, incorrect: 0, total: 0, pct: 0 }}
+				{@const myScore = resolvedScores[username] ?? 0}
+				<div class="mt-2.5 sm:mt-3 flex items-center justify-between gap-2 sm:gap-3 px-3 sm:px-5 py-2 sm:py-2.5 rounded-2xl bg-slate-900/95 border-2 border-emerald-500 shadow-2xl backdrop-blur-md text-white max-w-full">
+					<div class="flex items-center gap-2 sm:gap-3 min-w-0">
+						<div class="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center shrink-0">
+							<AnimalAvatar avatarId={parsed.avatarId} size="100%" class="shadow-md" />
 						</div>
-						<div class="font-extrabold text-xs sm:text-base text-white flex flex-wrap items-center gap-1.5 sm:gap-2.5">
-							<span class="truncate max-w-[120px] sm:max-w-none">{parsed.name}</span>
-							<span class="text-emerald-300 font-mono text-[11px] sm:text-sm">({formatScoreWithUnit(resolvedScores[username])})</span>
-							<span class="px-1.5 sm:px-2 py-0.5 rounded-md bg-yellow-400/20 text-yellow-300 text-[10px] sm:text-xs font-black border border-yellow-400/30">
-								#{myRank} z {player_names.length}
-							</span>
-							{#if (playerLightning[username] ?? 0) > 0}
-								<span class="inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full bg-slate-950/80 border border-amber-400/50 text-amber-300 font-mono font-black text-[10px] sm:text-xs shadow">
-									<span>{playerLightning[username]}x</span>
-									<svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)] shrink-0" viewBox="0 0 24 24">
-										<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
-									</svg>
+						<div class="text-left min-w-0">
+							<div class="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider text-emerald-400">
+								{$t('results_page.your_result', { default: 'Tvoj výsledok' })}
+							</div>
+							<div class="font-extrabold text-xs sm:text-base text-white flex flex-wrap items-center gap-1.5 sm:gap-2.5">
+								<span class="truncate max-w-[120px] sm:max-w-none">{parsed.name}</span>
+								<span class="text-emerald-300 font-mono text-[11px] sm:text-sm">({formatScoreWithUnit(myScore)})</span>
+								<span class="px-1.5 sm:px-2 py-0.5 rounded-md bg-yellow-400/20 text-yellow-300 text-[10px] sm:text-xs font-black border border-yellow-400/30">
+									#{myRank} z {player_names.length}
 								</span>
-							{/if}
+								{#if (playerLightning[username] ?? 0) > 0}
+									<span class="inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full bg-slate-950/80 border border-amber-400/50 text-amber-300 font-mono font-black text-[10px] sm:text-xs shadow">
+										<span>{playerLightning[username]}x</span>
+										<svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-300 fill-amber-300 drop-shadow-[0_0_3px_rgba(251,191,36,0.9)] shrink-0" viewBox="0 0 24 24">
+											<path d="M13 2L3 14h7v8l10-12h-7l1-8z" />
+										</svg>
+									</span>
+								{/if}
+							</div>
 						</div>
 					</div>
-					{#if acc}
-						<div class="ml-auto shrink-0">
-							<AccuracyDonut
-								correct={acc.correct}
-								incorrect={acc.incorrect}
-								total={acc.total}
-								size={32}
-								strokeWidth={3.8}
-							/>
-						</div>
-					{/if}
+					<div class="ml-auto shrink-0 flex flex-col items-center">
+						<AccuracyDonut
+							correct={acc.correct}
+							incorrect={acc.incorrect}
+							total={acc.total}
+							size={44}
+							strokeWidth={4.5}
+						/>
+					</div>
 				</div>
 			{/if}
 		</div>
