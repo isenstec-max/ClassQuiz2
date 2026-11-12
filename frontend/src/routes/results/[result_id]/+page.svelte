@@ -118,7 +118,7 @@ SPDX-License-Identifier: MPL-2.0
 					type="button"
 					onclick={() => (selected_tab = SelectedTab.BonusPoints)}
 					class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-400 text-white font-extrabold text-xs shadow-md shadow-amber-500/20 hover:scale-105 active:scale-95 transition-all cursor-pointer border border-amber-300/40"
-					title="Zobraziť tabuľku zápočtových bodov (2, 1, 0,5, 0,25) a exportovať do XLS"
+					title="Zobraziť tabuľku zápočtových bodov (2, 1,5, 1, 0,5) a exportovať do XLS"
 				>
 					<span>⭐</span>
 					<span>Body (B) / XLS</span>
@@ -176,7 +176,7 @@ SPDX-License-Identifier: MPL-2.0
 				</span>
 			</button>
 
-			<!-- Tab 4: Zápočtové body (2, 1, 0,5, 0,25) -->
+			<!-- Tab 4: Zápočtové body (2, 1,5, 1, 0,5) -->
 			<button
 				onclick={() => (selected_tab = SelectedTab.BonusPoints)}
 				class="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2 sm:px-3 rounded-xl font-black text-xs sm:text-sm transition-all cursor-pointer {selected_tab === SelectedTab.BonusPoints ? 'bg-white dark:bg-slate-800 text-amber-500 shadow-md scale-[1.02]' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}"

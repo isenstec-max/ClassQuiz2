@@ -167,21 +167,21 @@ SPDX-License-Identifier: MPL-2.0
 						<span class="text-base">🥈</span>
 						<div>
 							<div class="font-bold text-slate-800 dark:text-slate-200">2. miesto</div>
-							<div class="font-black text-slate-600 dark:text-slate-300">+1 bod</div>
+							<div class="font-black text-slate-600 dark:text-slate-300">+1,5 boda</div>
 						</div>
 					</div>
 					<div class="flex items-center gap-2 p-2 rounded-xl bg-orange-100/70 dark:bg-orange-950/40 border border-orange-300/60 dark:border-orange-800/40">
 						<span class="text-base">🥉</span>
 						<div>
 							<div class="font-bold text-slate-800 dark:text-slate-200">3. miesto</div>
-							<div class="font-black text-orange-600 dark:text-orange-400">+0,5 bodu</div>
+							<div class="font-black text-orange-600 dark:text-orange-400">+1 bod</div>
 						</div>
 					</div>
 					<div class="flex items-center gap-2 p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300/60 dark:border-emerald-800/40">
 						<span class="text-base">🎯</span>
 						<div>
 							<div class="font-bold text-slate-800 dark:text-slate-200">Úspešnosť ≥ 80 %</div>
-							<div class="font-black text-emerald-600 dark:text-emerald-400">+0,25 bodu</div>
+							<div class="font-black text-emerald-600 dark:text-emerald-400">+0,5 bodu</div>
 						</div>
 					</div>
 				</div>
@@ -329,7 +329,7 @@ SPDX-License-Identifier: MPL-2.0
 												+{String(p.points).replace('.', ',')}
 											</span>
 											<span class="text-xs font-bold opacity-80">
-												{p.points === 1 ? 'bod' : p.points === 2 ? 'body' : 'bodu'}
+												{p.points === 1 ? 'bod' : p.points === 2 ? 'body' : p.points === 1.5 ? 'boda' : 'bodu'}
 											</span>
 										</div>
 										<div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 mt-0.5">

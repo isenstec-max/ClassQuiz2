@@ -131,16 +131,16 @@ export function evaluateBonusPoints(
 			pointsLabel = '2 body';
 			reason = '1. miesto';
 		} else if (currentRank === 2) {
-			points = 1;
-			pointsLabel = '1 bod';
+			points = 1.5;
+			pointsLabel = '1,5 boda';
 			reason = '2. miesto';
 		} else if (currentRank === 3) {
-			points = 0.5;
-			pointsLabel = '0,5 bodu';
+			points = 1;
+			pointsLabel = '1 bod';
 			reason = '3. miesto';
 		} else if (pct >= 80) {
-			points = 0.25;
-			pointsLabel = '0,25 bodu';
+			points = 0.5;
+			pointsLabel = '0,5 bodu';
 			reason = `Úspešnosť ${pct} % (≥ 80 %)`;
 		} else {
 			points = 0;
@@ -166,7 +166,7 @@ export function evaluateBonusPoints(
 
 	const total = participants.length;
 	const awarded = participants.filter((p) => p.points > 0).length;
-	const sumPoints = participants.reduce((acc, p) => acc + p.points, 0);
+	const sumPoints = Math.round(participants.reduce((acc, p) => acc + p.points, 0) * 100) / 100;
 
 	return {
 		participants,

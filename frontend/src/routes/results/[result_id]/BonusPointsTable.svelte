@@ -75,7 +75,7 @@ SPDX-License-Identifier: MPL-2.0
 				<span class="px-2.5 py-0.5 rounded-md bg-amber-400/20 text-amber-700 dark:text-amber-300 text-xs font-black border border-amber-400/30">
 					⭐ ZÁPOČTOVÉ BODY
 				</span>
-				<span class="text-xs text-slate-500 dark:text-slate-400 font-bold">2 / 1 / 0,5 / 0,25</span>
+				<span class="text-xs text-slate-500 dark:text-slate-400 font-bold">2 / 1,5 / 1 / 0,5</span>
 			</div>
 			<h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
 				Hodnotenie a export zápočtových bodov
@@ -181,9 +181,9 @@ SPDX-License-Identifier: MPL-2.0
 		</div>
 		<div class="flex flex-wrap items-center gap-2.5 font-bold">
 			<span class="px-2.5 py-1 rounded-lg bg-yellow-400/20 text-yellow-800 dark:text-yellow-200 border border-yellow-400/40">🥇 1. miesto = 2 body</span>
-			<span class="px-2.5 py-1 rounded-lg bg-slate-300/30 text-slate-800 dark:text-slate-200 border border-slate-300/50">🥈 2. miesto = 1 bod</span>
-			<span class="px-2.5 py-1 rounded-lg bg-amber-700/20 text-amber-800 dark:text-amber-200 border border-amber-700/40">🥉 3. miesto = 0,5 bodu</span>
-			<span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-800 dark:text-emerald-200 border border-emerald-500/40">✅ Úspešnosť ≥ 80 % = 0,25 bodu</span>
+			<span class="px-2.5 py-1 rounded-lg bg-slate-300/30 text-slate-800 dark:text-slate-200 border border-slate-300/50">🥈 2. miesto = 1,5 boda</span>
+			<span class="px-2.5 py-1 rounded-lg bg-amber-700/20 text-amber-800 dark:text-amber-200 border border-amber-700/40">🥉 3. miesto = 1 bod</span>
+			<span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-800 dark:text-emerald-200 border border-emerald-500/40">✅ Úspešnosť ≥ 80 % = 0,5 bodu</span>
 		</div>
 	</div>
 
@@ -293,17 +293,17 @@ SPDX-License-Identifier: MPL-2.0
 										<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-black bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-900 shadow-md">
 											⭐ +2 body
 										</span>
-									{:else if p.points === 1}
+									{:else if p.points === 1.5}
 										<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-black bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white border border-slate-300 dark:border-slate-600 shadow-2xs">
+											⭐ +1,5 boda
+										</span>
+									{:else if p.points === 1}
+										<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-black bg-amber-600/20 text-amber-800 dark:text-amber-200 border border-amber-600/40">
 											⭐ +1 bod
 										</span>
 									{:else if p.points === 0.5}
-										<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-black bg-amber-600/20 text-amber-800 dark:text-amber-200 border border-amber-600/40">
-											⭐ +0,5 bodu
-										</span>
-									{:else if p.points === 0.25}
 										<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-800 dark:text-emerald-200 border border-emerald-500/40">
-											✨ +0,25 bodu
+											✨ +0,5 bodu
 										</span>
 									{:else}
 										<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold text-slate-400 bg-slate-100 dark:bg-slate-800">
