@@ -177,7 +177,10 @@ async def join_game(sid: str, data: dict):
         await sio.emit("username_already_exists", room=sid)
         return
 
-    existing_sio_session = await get_session(sid, sio)
+    try:
+        existing_sio_session = await sio.get_session(sid)
+    except Exception:
+        existing_sio_session = {}
     client_ip = existing_sio_session.get("client_ip", "unknown") if isinstance(existing_sio_session, dict) else "unknown"
 
     session = {
