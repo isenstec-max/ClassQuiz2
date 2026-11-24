@@ -8,6 +8,7 @@ SPDX-License-Identifier: MPL-2.0
 	import AnimalAvatar from '$lib/components/AnimalAvatar.svelte';
 	import AccuracyDonut from '$lib/components/AccuracyDonut.svelte';
 	import { parsePlayer } from '$lib/avatars';
+	import PlayersMapModal from '$lib/components/PlayersMapModal.svelte';
 
 	const { t } = getLocalization();
 
@@ -24,6 +25,7 @@ SPDX-License-Identifier: MPL-2.0
 	let { scores = {}, custom_field = {}, answers = [] }: Props = $props();
 
 	let searchQuery = $state('');
+	let showMapModal = $state(false);
 
 	let playerMetaMap = $derived.by(() => {
 		const raw = custom_field?.['__player_meta__'];
@@ -107,6 +109,8 @@ SPDX-License-Identifier: MPL-2.0
 					customField: custom_field[uname] || '',
 					ip: meta.ip || '',
 					location: meta.location || '',
+					lat,
+					lon,
 					source: meta.source || '',
 					mapUrl
 				};
@@ -148,17 +152,30 @@ SPDX-License-Identifier: MPL-2.0
 			</div>
 		</div>
 
-		<!-- Hľadanie -->
-		<div class="relative w-full sm:w-64">
-			<input
-				type="text"
-				bind:value={searchQuery}
-				placeholder={$t('results_page.search_players', { default: 'Hľadať hráča...' })}
-				class="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 transition-all"
-			/>
-			<svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-				<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-			</svg>
+		<!-- Hľadanie a mapa -->
+		<div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
+			{#if hasPlayerMeta}
+				<button
+					type="button"
+					onclick={() => (showMapModal = true)}
+					class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs sm:text-sm shadow-sm hover:scale-[1.02] active:scale-95 transition-all cursor-pointer shrink-0"
+					title="Zobraziť polohy všetkých hráčov na mape"
+				>
+					<span>🗺️</span>
+					<span>Zobraziť na mape</span>
+				</button>
+			{/if}
+			<div class="relative w-full sm:w-64">
+				<input
+					type="text"
+					bind:value={searchQuery}
+					placeholder={$t('results_page.search_players', { default: 'Hľadať hráča...' })}
+					class="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 transition-all"
+				/>
+				<svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+				</svg>
+			</div>
 		</div>
 	</div>
 
@@ -326,3 +343,5 @@ SPDX-License-Identifier: MPL-2.0
 	{/if}
 
 </div>
+
+<PlayersMapModal bind:open={showMapModal} players={playerStats} />

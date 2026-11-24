@@ -74,8 +74,6 @@ SPDX-License-Identifier: MPL-2.0
 				<BrandLogo size="md" showBadge={true} />
 			</a>
 			<a class="btn-nav border-2 rounded-sm" href="/play">{$t('words.play')}</a>
-			<a class="btn-nav" href="/explore">{$t('words.explore')}</a>
-			<a class="btn-nav" href="/search?q=">{$t('words.search')}</a>
 			{#if $signedIn}
 				<a class="btn-nav" href="/dashboard">{$t('words.dashboard')}</a>
 			{:else}
@@ -398,8 +396,6 @@ SPDX-License-Identifier: MPL-2.0
 		<!-- Navbar content -->
 		{#if !menuIsClosed}
 			<div class="flex flex-col" transition:slide|global={{ duration: 400 }}>
-				<a class="btn-nav" href="/explore">{$t('words.explore')}</a>
-				<a class="btn-nav" href="/search?q=">{$t('words.search')}</a>
 				{#if $signedIn}
 					<a class="btn-nav" href="/dashboard">{$t('words.dashboard')}</a>
 				{:else}

@@ -7,6 +7,7 @@ SPDX-License-Identifier: MPL-2.0
 	import AnimalAvatar from '$lib/components/AnimalAvatar.svelte';
 	import { parsePlayer } from '$lib/avatars';
 	import type { Player } from '$lib/admin';
+	import PlayersMapModal from '$lib/components/PlayersMapModal.svelte';
 
 	interface Props {
 		open: boolean;
@@ -16,6 +17,7 @@ SPDX-License-Identifier: MPL-2.0
 	let { open = $bindable(false), players = [] }: Props = $props();
 
 	let searchQuery = $state('');
+	let showMapModal = $state(false);
 
 	const close = () => {
 		open = false;
@@ -129,9 +131,9 @@ SPDX-License-Identifier: MPL-2.0
 				</button>
 			</div>
 
-			<!-- Search -->
-			<div class="px-5 py-3 border-b border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/40 flex items-center justify-between gap-3">
-				<div class="relative flex-1 max-w-sm">
+			<!-- Search & Map -->
+			<div class="px-5 py-3 border-b border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/40 flex flex-wrap items-center justify-between gap-3">
+				<div class="relative flex-1 min-w-[200px] max-w-sm">
 					<input
 						type="text"
 						bind:value={searchQuery}
@@ -142,9 +144,20 @@ SPDX-License-Identifier: MPL-2.0
 						<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
 					</svg>
 				</div>
-				<span class="text-xs font-bold text-slate-500 dark:text-slate-400">
-					Zobrazených: {filteredPlayers.length}
-				</span>
+				<div class="flex items-center gap-3">
+					<button
+						type="button"
+						onclick={() => (showMapModal = true)}
+						class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs sm:text-sm shadow-sm hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
+						title="Zobraziť polohy všetkých hráčov na mape"
+					>
+						<span>🗺️</span>
+						<span>Zobraziť na mape</span>
+					</button>
+					<span class="text-xs font-bold text-slate-500 dark:text-slate-400">
+						Zobrazených: {filteredPlayers.length}
+					</span>
+				</div>
 			</div>
 
 			<!-- Table -->
@@ -232,3 +245,5 @@ SPDX-License-Identifier: MPL-2.0
 		</div>
 	</div>
 {/if}
+
+<PlayersMapModal bind:open={showMapModal} players={normalizedPlayers} />
