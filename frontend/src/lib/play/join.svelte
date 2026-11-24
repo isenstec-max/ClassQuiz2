@@ -50,6 +50,16 @@ SPDX-License-Identifier: MPL-2.0
 	let captcha_enabled = $state();
 	let showScoreInfo = $state(false);
 
+	// Built-in SVG CAPTCHA
+	let captchaId = $state('');
+	let captchaSvg = $state('');
+	let captchaAnswer = $state('');
+	let captchaError = $state('');
+	let captchaLoading = $state(false);
+
+	// Optional browser geolocation
+	let geoCoords = $state<{ lat: number; lon: number; accuracy?: number } | null>(null);
+
 	let hcaptchaSitekey = hcaptcha_site_key;
 
 	let hcaptcha = {
@@ -176,6 +186,46 @@ SPDX-License-Identifier: MPL-2.0
 		}
 	};
 
+	const loadBuiltinCaptcha = async () => {
+		if (!browser) return;
+		captchaLoading = true;
+		captchaError = '';
+		try {
+			const res = await fetch('/api/v1/quiz/play/captcha');
+			if (res.ok) {
+				const data = await res.json();
+				captchaId = data.captcha_id;
+				captchaSvg = data.svg;
+				captchaAnswer = '';
+			}
+		} catch (err) {
+			console.warn('Failed to load captcha:', err);
+		} finally {
+			captchaLoading = false;
+		}
+	};
+
+	const requestBrowserGeo = () => {
+		if (!browser || !('geolocation' in navigator) || geoCoords !== null) return;
+		try {
+			navigator.geolocation.getCurrentPosition(
+				(pos) => {
+					geoCoords = {
+						lat: pos.coords.latitude,
+						lon: pos.coords.longitude,
+						accuracy: pos.coords.accuracy
+					};
+				},
+				() => {
+					// Fallback silently to IP geolocation on backend
+				},
+				{ enableHighAccuracy: false, timeout: 4000, maximumAge: 60000 }
+			);
+		} catch {
+			// Ignore
+		}
+	};
+
 	let is_loading_pin = $state(false);
 	const set_game_pin = async () => {
 		if (is_loading_pin || game_pin.length !== 6) return;
@@ -196,6 +246,8 @@ SPDX-License-Identifier: MPL-2.0
 			if (res.status === 200) {
 				captcha_enabled = json.enabled;
 				custom_field = json.custom_field;
+				loadBuiltinCaptcha();
+				requestBrowserGeo();
 			} else if (res.status === 404) {
 				if (browser) {
 					alert('Hra sa nenašla');
@@ -218,49 +270,22 @@ SPDX-License-Identifier: MPL-2.0
 	});
 
 	const executeJoin = async (targetUsername: string) => {
-		let captcha_resp: string;
-		if (captcha_enabled) {
-			if (hcaptchaSitekey) {
-				try {
-					const { response } = await hcaptcha.execute(hcaptchaWidgetID, {
-						async: true
-					});
-					captcha_resp = response;
-					socket.emit('join_game', {
-						username: targetUsername,
-						game_pin: game_pin,
-						captcha: captcha_resp,
-						custom_field: custom_field ? custom_field_value : undefined
-					});
-				} catch (err) {
-					if (sentry_dsn !== null) {
-						Sentry.captureException(err);
-					}
-					alert('Captcha zlyhala!');
-					window.location.reload();
-				}
-			} else if (recaptcha_key) {
-				// eslint-disable-next-line no-undef
-				grecaptcha.ready(() => {
-					// eslint-disable-next-line no-undef
-					grecaptcha.execute(recaptcha_key, { action: 'submit' }).then(function (token) {
-						socket.emit('join_game', {
-							username: targetUsername,
-							game_pin: game_pin,
-							captcha: token,
-							custom_field: custom_field ? custom_field_value : undefined
-						});
-					});
-				});
+		captchaError = '';
+		if (!captchaId || captchaAnswer.trim().length === 0) {
+			captchaError = 'Zadajte prosím výsledok z obrázka (CAPTCHA).';
+			if (!captchaId) {
+				loadBuiltinCaptcha();
 			}
-		} else {
-			socket.emit('join_game', {
-				username: targetUsername,
-				game_pin: game_pin,
-				captcha: undefined,
-				custom_field: custom_field ? custom_field_value : undefined
-			});
+			return;
 		}
+		socket.emit('join_game', {
+			username: targetUsername,
+			game_pin: game_pin,
+			captcha: captchaAnswer.trim(),
+			captcha_id: captchaId,
+			custom_field: custom_field ? custom_field_value : undefined,
+			geo: geoCoords || undefined
+		});
 	};
 
 	const setUsername = async (e: Event) => {
@@ -307,6 +332,12 @@ SPDX-License-Identifier: MPL-2.0
 		if (browser) {
 			alert('Hra sa nenašla');
 		}
+	});
+
+	socket.on('captcha_failed', (errData: any) => {
+		is_rejoining = false;
+		captchaError = errData?.detail || 'Nesprávna CAPTCHA. Skúste prosím znova.';
+		loadBuiltinCaptcha();
 	});
 
 	$effect(() => {
@@ -668,10 +699,53 @@ SPDX-License-Identifier: MPL-2.0
 						</div>
 					{/if}
 
+					<!-- CAPTCHA overenie proti botom -->
+					<div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-950/80 border-2 {captchaError ? 'border-rose-500/80' : 'border-slate-200 dark:border-slate-800'} flex flex-col gap-2">
+						<div class="flex items-center justify-between px-0.5">
+							<span class="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
+								<span>🛡️</span>
+								<span>Overenie (CAPTCHA)</span>
+							</span>
+							<button
+								type="button"
+								onclick={loadBuiltinCaptcha}
+								disabled={captchaLoading}
+								class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1 cursor-pointer disabled:opacity-50"
+								title="Vygenerovať nový príklad"
+							>
+								<span>🔄</span>
+								<span>Nový</span>
+							</button>
+						</div>
+						<div class="flex items-center gap-2.5">
+							<div class="shrink-0 rounded-xl overflow-hidden border border-slate-300 dark:border-slate-700 bg-slate-50 shadow-2xs flex items-center justify-center min-w-[160px] h-[52px]">
+								{#if captchaSvg}
+									{@html captchaSvg}
+								{:else}
+									<span class="text-xs text-slate-400 font-semibold">Načítavam...</span>
+								{/if}
+							</div>
+							<input
+								type="text"
+								inputmode="numeric"
+								autocomplete="off"
+								bind:value={captchaAnswer}
+								placeholder="Výsledok"
+								required
+								class="w-full h-[52px] px-3 bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 rounded-xl text-center font-mono font-black text-lg text-slate-900 dark:text-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 outline-none transition"
+							/>
+						</div>
+						{#if captchaError}
+							<p class="text-xs font-bold text-rose-600 dark:text-rose-400 text-center">
+								{captchaError}
+							</p>
+						{/if}
+					</div>
+
 					<div class="mt-2">
 						<button
 							type="submit"
-							disabled={rawUsername.trim().length < 2}
+							disabled={rawUsername.trim().length < 2 || captchaAnswer.trim().length < 1}
 							class="w-full py-4 px-6 rounded-2xl font-black text-lg text-white bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-500 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed shadow-xl shadow-emerald-500/25 border-2 border-emerald-400/60 ring-4 ring-emerald-500/20 transition-all cursor-pointer flex items-center justify-center gap-3"
 						>
 							<span>{$t('play_page.enter_game', { defaultValue: 'Prihlásiť sa do kvízu' })}</span>

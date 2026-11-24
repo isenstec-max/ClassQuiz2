@@ -28,7 +28,10 @@ from datetime import datetime, timedelta
 from classquiz.socket_server.helpers import (
     check_answer,
     check_captcha,
+    extract_client_ip,
     has_already_answered,
+    resolve_ip_location,
+    verify_builtin_captcha,
 )
 from .models import (
     RejoinGameData,
@@ -144,14 +147,38 @@ async def join_game(sid: str, data: dict):
         return
     game_data = PlayGame.model_validate_json(redis_res)
     # +++ START checking captcha +++
-    if game_data.captcha_enabled:
-        captcha_res = check_captcha(data.captcha)
-        if not captcha_res:
+    if data.captcha_id is not None:
+        captcha_ok = await verify_builtin_captcha(data.captcha_id, data.captcha)
+        if not captcha_ok:
+            await sio.emit(
+                "captcha_failed",
+                {"detail": "Nesprávny výsledok alebo expirovaná CAPTCHA. Skúste znova."},
+                room=sid,
+            )
             return
+    elif game_data.captcha_enabled and (settings.hcaptcha_key is not None or settings.recaptcha_key is not None):
+        captcha_res = await check_captcha(data.captcha)
+        if not captcha_res:
+            await sio.emit(
+                "captcha_failed",
+                {"detail": "Overenie CAPTCHA zlyhalo."},
+                room=sid,
+            )
+            return
+    else:
+        await sio.emit(
+            "captcha_failed",
+            {"detail": "Vyplňte prosím CAPTCHA overenie."},
+            room=sid,
+        )
+        return
     # --- END checking captcha ---
     if await redis.get(f"game_session:{data.game_pin}:players:{data.username}") is not None:
         await sio.emit("username_already_exists", room=sid)
         return
+
+    existing_sio_session = await get_session(sid, sio)
+    client_ip = existing_sio_session.get("client_ip", "unknown") if isinstance(existing_sio_session, dict) else "unknown"
 
     session = {
         "game_pin": data.game_pin,
@@ -159,6 +186,7 @@ async def join_game(sid: str, data: dict):
         "sid_custom": sid,
         "admin": False,
         "ping": 50,
+        "client_ip": client_ip,
     }
     await save_session(sid, sio, session)
     await sio.emit(
@@ -168,6 +196,48 @@ async def join_game(sid: str, data: dict):
     )
     await redis.set(f"game_session:{data.game_pin}:players:{data.username}", sid, ex=7200)
     await GamePlayer(username=data.username, sid=sid).to_player_stack(data.game_pin)
+
+    # +++ Record IP & Location +++
+    ip_geo = await resolve_ip_location(client_ip)
+    gps_lat = None
+    gps_lon = None
+    gps_acc = None
+    if isinstance(data.geo, dict):
+        try:
+            lat_val = float(data.geo.get("lat"))
+            lon_val = float(data.geo.get("lon"))
+            if -90.0 <= lat_val <= 90.0 and -180.0 <= lon_val <= 180.0:
+                gps_lat = round(lat_val, 6)
+                gps_lon = round(lon_val, 6)
+                if data.geo.get("accuracy") is not None:
+                    gps_acc = round(float(data.geo.get("accuracy")), 1)
+        except (TypeError, ValueError):
+            pass
+
+    location_label = ip_geo.get("location") or "Neznáma"
+    if gps_lat is not None and gps_lon is not None:
+        if location_label in ("Neznáma", "Lokálna sieť"):
+            location_label = f"GPS ({gps_lat}, {gps_lon})"
+        else:
+            location_label = f"{location_label} (GPS)"
+
+    player_meta = {
+        "ip": client_ip,
+        "location": location_label,
+        "lat": gps_lat if gps_lat is not None else ip_geo.get("lat"),
+        "lon": gps_lon if gps_lon is not None else ip_geo.get("lon"),
+        "accuracy": gps_acc,
+        "isp": ip_geo.get("isp"),
+        "source": "gps" if gps_lat is not None else ip_geo.get("source", "unknown"),
+        "joined_at": datetime.now().isoformat(timespec="seconds"),
+    }
+    await redis.hset(
+        f"game:{data.game_pin}:players:meta",
+        data.username,
+        json.dumps(player_meta),
+    )
+    await redis.expire(f"game:{data.game_pin}:players:meta", 18000)
+    # --- Record IP & Location ---
 
     if data.custom_field == "":
         data.custom_field = None
@@ -180,7 +250,7 @@ async def join_game(sid: str, data: dict):
 
     await sio.emit(
         "player_joined",
-        {"username": data.username, "sid": sid},
+        {"username": data.username, "sid": sid, "ip": client_ip, "meta": player_meta},
         room=f"admin:{data.game_pin}",
     )
     # +++ Time-Sync +++
@@ -483,9 +553,10 @@ async def save_quiz(sid: str):
 
 
 @sio.event
-async def connect(sid: str, _environ, _auth):
+async def connect(sid: str, environ, _auth):
     session_id = os.urandom(16).hex()
-    print("Connection opened with handler")
-    sio_session = {"session_id": session_id}
+    client_ip = extract_client_ip(environ)
+    print(f"Connection opened with handler (ip={client_ip})")
+    sio_session = {"session_id": session_id, "client_ip": client_ip}
     await sio.save_session(sid, sio_session)
     await sio.emit("session_id", ConnectSessionIdEvent(session_id=session_id).dict())

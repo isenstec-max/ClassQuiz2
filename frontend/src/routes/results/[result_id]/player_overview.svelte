@@ -25,6 +25,21 @@ SPDX-License-Identifier: MPL-2.0
 
 	let searchQuery = $state('');
 
+	let playerMetaMap = $derived.by(() => {
+		const raw = custom_field?.['__player_meta__'];
+		if (!raw) return {} as Record<string, any>;
+		if (typeof raw === 'string') {
+			try {
+				return JSON.parse(raw);
+			} catch {
+				return {};
+			}
+		}
+		return raw as Record<string, any>;
+	});
+
+	let hasPlayerMeta = $derived(Object.keys(playerMetaMap).length > 0);
+
 	// Výpočet správnych odpovedí a času pre každého hráča
 	let playerStats = $derived.by(() => {
 		const correctMap: Record<string, number> = {};
@@ -71,6 +86,14 @@ SPDX-License-Identifier: MPL-2.0
 				const avgTimeSec = avgTimeMs !== null ? (avgTimeMs / 1000).toFixed(2) : null;
 				const totalTimeSec = countWithTime > 0 ? (totalTimeMap[uname] / 1000).toFixed(2) : null;
 
+				const meta = playerMetaMap[uname] || {};
+				const lat = meta.lat ?? null;
+				const lon = meta.lon ?? null;
+				const mapUrl =
+					lat !== null && lon !== null
+						? `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=14/${lat}/${lon}`
+						: null;
+
 				return {
 					username: uname,
 					name: parsed.name,
@@ -81,7 +104,11 @@ SPDX-License-Identifier: MPL-2.0
 					pct,
 					avgTimeSec,
 					totalTimeSec,
-					customField: custom_field[uname] || ''
+					customField: custom_field[uname] || '',
+					ip: meta.ip || '',
+					location: meta.location || '',
+					source: meta.source || '',
+					mapUrl
 				};
 			})
 			.sort((a, b) => b.score - a.score)
@@ -94,7 +121,9 @@ SPDX-License-Identifier: MPL-2.0
 		return playerStats.filter((p) => p.name.toLowerCase().includes(q) || p.username.toLowerCase().includes(q));
 	});
 
-	const hasCustomFields = $derived(Object.keys(custom_field).length > 0);
+	const hasCustomFields = $derived(
+		Object.keys(custom_field || {}).filter((k) => k !== '__player_meta__').length > 0
+	);
 
 	const formatScore = (val: number) => {
 		return new Intl.NumberFormat('sk-SK').format(val);
@@ -149,6 +178,10 @@ SPDX-License-Identifier: MPL-2.0
 						<th class="px-4 py-2 w-44">Správne odpovede</th>
 						<th class="px-4 py-2 text-right w-36">Priemerný čas</th>
 						<th class="px-4 py-2 text-right w-32">Body</th>
+						{#if hasPlayerMeta}
+							<th class="px-4 py-2 w-36">IP adresa</th>
+							<th class="px-4 py-2 w-48">Poloha</th>
+						{/if}
 						{#if hasCustomFields}
 							<th class="px-4 py-2 w-40">{$t('result_page.custom_field', { default: 'Vlastné pole' })}</th>
 						{/if}
@@ -244,6 +277,38 @@ SPDX-License-Identifier: MPL-2.0
 									<span>{formatScore(p.score)}</span>
 								</span>
 							</td>
+
+							<!-- IP adresa a Poloha -->
+							{#if hasPlayerMeta}
+								<td class="px-4 py-3.5 sm:py-4">
+									{#if p.ip}
+										<span class="inline-flex items-center px-2 py-0.5 rounded-lg bg-slate-200/70 dark:bg-slate-900 text-slate-700 dark:text-sky-300 font-mono font-bold text-xs select-all">
+											{p.ip}
+										</span>
+									{:else}
+										<span class="text-xs text-slate-400">—</span>
+									{/if}
+								</td>
+								<td class="px-4 py-3.5 sm:py-4 text-xs font-medium text-slate-600 dark:text-slate-300">
+									<div class="flex flex-wrap items-center gap-1">
+										<span>{p.location || '—'}</span>
+										{#if p.source === 'gps'}
+											<span class="px-1 py-0.5 rounded bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-[10px] font-black uppercase">GPS</span>
+										{/if}
+										{#if p.mapUrl}
+											<a
+												href={p.mapUrl}
+												target="_blank"
+												rel="noopener noreferrer"
+												class="text-sky-600 dark:text-sky-400 hover:underline font-bold"
+												title="Otvoriť na mape"
+											>
+												📍
+											</a>
+										{/if}
+									</div>
+								</td>
+							{/if}
 
 							<!-- Vlastné pole -->
 							{#if hasCustomFields}

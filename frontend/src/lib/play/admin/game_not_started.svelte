@@ -13,6 +13,7 @@ SPDX-License-Identifier: MPL-2.0
 	import AnimalAvatar from '$lib/components/AnimalAvatar.svelte';
 	import { parsePlayer } from '$lib/avatars';
 	import AnswerShape from '$lib/components/AnswerShape.svelte';
+	import PlayerNetworkModal from '$lib/components/PlayerNetworkModal.svelte';
 
 	interface Props {
 		game_pin: string;
@@ -29,6 +30,7 @@ SPDX-License-Identifier: MPL-2.0
 	}: Props = $props();
 
 	let fullscreen_open = $state(false);
+	let showNetworkModal = $state(false);
 	const { t } = getLocalization();
 
 	if (cqc_code === 'null') {
@@ -149,12 +151,23 @@ SPDX-License-Identifier: MPL-2.0
 
 		<!-- 5. Počet čakajúcich študentov a zoznam hráčov POD tlačidlom Spustiť kvíz -->
 		<div class="mt-7 pt-6 border-t border-white/10 w-full flex flex-col items-center">
-			<!-- Indikátor počtu čakajúcich študentov -->
-			<div class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-slate-800/90 border border-slate-700 text-slate-200 text-sm font-bold shadow-md mb-4">
-				<span class="w-2.5 h-2.5 rounded-full {playerCount > 0 ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}"></span>
-				<span class="font-bold">
-					Počet čakajúcich študentov na kvíz: <span class="text-emerald-400 font-extrabold">{playerCount}</span>
-				</span>
+			<!-- Indikátor počtu čakajúcich študentov + tlačidlo na IP a polohu -->
+			<div class="flex flex-wrap items-center justify-center gap-2.5 mb-4">
+				<div class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-slate-800/90 border border-slate-700 text-slate-200 text-sm font-bold shadow-md">
+					<span class="w-2.5 h-2.5 rounded-full {playerCount > 0 ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}"></span>
+					<span class="font-bold">
+						Počet čakajúcich študentov na kvíz: <span class="text-emerald-400 font-extrabold">{playerCount}</span>
+					</span>
+				</div>
+				<button
+					type="button"
+					onclick={() => (showNetworkModal = true)}
+					class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-sky-600/90 hover:bg-sky-500 border border-sky-400/50 text-white text-xs sm:text-sm font-bold shadow-md transition hover:scale-105 active:scale-95 cursor-pointer"
+					title="Zobraziť IP adresy a polohu prihlásených účastníkov"
+				>
+					<span>🌐</span>
+					<span>IP a poloha</span>
+				</button>
 			</div>
 
 			<!-- Zoznam prihlásených hráčov s avatarmi -->
@@ -224,3 +237,5 @@ SPDX-License-Identifier: MPL-2.0
 		</div>
 	</div>
 {/if}
+
+<PlayerNetworkModal bind:open={showNetworkModal} players={game_state?.players || []} />

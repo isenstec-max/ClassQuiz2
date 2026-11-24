@@ -147,6 +147,70 @@ class CheckIfCaptchaEnabledResponse(BaseModel):
     custom_field: str | None = None
 
 
+@router.get("/play/captcha")
+async def generate_play_captcha():
+    import os
+
+    op = random.choice(["+", "-", "*"])
+    if op == "+":
+        a = random.randint(2, 19)
+        b = random.randint(1, 15)
+        answer = a + b
+        expr = f"{a}+{b}"
+    elif op == "-":
+        a = random.randint(8, 25)
+        b = random.randint(1, a - 1)
+        answer = a - b
+        expr = f"{a}-{b}"
+    else:
+        a = random.randint(2, 9)
+        b = random.randint(2, 9)
+        answer = a * b
+        expr = f"{a}×{b}"
+
+    captcha_id = os.urandom(16).hex()
+    await redis.set(f"captcha:{captcha_id}", str(answer), ex=300)
+
+    colors = ["#059669", "#2563eb", "#7c3aed", "#d97706", "#dc2626", "#0891b2"]
+    lines = []
+    for _ in range(5):
+        x1, y1 = random.randint(0, 160), random.randint(0, 52)
+        x2, y2 = random.randint(0, 160), random.randint(0, 52)
+        c = random.choice(colors)
+        lines.append(
+            f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{c}" stroke-width="1.3" opacity="0.32" />'
+        )
+    dots = []
+    for _ in range(14):
+        cx, cy = random.randint(4, 156), random.randint(4, 48)
+        r = random.uniform(1.0, 2.2)
+        c = random.choice(colors)
+        dots.append(f'<circle cx="{cx}" cy="{cy}" r="{r:.1f}" fill="{c}" opacity="0.35" />')
+
+    full_text = f"{expr}=?"
+    chars_svg = []
+    start_x = 16
+    step_x = 132 // max(len(full_text), 1)
+    for idx, ch in enumerate(full_text):
+        x = start_x + idx * step_x + random.randint(-2, 2)
+        y = random.randint(31, 39)
+        rot = random.randint(-14, 14)
+        c = random.choice(colors)
+        chars_svg.append(
+            f'<text x="{x}" y="{y}" fill="{c}" font-family="monospace,sans-serif" font-size="22" font-weight="900" transform="rotate({rot} {x} {y})">{ch}</text>'
+        )
+
+    svg = (
+        '<svg xmlns="http://www.w3.org/2000/svg" width="160" height="52" viewBox="0 0 160 52">'
+        '<rect width="160" height="52" rx="10" fill="#f8fafc" />'
+        + "".join(lines)
+        + "".join(dots)
+        + "".join(chars_svg)
+        + "</svg>"
+    )
+    return {"captcha_id": captcha_id, "svg": svg}
+
+
 @router.get("/play/check_captcha/{game_pin}", response_model=CheckIfCaptchaEnabledResponse)
 async def check_if_captcha_enabled(game_pin: str):
     game = await redis.get(f"game:{game_pin}")

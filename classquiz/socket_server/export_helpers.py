@@ -24,6 +24,15 @@ async def save_quiz_to_storage(game_pin: str):
             answers.append([])
     player_scores = await redis.hgetall(f"game_session:{game_pin}:player_scores")
     custom_field_data = await redis.hgetall(f"game:{game_pin}:players:custom_fields")
+    player_meta_raw = await redis.hgetall(f"game:{game_pin}:players:meta")
+    if player_meta_raw:
+        parsed_meta = {}
+        for uname, raw_json in player_meta_raw.items():
+            try:
+                parsed_meta[uname] = json.loads(raw_json)
+            except Exception:
+                parsed_meta[uname] = {"ip": str(raw_json)}
+        custom_field_data["__player_meta__"] = json.dumps(parsed_meta)
     q_return = []
     for q in game.questions:
         q_return.append(q.model_dump())

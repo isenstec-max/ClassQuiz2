@@ -1,8 +1,10 @@
 # SPDX-FileCopyrightText: 2025 Marlon W (Mawoka)
 #
 # SPDX-License-Identifier: MPL-2.0
+import ipaddress
+import json
 import aiohttp
-from classquiz.config import settings
+from classquiz.config import redis, settings
 from classquiz.db.models import (
     PlayGame,
     QuizQuestionType,
@@ -14,6 +16,123 @@ from classquiz.db.models import (
 )
 from classquiz.socket_server.models import SubmitAnswerData
 from .models import SubmitAnswerDataOrderType
+
+
+async def verify_builtin_captcha(captcha_id: str | None, captcha_answer: str | None) -> bool:
+    if not captcha_id or captcha_answer is None:
+        return False
+    key = f"captcha:{captcha_id}"
+    expected = await redis.get(key)
+    await redis.delete(key)
+    if expected is None:
+        return False
+    return str(expected).strip() == str(captcha_answer).strip()
+
+
+def extract_client_ip(environ: dict) -> str:
+    if not isinstance(environ, dict):
+        return "unknown"
+
+    def _clean(ip_val: str | None) -> str:
+        if not ip_val:
+            return ""
+        ip_str = ip_val.split(",")[0].strip()
+        if ip_str.startswith("::ffff:"):
+            ip_str = ip_str[7:]
+        return ip_str
+
+    # 1. Check WSGI-style forwarded headers
+    for key in ("HTTP_X_FORWARDED_FOR", "HTTP_X_REAL_IP", "HTTP_CF_CONNECTING_IP"):
+        val = _clean(environ.get(key))
+        if val:
+            return val
+
+    # 2. Check ASGI scope headers & client
+    scope = environ.get("asgi.scope")
+    if isinstance(scope, dict):
+        headers = scope.get("headers") or []
+        header_map = {}
+        for k, v in headers:
+            if isinstance(k, bytes):
+                k = k.decode("latin-1").lower()
+            else:
+                k = str(k).lower()
+            if isinstance(v, bytes):
+                v = v.decode("latin-1")
+            else:
+                v = str(v)
+            header_map[k] = v
+        for hname in ("x-forwarded-for", "x-real-ip", "cf-connecting-ip"):
+            val = _clean(header_map.get(hname))
+            if val:
+                return val
+        client = scope.get("client")
+        if isinstance(client, (list, tuple)) and len(client) > 0 and client[0]:
+            val = _clean(str(client[0]))
+            if val:
+                return val
+
+    # 3. Fallback to REMOTE_ADDR
+    val = _clean(environ.get("REMOTE_ADDR"))
+    return val or "unknown"
+
+
+async def resolve_ip_location(ip: str) -> dict:
+    default_res = {
+        "location": "Neznáma",
+        "lat": None,
+        "lon": None,
+        "isp": None,
+        "source": "unknown",
+    }
+    if not ip or ip == "unknown":
+        return default_res
+
+    try:
+        ip_obj = ipaddress.ip_address(ip)
+        if ip_obj.is_private or ip_obj.is_loopback or ip_obj.is_link_local or ip_obj.is_reserved:
+            return {
+                "location": "Lokálna sieť",
+                "lat": None,
+                "lon": None,
+                "isp": None,
+                "source": "local",
+            }
+    except ValueError:
+        return default_res
+
+    cache_key = f"geo_ip:{ip}"
+    cached = await redis.get(cache_key)
+    if cached:
+        try:
+            return json.loads(cached)
+        except Exception:
+            pass
+
+    try:
+        timeout = aiohttp.ClientTimeout(total=1.5)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.get(
+                f"http://ip-api.com/json/{ip}?fields=status,country,countryCode,regionName,city,lat,lon,isp"
+            ) as resp:
+                if resp.status == 200:
+                    data = await resp.json()
+                    if data.get("status") == "success":
+                        parts = [p for p in (data.get("city"), data.get("regionName"), data.get("countryCode")) if p]
+                        loc_str = ", ".join(parts) if parts else (data.get("country") or "Neznáma")
+                        res = {
+                            "location": loc_str,
+                            "lat": data.get("lat"),
+                            "lon": data.get("lon"),
+                            "isp": data.get("isp"),
+                            "source": "ip",
+                        }
+                        await redis.set(cache_key, json.dumps(res), ex=86400)
+                        return res
+    except Exception:
+        pass
+
+    return default_res
 
 
 async def check_captcha(captcha_data: str) -> bool:

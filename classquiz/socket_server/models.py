@@ -10,7 +10,9 @@ class JoinGameData(BaseModel):
     username: str
     game_pin: str
     captcha: str | None = None
+    captcha_id: str | None = None
     custom_field: str | None = None
+    geo: dict | None = None
 
 
 class RejoinGameData(BaseModel):

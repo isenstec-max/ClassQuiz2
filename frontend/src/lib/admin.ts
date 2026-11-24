@@ -53,8 +53,22 @@ export const getWinnersSorted = (
 	}
 };
 
+export interface PlayerNetworkMeta {
+	ip?: string;
+	location?: string;
+	lat?: number | null;
+	lon?: number | null;
+	accuracy?: number | null;
+	isp?: string | null;
+	source?: string;
+	joined_at?: string;
+}
+
 export interface Player {
 	username: string;
+	sid?: string;
+	ip?: string;
+	meta?: PlayerNetworkMeta;
 }
 
 export interface PlayerAnswer {

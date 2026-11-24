@@ -19,6 +19,7 @@ SPDX-License-Identifier: MPL-2.0
 	import { QuizQuestionType, type QuizData } from '$lib/quiz_types';
 	import type { Player, PlayerAnswer } from '$lib/admin';
 	import { tinykeys } from '$lib/tinykeys';
+	import PlayerNetworkModal from '$lib/components/PlayerNetworkModal.svelte';
 
 	navbarVisible.visible = false;
 
@@ -110,6 +111,7 @@ SPDX-License-Identifier: MPL-2.0
 	let export_token = $state(undefined);
 	let downloading = $state(false);
 	let download_success = $state(false);
+	let show_network_modal = $state(false);
 
 	const socket_game_controls: SocketGameControls = new SocketGameControls(socket);
 	let game_state: GameState = $state(new GameState(game_token));
@@ -377,6 +379,16 @@ SPDX-License-Identifier: MPL-2.0
 					<span>Body (B) / XLS</span>
 				</button>
 
+				<!-- Tlačidlo na IP adresy a polohu -->
+				<button
+					onclick={() => (show_network_modal = true)}
+					class="group flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-extrabold text-xs sm:text-sm md:text-base hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-sky-600/30 border-2 border-sky-300 ring-4 ring-sky-500/25 cursor-pointer whitespace-nowrap shrink-0"
+					title="Zobraziť IP adresy a polohu účastníkov"
+				>
+					<span>🌐</span>
+					<span>IP / Poloha</span>
+				</button>
+
 				<!-- Tlačidlo na ukončenie kvízu -->
 				<button
 					onclick={exit_quiz}
@@ -398,6 +410,7 @@ SPDX-License-Identifier: MPL-2.0
 			{show_final_results}
 			bind:show_bonus_points
 		/>
+		<PlayerNetworkModal bind:open={show_network_modal} players={game_state.players} />
 	{:else}
 		<SomeAdminScreen {game_token} {game_pin} {bg_color} bind:game_state />
 	{/if}
