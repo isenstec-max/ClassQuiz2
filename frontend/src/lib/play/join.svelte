@@ -6,12 +6,10 @@ SPDX-License-Identifier: MPL-2.0
 
 <script lang="ts">
 	import { socket } from '$lib/socket';
-	import { onDestroy, onMount } from 'svelte';
+	import { onDestroy, onMount, untrack } from 'svelte';
 	import { browser } from '$app/environment';
-	import * as Sentry from '@sentry/browser';
 	import { getLocalization } from '$lib/i18n';
 	import Cookies from 'js-cookie';
-	import { hcaptcha_site_key, recaptcha_key, sentry_dsn } from '$lib/config';
 	import AnimalAvatar from '$lib/components/AnimalAvatar.svelte';
 	import { ANIMAL_AVATARS, formatPlayer, parsePlayer } from '$lib/avatars';
 	import { getPlayerSession } from '$lib/play/session_storage';
@@ -59,15 +57,6 @@ SPDX-License-Identifier: MPL-2.0
 
 	// Optional browser geolocation
 	let geoCoords = $state<{ lat: number; lon: number; accuracy?: number } | null>(null);
-
-	let hcaptchaSitekey = hcaptcha_site_key;
-
-	let hcaptcha = {
-		execute: async (_a, _b) => ({ response: '' }), // eslint-disable-line @typescript-eslint/no-unused-vars
-		// eslint-disable-next-line @typescript-eslint/no-empty-function
-		render: (_a, _b) => {} // eslint-disable-line @typescript-eslint/no-unused-vars
-	};
-	let hcaptchaWidgetID;
 
 	let darkMode = $state(false);
 	if (browser) {
@@ -118,14 +107,6 @@ SPDX-License-Identifier: MPL-2.0
 				}
 			}
 			prefetch_username();
-			hcaptcha = window.hcaptcha;
-			if (hcaptcha.render) {
-				hcaptchaWidgetID = hcaptcha.render('hcaptcha', {
-					sitekey: hcaptchaSitekey,
-					size: 'invisible',
-					theme: 'dark'
-				});
-			}
 		}
 	});
 
@@ -164,15 +145,7 @@ SPDX-License-Identifier: MPL-2.0
 		}, 1500);
 	};
 
-	onDestroy(() => {
-		if (browser) {
-			hcaptcha = {
-				execute: async () => ({ response: '' }),
-				// eslint-disable-next-line @typescript-eslint/no-empty-function
-				render: () => {}
-			};
-		}
-	});
+	onDestroy(() => {});
 
 	const prefetch_username = async () => {
 		if (rawUsername) return;
@@ -227,8 +200,9 @@ SPDX-License-Identifier: MPL-2.0
 	};
 
 	let is_loading_pin = $state(false);
-	const set_game_pin = async () => {
-		if (is_loading_pin || game_pin.length !== 6) return;
+	let lastFetchedPin = '';
+	const set_game_pin = async (pinToFetch: string) => {
+		if (pinToFetch.length !== 6) return;
 		is_loading_pin = true;
 		try {
 			let process_var;
@@ -239,7 +213,7 @@ SPDX-License-Identifier: MPL-2.0
 			}
 
 			const res = await fetch(
-				`${process_var.env.API_URL ?? ''}/api/v1/quiz/play/check_captcha/${game_pin}`
+				`${process_var.env.API_URL ?? ''}/api/v1/quiz/play/check_captcha/${pinToFetch}`
 			);
 			const json = await res.json();
 			game_mode = json.game_mode;
@@ -252,20 +226,31 @@ SPDX-License-Identifier: MPL-2.0
 				if (browser) {
 					alert('Hra sa nenašla');
 				}
+				lastFetchedPin = '';
 				game_pin = '';
 				return;
 			} else {
 				alert('Neznáma chyba');
+				lastFetchedPin = '';
 				return;
 			}
+		} catch (err) {
+			console.error('Failed to check game pin:', err);
+			lastFetchedPin = '';
 		} finally {
 			is_loading_pin = false;
 		}
 	};
 
 	$effect(() => {
-		if (game_pin.length === 6) {
-			set_game_pin();
+		const pin = game_pin;
+		if (pin.length === 6 && pin !== lastFetchedPin) {
+			lastFetchedPin = pin;
+			untrack(() => {
+				set_game_pin(pin);
+			});
+		} else if (pin.length < 6) {
+			lastFetchedPin = '';
 		}
 	});
 
@@ -349,14 +334,7 @@ SPDX-License-Identifier: MPL-2.0
 	});
 </script>
 
-<svelte:head>
-	{#if captcha_enabled && hcaptchaSitekey}
-		<script src="https://js.hcaptcha.com/1/api.js" async defer></script>
-	{/if}
-	{#if recaptcha_key && captcha_enabled}
-		<script src="https://www.google.com/recaptcha/api.js?render={recaptcha_key}"></script>
-	{/if}
-</svelte:head>
+<svelte:head></svelte:head>
 
 {#if game_pin === '' || game_pin.length < 6}
 	<div class="min-h-screen w-screen flex flex-col justify-between items-center bg-gradient-to-br from-slate-100 via-emerald-50/30 to-slate-200 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 px-4 py-6 transition-colors selection:bg-emerald-500 selection:text-white">
@@ -761,12 +739,4 @@ SPDX-License-Identifier: MPL-2.0
 		</footer>
 	</div>
 {/if}
-<div
-	id="hcaptcha"
-	class="h-captcha"
-	data-sitekey={hcaptchaSitekey}
-	data-size="invisible"
-	data-theme="dark"
-></div>
-
 <ScoreInfoModal bind:open={showScoreInfo} lang={currentLang} />
